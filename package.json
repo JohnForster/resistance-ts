@@ -1,0 +1,39 @@
+{
+  "name": "resistance",
+  "version": "0.0.1",
+  "description": "Mobile app for playing \"The Resistance\" board game",
+  "main": "index.js",
+  "repository": "github.com/johnforster/resistance",
+  "author": "John Forster",
+  "license": "MIT",
+  "scripts": {
+    "build": "yarn build:client && yarn build:server",
+    "build:client": "webpack --config webpack.config.js",
+    "build:server": "babel src/server -d build --extensions .ts"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/webpack-env": "^1.14.0",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
+    "@typescript-eslint/parser": "^2.0.0",
+    "babel-loader": "^8.0.6",
+    "eslint": "^6.2.2",
+    "eslint-config-prettier": "^6.1.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.3",
+    "prettier": "^1.18.2",
+    "source-map-loader": "^0.2.4",
+    "typescript": "^3.5.3",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7"
+  },
+  "dependencies": {
+    "@types/react": "^16.9.2",
+    "@types/react-dom": "^16.9.0",
+    "@types/react-router-dom": "^4.3.5"
+  }
+}
