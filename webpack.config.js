@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 const path = require('path')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 module.exports = {
   // Use environment variables to determine mode
@@ -24,4 +25,7 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    new CleanWebpackPlugin ()
+  ],
 };
