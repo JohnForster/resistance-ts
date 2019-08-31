@@ -7,7 +7,7 @@ const isDev = process.env.NODE_ENV === 'development';
 const middlePath = isDev ? '../../build' : '';
 app.use(express.static(path.join(__dirname, middlePath, '/dist')));
 
-app.get('*', (req: Request, res: Response) => {
+app.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, middlePath, '/dist/index.html'));
 });
 
