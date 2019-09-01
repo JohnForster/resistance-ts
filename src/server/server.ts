@@ -1,8 +1,17 @@
 import express, { Response, Request } from 'express';
 import path from 'path';
+import createWebSocket from 'express-ws';
 
-const app = express();
+const { app } = createWebSocket(express());
+
 const isDev = process.env.NODE_ENV === 'development';
+
+// Websocket routes
+app.ws('/echo', (ws, req) => {
+  ws.on('message', msg => {
+    ws.send(msg);
+  });
+});
 
 // Publicly expose the '/dist' folder
 const middlePath = isDev ? '../../build' : '';
