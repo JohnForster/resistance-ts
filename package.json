@@ -48,10 +48,12 @@
     "webpack-cli": "^3.3.7"
   },
   "dependencies": {
+    "@types/uuid": "^3.4.5",
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "uuid": "^3.3.3",
     "websocket": "^1.0.29"
   }
 }
