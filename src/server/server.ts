@@ -17,6 +17,7 @@ app.ws('/echo', (ws, req) => {
   users.set(userID, ws);
 
   ws.on('message', msg => {
+    console.log(msg);
     ws.send(msg);
   });
 });
