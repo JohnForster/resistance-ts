@@ -2,7 +2,9 @@ import express, { Response, Request } from 'express';
 import path from 'path';
 import createWebSocket from 'express-ws';
 import uuidv4 from 'uuid/v4';
+
 import getLocalIP from './utils/getLocalIP';
+import { WSEvent } from '../shared/types/eventTypes';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -17,8 +19,8 @@ app.ws('/echo', (ws, req) => {
   users.set(userID, ws);
 
   ws.on('message', msg => {
-    console.log(msg);
-    ws.send(msg);
+    const payload: WSEvent = { event: 'message', data: 'the fuck is up coachella?!' };
+    ws.send(JSON.stringify(payload));
   });
 });
 
@@ -34,14 +36,14 @@ app.get('/', (req: Request, res: Response) => {
 
 const port = isDev ? 8080 : 8081;
 
-// Listen locally
-app.listen(port);
-console.log(`App available at http://localhost:${port}`);
-
 // Listen on local IP (for connecting over LAN)
 if (isDev) {
   getLocalIP().then(address => {
-    app.listen(port, address);
+    app.listen(port, '0.0.0.0');
     console.log(`App available at http://${address}:${port}`);
   });
+} else {
+  // Will need to work out how this works in prod
+  app.listen(port)
 }
+
