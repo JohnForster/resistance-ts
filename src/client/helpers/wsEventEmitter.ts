@@ -1,7 +1,8 @@
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { WSEvent, Callbacks, Callback } from '../../shared/types/eventTypes';
+import { EventEmitter } from 'events';
 
-export default new (class WSEventEmitter {
+export class WSEventEmitter {
   private websocket: W3CWebSocket;
   private callbacks: Callbacks = {};
 
@@ -18,14 +19,12 @@ export default new (class WSEventEmitter {
     return this;
   };
 
-  public bind = <T extends WSEvent>(eventType: T['event'], cb: Callback<T>
-  ): WSEventEmitter => {
+  public bind = <T extends WSEvent>(eventType: T['event'], cb: Callback<T>): WSEventEmitter => {
     if (!this.callbacks[eventType]) this.callbacks[eventType] = [];
     this.callbacks[eventType].push(cb);
     return this;
   };
 
-  // ! Type for sending messages from server
   private onMessage = (evt: { data: string }): void => {
     const json: WSEvent = JSON.parse(evt.data);
     this.execute(json.event, json.data);
@@ -35,4 +34,7 @@ export default new (class WSEventEmitter {
     const chain: Callback<T>[] = this.callbacks[eventName] || [];
     chain.forEach(cb => cb(data));
   };
-})('ws://localhost:8080/echo');
+}
+
+// ! STATIC WEB SOCKET LOCATION
+export default new WSEventEmitter('ws://localhost:8080/echo');
