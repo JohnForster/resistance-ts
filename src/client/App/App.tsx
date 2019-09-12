@@ -40,15 +40,12 @@ export default class App extends PureComponent<{}, AppState> {
   }
 
   hostGame = (): void => {
-    console.log(this.state);
-    this.state.eventEmitter.send<CreateEvent>('create_game', { host_id: this.state.player.id });
+    this.state.eventEmitter.send<CreateEvent>('create_game', { hostID: this.state.player.id });
     this.setState({ status: 'pending' });
   };
 
   onGameCreated = (data: GameCreatedEvent['data']): void => {
-    console.log(data);
-    const game = new ClientGame({ id: data.game_id, isHosting: true, player: this.state.player });
-    console.log('game:', game);
+    const game = new ClientGame({ id: data.gameID, isHosting: true, player: this.state.player });
     this.setState({ game });
   };
 
@@ -57,12 +54,12 @@ export default class App extends PureComponent<{}, AppState> {
   };
 
   onGameJoined = (data: GameJoinedEvent['data']): void => {
-    const game = new ClientGame({ id: data.game_id, isHosting: false, player: this.state.player });
+    const game = new ClientGame({ id: data.gameID, isHosting: false, player: this.state.player });
     this.setState({ game });
   };
 
   createPlayer = (data: NewPlayerEvent['data']): void => {
-    const player = new ClientPlayer(data.player_id);
+    const player = new ClientPlayer(data.playerID);
     this.setState({ player }, () => console.log('app state:', this.state));
   };
 

@@ -18,7 +18,7 @@ export interface OpenEvent extends EventTemplate {
 export interface CreateEvent extends EventTemplate {
   event: 'create_game';
   data: {
-    host_id: string;
+    hostID: string;
   };
 }
 
@@ -32,7 +32,7 @@ export interface JoinEvent extends EventTemplate {
 export interface GameJoinedEvent extends EventTemplate {
   event: 'game_joined';
   data: {
-    game_id: string;
+    gameID: string;
   };
 }
 
@@ -43,7 +43,7 @@ export interface MessageEvent extends EventTemplate {
 export interface GameCreatedEvent extends EventTemplate {
   event: 'game_created';
   data: {
-    game_id: string;
+    gameID: string;
   };
 }
 export interface ErrorEvent extends EventTemplate {
@@ -54,7 +54,7 @@ export interface ErrorEvent extends EventTemplate {
 export interface NewPlayerEvent extends EventTemplate {
   event: 'new_player';
   data: {
-    player_id: string;
+    playerID: string;
   };
 }
 

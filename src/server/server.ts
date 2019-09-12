@@ -21,7 +21,7 @@ app.ws('/echo', (ws, req) => {
   console.log(new Date() + ' Recieved a new connection from origin ' + req.ip);
   users.set(req.ip, user);
 
-  const payload: NewPlayerEvent = { event: 'new_player', data: { player_id: user.id } };
+  const payload: NewPlayerEvent = { event: 'new_player', data: { playerID: user.id } };
   ws.send(JSON.stringify(payload));
 
   ws.on('message', msg => {
@@ -32,7 +32,7 @@ app.ws('/echo', (ws, req) => {
       if (games.get(user.id)) return ws.send(JSON.stringify({ event: 'error', data: 'game already exists' }));
       const game = new Game(user);
       games.set(game.id, game);
-      const payload: GameCreatedEvent = { event: 'game_created', data: { game_id: game.id } };
+      const payload: GameCreatedEvent = { event: 'game_created', data: { gameID: game.id } };
       ws.send(JSON.stringify(payload));
     }
     if (event === 'message') {

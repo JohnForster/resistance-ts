@@ -1,5 +1,5 @@
-import uuidv4 from 'uuid/v4';
 import User from './user';
+import generateID from '../utils/generateID';
 
 export default class Game {
   public id: string;
@@ -7,9 +7,7 @@ export default class Game {
   public players: User[] = [];
 
   constructor(user: User) {
-    this.id = Math.floor(Math.random() * 60466176)
-      .toString(36)
-      .toUpperCase();
+    this.id = generateID();
     this.host = user;
     this.players.push(user);
   }
