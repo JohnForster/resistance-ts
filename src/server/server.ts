@@ -3,54 +3,22 @@ import path from 'path';
 import createWebSocket from 'express-ws';
 
 import getLocalIP from './utils/getLocalIP';
-import { MessageEvent, GameCreatedEvent, NewPlayerEvent, JoinEvent, ErrorEvent } from '../shared/types/eventTypes';
 import User from './models/user';
 import Game from './models/game';
+import WSEventHandler from './helpers/wsEventHandler';
 
 const isDev = process.env.NODE_ENV === 'development';
 
 const { app } = createWebSocket(express());
 
+// Could users and games be stored within WSEventHandler?
 const users = new Map<string, User>();
 const games = new Map<string, Game>();
 
+const wsEventHandler = new WSEventHandler(users, games);
+
 // Websocket routes
-app.ws('/echo', (ws, req) => {
-  if (users.has(req.ip)) console.log('User already exists!', 'Should reassign that users ws here');
-  const user = new User(ws, req.ip);
-  console.log(new Date() + ' Recieved a new connection from origin ' + req.ip);
-  users.set(req.ip, user);
-
-  const payload: NewPlayerEvent = { event: 'new_player', data: { playerID: user.id } };
-  ws.send(JSON.stringify(payload));
-
-  ws.on('message', msg => {
-    const [event, data] = JSON.parse(msg as string);
-    console.log(new Date(), 'Message recieved:', [event, data]);
-
-    if (event === 'create_game') {
-      if (games.get(user.id)) return ws.send(JSON.stringify({ event: 'error', data: 'game already exists' }));
-      const game = new Game(user);
-      games.set(game.id, game);
-      const payload: GameCreatedEvent = { event: 'game_created', data: { gameID: game.id } };
-      ws.send(JSON.stringify(payload));
-    }
-    if (event === 'message') {
-      const payload: MessageEvent = { event: 'message', data: 'the fuck is up coachella?!' };
-      ws.send(JSON.stringify(payload));
-    }
-    if (event === 'join_game') {
-      const game = games.get((data as JoinEvent['data']).gameID);
-      if (!game) {
-        return ws.send(
-          JSON.stringify({ event: 'error', data: `Game with id ${data.gameID} not found.` } as ErrorEvent),
-        );
-      }
-      game.addPlayer(user);
-      console.log(`Adding player ${user.id} to game ${game.id}`);
-    }
-  });
-});
+app.ws('/echo', wsEventHandler.middleWare);
 
 // Publicly expose the '/dist' folder
 const middlePath = isDev ? '../../build' : '';

@@ -58,6 +58,15 @@ export interface NewPlayerEvent extends EventTemplate {
   };
 }
 
+export interface UpdatePlayersEvent extends EventTemplate {
+  event: 'updatePlayers';
+  data: {
+    gameID: string;
+    playerIDs: string[];
+    host: string;
+  };
+}
+
 export type WSEvent =
   | CreateEvent
   | JoinEvent
@@ -68,7 +77,8 @@ export type WSEvent =
   | ErrorEvent
   | JoinEvent
   | GameJoinedEvent
-  | NewPlayerEvent;
+  | NewPlayerEvent
+  | UpdatePlayersEvent;
 
 export type EventByName<E extends WSEvent['event'], T = WSEvent> = T extends { event: E } ? T : never;
 

@@ -26,6 +26,7 @@ export default class WSEventEmitter {
 
   private onMessage = (evt: { data: string }): void => {
     const json: WSEvent = JSON.parse(evt.data);
+    console.log('Websocket recieved:', json);
     this.execute(json.event, json.data);
   };
 
