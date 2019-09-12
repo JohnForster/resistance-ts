@@ -1,6 +1,8 @@
 import React, { PureComponent, Fragment } from 'react';
 
-export interface JoinPageProps {}
+export interface JoinPageProps {
+  joinGame: (id: string) => void;
+}
 
 interface JoinPageState {}
 

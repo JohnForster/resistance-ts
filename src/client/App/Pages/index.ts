@@ -1,3 +1,3 @@
-export * from './Main';
+export * from './Landing';
 export * from './Host';
 export * from './Join';

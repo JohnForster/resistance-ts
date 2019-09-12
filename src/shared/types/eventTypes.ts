@@ -17,13 +17,22 @@ export interface OpenEvent extends EventTemplate {
 
 export interface CreateEvent extends EventTemplate {
   event: 'create_game';
-  data: {};
+  data: {
+    host_id: string;
+  };
 }
 
 export interface JoinEvent extends EventTemplate {
   event: 'join_game';
   data: {
-    gameID: 'string';
+    gameID: string;
+  };
+}
+
+export interface GameJoinedEvent extends EventTemplate {
+  event: 'game_joined';
+  data: {
+    game_id: string;
   };
 }
 
@@ -33,14 +42,33 @@ export interface MessageEvent extends EventTemplate {
 }
 export interface GameCreatedEvent extends EventTemplate {
   event: 'game_created';
-  data: string;
+  data: {
+    game_id: string;
+  };
 }
 export interface ErrorEvent extends EventTemplate {
   event: 'error';
   data: string;
 }
 
-export type WSEvent = CreateEvent | JoinEvent | MessageEvent | CloseEvent | OpenEvent | GameCreatedEvent | ErrorEvent;
+export interface NewPlayerEvent extends EventTemplate {
+  event: 'new_player';
+  data: {
+    player_id: string;
+  };
+}
+
+export type WSEvent =
+  | CreateEvent
+  | JoinEvent
+  | MessageEvent
+  | CloseEvent
+  | OpenEvent
+  | GameCreatedEvent
+  | ErrorEvent
+  | JoinEvent
+  | GameJoinedEvent
+  | NewPlayerEvent;
 
 export type EventByName<E extends WSEvent['event'], T = WSEvent> = T extends { event: E } ? T : never;
 

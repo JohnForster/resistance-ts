@@ -1,0 +1,1 @@
+Add server stuff for creating a player on connection.

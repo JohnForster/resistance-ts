@@ -1,10 +1,9 @@
 import express, { Response, Request } from 'express';
 import path from 'path';
 import createWebSocket from 'express-ws';
-import uuidv4 from 'uuid/v4';
 
 import getLocalIP from './utils/getLocalIP';
-import { WSEvent, MessageEvent } from '../shared/types/eventTypes';
+import { MessageEvent, GameCreatedEvent, NewPlayerEvent, JoinEvent, ErrorEvent } from '../shared/types/eventTypes';
 import User from './models/user';
 import Game from './models/game';
 
@@ -12,14 +11,18 @@ const isDev = process.env.NODE_ENV === 'development';
 
 const { app } = createWebSocket(express());
 
-const users = new Map();
-const games = new Map();
+const users = new Map<string, User>();
+const games = new Map<string, Game>();
 
 // Websocket routes
 app.ws('/echo', (ws, req) => {
+  if (users.has(req.ip)) console.log('User already exists!', 'Should reassign that users ws here');
   const user = new User(ws, req.ip);
   console.log(new Date() + ' Recieved a new connection from origin ' + req.ip);
-  users.set(user.id, user);
+  users.set(req.ip, user);
+
+  const payload: NewPlayerEvent = { event: 'new_player', data: { player_id: user.id } };
+  ws.send(JSON.stringify(payload));
 
   ws.on('message', msg => {
     const [event, data] = JSON.parse(msg as string);
@@ -28,13 +31,23 @@ app.ws('/echo', (ws, req) => {
     if (event === 'create_game') {
       if (games.get(user.id)) return ws.send(JSON.stringify({ event: 'error', data: 'game already exists' }));
       const game = new Game(user);
-      games.set(user.id, game);
-
-      ws.send(JSON.stringify({ event: 'game_created', data: game.id }));
+      games.set(game.id, game);
+      const payload: GameCreatedEvent = { event: 'game_created', data: { game_id: game.id } };
+      ws.send(JSON.stringify(payload));
     }
     if (event === 'message') {
       const payload: MessageEvent = { event: 'message', data: 'the fuck is up coachella?!' };
       ws.send(JSON.stringify(payload));
+    }
+    if (event === 'join_game') {
+      const game = games.get((data as JoinEvent['data']).gameID);
+      if (!game) {
+        return ws.send(
+          JSON.stringify({ event: 'error', data: `Game with id ${data.gameID} not found.` } as ErrorEvent),
+        );
+      }
+      game.addPlayer(user);
+      console.log(`Adding player ${user.id} to game ${game.id}`);
     }
   });
 });

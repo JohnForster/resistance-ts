@@ -1,8 +1,7 @@
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { WSEvent, Callbacks, Callback } from '../../shared/types/eventTypes';
-import { EventEmitter } from 'events';
 
-export class WSEventEmitter {
+export default class WSEventEmitter {
   private websocket: W3CWebSocket;
   private callbacks: Callbacks = {};
 
@@ -35,6 +34,3 @@ export class WSEventEmitter {
     chain.forEach(cb => cb(data));
   };
 }
-
-// ! STATIC WEB SOCKET LOCATION
-export default new WSEventEmitter('ws://localhost:8080/echo');
