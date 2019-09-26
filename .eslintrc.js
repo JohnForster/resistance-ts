@@ -3,6 +3,11 @@ module.exports =  {
   plugins: [
     "jsx-control-statements"
   ],
+  env: {
+    es6: true,
+    browser: true,
+    node: true,
+  },
   extends:  [
     'plugin:react/recommended',  // Uses the recommended rules from @eslint-plugin-react
 		'plugin:@typescript-eslint/recommended',
@@ -11,11 +16,11 @@ module.exports =  {
     'plugin:jsx-control-statements/recommended'
   ],
   parserOptions:  {
-  ecmaVersion:  2018,  // Allows for the parsing of modern ECMAScript features
-  sourceType:  'module',  // Allows for the use of imports
-  ecmaFeatures:  {
-    jsx:  true,  // Allows for the parsing of JSX
-  },
+    ecmaVersion:  2018,  // Allows for the parsing of modern ECMAScript features
+    sourceType:  'module',  // Allows for the use of imports
+    ecmaFeatures:  {
+      jsx:  true,  // Allows for the parsing of JSX
+    },
   },
   rules:  {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
