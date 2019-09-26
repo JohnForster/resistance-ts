@@ -3,7 +3,7 @@ import { Request } from 'express';
 
 import Game from '../models/game';
 import User from '../models/user';
-import { CreateEvent, GameCreatedEvent, NewPlayerEvent, JoinEvent, ErrorEvent } from '../../shared/types/eventTypes';
+import { CreateEvent, PlayerDataEvent, JoinEvent, ErrorEvent, GameUpdateEvent } from '../../shared/types/eventTypes';
 import { WebsocketRequestHandler } from 'express-ws';
 
 export default class WSEventHandler {
@@ -16,12 +16,24 @@ export default class WSEventHandler {
   }
 
   public middleWare: WebsocketRequestHandler = (ws, req): void => {
-    const user = this.createNewUser(ws, req);
-    ws.on('message', this.handleMessage(user));
+    const isExistingUser = this.users.has(req.ip);
+    if (isExistingUser) {
+      const user = this.users.get(req.ip);
+      user.ws = ws.on('message', this.handleMessage(user));
+      user.sendPlayerData();
+      if (user.game) {
+        // TODO refactor to user.sendGameUpdate()
+        user.game.sendGameUpdate(user);
+      }
+    } else {
+      const user = this.createNewUser(ws, req);
+      user.ws = ws.on('message', this.handleMessage(user));
+    }
   };
 
   private handleMessage = (user: User) => (msg: Data): void => {
     const [event, data] = JSON.parse(msg as string);
+    console.log('Event received:', event);
     if (event === 'create_game') this.createGame(user, data);
     if (event === 'join_game') this.joinGame(user, data);
   };
@@ -29,28 +41,32 @@ export default class WSEventHandler {
   private createGame = (user: User, data: CreateEvent['data']): void => {
     if (this.games.get(user.id)) return user.ws.send(JSON.stringify({ event: 'error', data: 'game already exists' }));
 
-    const game = new Game();
+    const game = new Game(user);
     this.games.set(game.id, game);
 
-    const payload: GameCreatedEvent = { event: 'game_created', data: { gameID: game.id } };
-    user.ws.send(JSON.stringify(payload));
+    user.game = game;
     game.addPlayer(user, true);
   };
 
   private joinGame = (user: User, data: JoinEvent['data']): void => {
     const game = this.games.get(data.gameID);
     if (!game) {
+      console.error(`No game found with ID '${data.gameID}'`);
+      console.error(`Current games: ${this.games.keys}`);
       return user.ws.send(
         JSON.stringify({ event: 'error', data: `Game with id ${data.gameID} not found.` } as ErrorEvent),
       );
     }
     game.addPlayer(user);
-    console.log(`Adding player ${user.id} to game ${game.id}`);
+    user.game = game;
+    console.log(`Added player ${user.id} to game ${game.id}`);
+    game.sendGameUpdate(user);
   };
 
   private createNewUser = (ws: WebSocket, req: Request): User => {
     if (this.users.has(req.ip)) {
-      console.log('User already exists!', 'Should reassign that users ws here');
+      const user = this.users.get(req.ip);
+      user.sendPlayerData();
       return;
     }
 
@@ -59,7 +75,7 @@ export default class WSEventHandler {
 
     this.users.set(req.ip, user);
 
-    const payload: NewPlayerEvent = { event: 'new_player', data: { playerID: user.id } };
+    const payload: PlayerDataEvent = { event: 'playerData', data: { playerID: user.id, inGame: false } };
     user.ws.send(JSON.stringify(payload));
 
     return user;

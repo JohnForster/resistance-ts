@@ -1,23 +1,20 @@
 import React, { PureComponent, Fragment } from 'react';
 import { LandingPage } from './Pages';
-import {
-  GameCreatedEvent,
-  CreateEvent,
-  JoinEvent,
-  GameJoinedEvent,
-  NewPlayerEvent,
-} from '../../shared/types/eventTypes';
-import ClientGame from './clientGame/clientGame';
+import { CreateEvent, JoinEvent, PlayerDataEvent, MessageEvent, GameUpdateEvent } from '../../shared/types/eventTypes';
 import WSEventEmitter from '../helpers/wsEventEmitter';
 import ClientPlayer from './clientGame/clientPlayer';
 import LobbyPage from './Pages/Lobby';
+import { GameData } from '../../shared/types/gameData';
 
 interface AppState {
-  game: ClientGame;
+  game: GameData;
   status: 'idle' | 'pending' | 'inLobby' | 'inGame';
   eventEmitter?: WSEventEmitter;
   player?: ClientPlayer;
 }
+
+// ! Hard coded
+const CONNECTION_URL = 'ws://192.168.1.9:8080/echo';
 
 export default class App extends PureComponent<{}, AppState> {
   state: AppState = {
@@ -26,15 +23,14 @@ export default class App extends PureComponent<{}, AppState> {
   };
 
   componentDidMount(): void {
-    const eventEmitter = new WSEventEmitter('ws://localhost:8080/echo');
+    const eventEmitter = new WSEventEmitter(CONNECTION_URL);
 
     // Temporary for message/error
     eventEmitter.bind('message', msg => console.log('message received: ', msg));
     eventEmitter.bind('error', msg => console.error('error received: ', msg));
 
-    eventEmitter.bind('new_player', this.createPlayer);
-    eventEmitter.bind('game_created', this.onGameCreated);
-    eventEmitter.bind('game_joined', this.onGameJoined);
+    eventEmitter.bind('playerData', this.createPlayer);
+    eventEmitter.bind('gameUpdate', this.onGameUpdate);
 
     this.setState({ eventEmitter });
   }
@@ -44,32 +40,42 @@ export default class App extends PureComponent<{}, AppState> {
     this.setState({ status: 'pending' });
   };
 
-  onGameCreated = (data: GameCreatedEvent['data']): void => {
-    const game = new ClientGame({ id: data.gameID, isHosting: true, player: this.state.player });
-    this.setState({ game });
+  onGameUpdate = (data: GameUpdateEvent['data']): void => {
+    // TODO set status
+    this.setState({ game: data });
   };
 
-  joinGame = (id: string): void => {
-    this.state.eventEmitter.send<JoinEvent>('join_game', { gameID: id });
+  joinGame = (gameID: string): void => {
+    this.state.eventEmitter.send<JoinEvent>('join_game', { gameID });
   };
 
-  onGameJoined = (data: GameJoinedEvent['data']): void => {
-    const game = new ClientGame({ id: data.gameID, isHosting: false, player: this.state.player });
-    this.setState({ game });
-  };
-
-  createPlayer = (data: NewPlayerEvent['data']): void => {
+  createPlayer = (data: PlayerDataEvent['data']): void => {
     const player = new ClientPlayer(data.playerID);
     this.setState({ player }, () => console.log('app state:', this.state));
   };
 
+  testMessage = (): void => {
+    this.state.eventEmitter.send<MessageEvent>('message', 'Test message');
+  };
+
+  onUpdatePlayers = (data: UpdatePlayersEvent) => {};
+
   render(): JSX.Element {
     return (
       <Fragment>
-        {!this.state.game && (
-          <LandingPage hostGame={this.hostGame} joinGame={this.joinGame} player={this.state.player} />
-        )}
-        {this.state.game && !this.state.game.hasStarted && <LobbyPage game={this.state.game} />}
+        <Choose>
+          <When condition={!this.state.game}>
+            <LandingPage
+              hostGame={this.hostGame}
+              joinGame={this.joinGame}
+              player={this.state.player}
+              testMessage={this.testMessage}
+            />
+          </When>
+          <When condition={this.state.game.round === 0}>
+            <LobbyPage game={this.state.game} />
+          </When>
+        </Choose>
       </Fragment>
     );
   }

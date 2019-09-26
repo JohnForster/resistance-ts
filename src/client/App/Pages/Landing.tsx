@@ -4,6 +4,7 @@ import ClientPlayer from '../clientGame/clientPlayer';
 export interface LandingPageProps {
   hostGame: () => void;
   joinGame: (id: string) => void;
+  testMessage: () => void;
   player: ClientPlayer;
 }
 
@@ -24,7 +25,7 @@ export class LandingPage extends PureComponent<LandingPageProps, LandingPageStat
     this.props.joinGame(this.state.formValue.toUpperCase());
   };
 
-  handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     event.preventDefault();
     this.setState({ formValue: event.target.value });
   };
@@ -32,19 +33,18 @@ export class LandingPage extends PureComponent<LandingPageProps, LandingPageStat
   render(): JSX.Element {
     return (
       <div>
-        <button onClick={this.handleClick}>Send Message</button>
+        <button onClick={this.props.testMessage}>Send Message</button>
         The Resistance
         <br />
         <button onClick={this.props.hostGame}>Host</button>
         <br />
         <form onSubmit={this.handleSubmit}>
           <label>
-            Name:
+            Game Code:
             <input type="text" value={this.state.formValue} onChange={this.handleChange} />
           </label>
-          <input type="submit" value="Submit" />
         </form>
-        <button onClick={(): void => this.props.joinGame(this.props.player.id)}>Join</button>
+        <button onClick={(): void => this.props.joinGame(this.state.formValue)}>Join</button>
       </div>
     );
   }

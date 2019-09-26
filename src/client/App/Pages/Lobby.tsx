@@ -1,8 +1,8 @@
 import React, { PureComponent, Fragment } from 'react';
-import ClientGame from '../clientGame/clientGame';
+import { GameData } from '../../../shared/types/gameData';
 
 export interface LobbyPageProps {
-  game: ClientGame;
+  game: GameData;
 }
 
 interface LobbyPageState {}
@@ -12,10 +12,10 @@ export default class LobbyPage extends PureComponent<LobbyPageProps, LobbyPageSt
     return (
       <Fragment>
         <h1>Lobby</h1>
-        <p>Game ID: {this.props.game.id}</p>
+        <p>Game ID: {this.props.game.gameID}</p>
         <h3>Players</h3>
         {this.props.game.players.map((p, i) => (
-          <p key={`player-${i}`}>{p.name}</p>
+          <p key={`player-${i}`}>{JSON.stringify(p)}</p>
         ))}
       </Fragment>
     );

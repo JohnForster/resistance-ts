@@ -1,1 +1,20 @@
 Add server stuff for creating a player on connection.
+
+Could combine all game events into one 'gameUpdated' event, which posts the _current_ state of the game
+{
+  event: 'gameUpdated',
+  data: {
+    round: 0 (lobby), 1,2,3,4,5
+    stage: 'nominate', 'nominationVote' , 'missionVote'
+    players: {name, id}[]
+    host: playerID
+    roundData: {
+    }
+  }
+}
+
+Probably need to use cookies/local storage for user identification rather than IP?
+
+Encapsulate websocket interactions within a service
+
+Add quit game functionality in lobby

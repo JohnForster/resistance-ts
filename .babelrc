@@ -3,7 +3,7 @@
     [
       "@babel/env"
     ],
-    "@babel/typescript",
+    "@babel/typescript"
   ],
-  "plugins": ["@babel/plugin-proposal-class-properties"]
+  "plugins": ["@babel/plugin-proposal-class-properties", "jsx-control-statements"]
 }
