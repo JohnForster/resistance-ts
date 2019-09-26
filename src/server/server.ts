@@ -18,7 +18,7 @@ const games = new Map<string, Game>();
 const wsEventHandler = new WSEventHandler(users, games);
 
 // Websocket routes
-app.ws('/echo', wsEventHandler.middleWare);
+app.ws('/ws', wsEventHandler.middleWare);
 
 // Publicly expose the '/dist' folder
 const middlePath = isDev ? '../../build' : '';

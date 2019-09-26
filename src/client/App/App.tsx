@@ -14,7 +14,7 @@ interface AppState {
 }
 
 // ! Hard coded
-const CONNECTION_URL = 'ws://192.168.1.9:8080/echo';
+const CONNECTION_URL = `ws://${window.location.host}/ws`;
 
 export default class App extends PureComponent<{}, AppState> {
   state: AppState = {
@@ -58,8 +58,6 @@ export default class App extends PureComponent<{}, AppState> {
     this.state.eventEmitter.send<MessageEvent>('message', 'Test message');
   };
 
-  onUpdatePlayers = (data: UpdatePlayersEvent) => {};
-
   render(): JSX.Element {
     return (
       <Fragment>
@@ -75,6 +73,7 @@ export default class App extends PureComponent<{}, AppState> {
           <When condition={this.state.game.round === 0}>
             <LobbyPage game={this.state.game} />
           </When>
+          <When condition={this.state.game.round > 0}>In Game</When>
         </Choose>
       </Fragment>
     );
