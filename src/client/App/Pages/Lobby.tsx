@@ -24,9 +24,11 @@ export default class LobbyPage extends PureComponent<LobbyPageProps, LobbyPageSt
         {this.props.game.players.map((p, i) => (
           <p key={`player-${i}`}>{p.name}</p>
         ))}
-        <button onClick={this.props.beginGame} disabled={this.props.game.players.length < 5}>
-          Begin Game
-        </button>
+        <If condition={this.isHost}>
+          <button onClick={this.props.beginGame} disabled={this.props.game.players.length < 2}>
+            Begin Game
+          </button>
+        </If>
       </Fragment>
     );
   }

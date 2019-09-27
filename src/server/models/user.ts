@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
 import generateID from '../utils/generateID';
 import Game from './game';
-import { PlayerDataEvent } from '../../shared/types/eventTypes';
+import { PlayerDataEvent, WSEvent } from '../../shared/types/eventTypes';
 
 export default class User {
   public id: string;
@@ -16,7 +16,7 @@ export default class User {
     this.id = generateID().toLowerCase();
   }
 
-  sendPlayerData = (): void => {
+  public sendPlayerData = (): void => {
     const payload: PlayerDataEvent = {
       event: 'playerData',
       data: {
@@ -24,6 +24,10 @@ export default class User {
         name: this.name,
       },
     };
+    this.send(payload);
+  };
+
+  public send = (payload: WSEvent): void => {
     this.ws.send(JSON.stringify(payload));
   };
 }

@@ -1,7 +1,7 @@
 export interface GameData {
   gameID: string;
   round: number;
-  stage: 'nominate' | 'nominationVote' | 'missionVote';
+  stage: 'characterAssignment' | 'nominate' | 'nominationVote' | 'missionVote';
   hostID: string;
   playerID: string;
   players: {
@@ -9,4 +9,5 @@ export interface GameData {
     id: string;
   }[];
   roundData: {};
+  privateData: any;
 }

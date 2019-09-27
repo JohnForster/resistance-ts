@@ -15,3 +15,5 @@ TODO NEXT:
   Add alias for @shared, @client and @server
 
   Refactor wsEventHandler in server (receives array, sends object?)
+
+  Relace string union types with enums

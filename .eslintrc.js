@@ -25,7 +25,8 @@ module.exports =  {
   rules:  {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
     "@typescript-eslint/no-empty-interface": "off",
-    "react/jsx-no-undef": [2, { "allowGlobals": true }]
+    "react/jsx-no-undef": [2, { "allowGlobals": true }],
+    "prettier/prettier": "warn",
   },
   settings:  {
     react:  {
