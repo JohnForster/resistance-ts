@@ -31,23 +31,11 @@ export interface JoinEvent extends EventTemplate {
   };
 }
 
-// export interface GameJoinedEvent extends EventTemplate {
-//   event: 'game_joined';
-//   data: {
-//     gameID: string;
-//   };
-// }
-
 export interface MessageEvent extends EventTemplate {
   event: 'message';
   data: string;
 }
-// export interface GameCreatedEvent extends EventTemplate {
-//   event: 'game_created';
-//   data: {
-//     gameID: string;
-//   };
-// }
+
 export interface ErrorEvent extends EventTemplate {
   event: 'error';
   data: string;
@@ -58,41 +46,10 @@ export interface PlayerDataEvent extends EventTemplate {
   data: PlayerData;
 }
 
-// export interface UpdatePlayersEvent extends EventTemplate {
-//   event: 'updatePlayers';
-//   data: {
-//     gameID: string;
-//     playerIDs: string[];
-//     host: string;
-//   };
-// }
-
-// export interface GameInProgress extends EventTemplate {
-//   event: 'gameInProgress';
-//   data: {
-//     gameID: string;
-//     playerID: string;
-//     playerIDs: string[];
-//     hostID: string;
-//   };
-// }
-
 export interface GameUpdateEvent extends EventTemplate {
   event: 'gameUpdate';
   data: GameData;
 }
-
-// {
-//   event: 'gameUpdated',
-//   data: {
-//     round: 0 (lobby), 1,2,3,4,5
-//     stage: 'nominate', 'nominationVote' , 'missionVote'
-//     players: {name, id}[]
-//     host: playerID
-//     roundData: {
-//     }
-//   }
-// }
 
 export type WSEvent =
   | CreateEvent
@@ -100,13 +57,9 @@ export type WSEvent =
   | MessageEvent
   | CloseEvent
   | OpenEvent
-  // | GameCreatedEvent
   | ErrorEvent
   | JoinEvent
-  // | GameJoinedEvent
   | PlayerDataEvent
-  // | UpdatePlayersEvent
-  // | GameInProgress
   | GameUpdateEvent;
 
 export type EventByName<E extends WSEvent['event'], T = WSEvent> = T extends { event: E } ? T : never;

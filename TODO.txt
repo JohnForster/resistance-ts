@@ -13,3 +13,5 @@ TODO NEXT:
   - Deal with beginning of game - showing if you are resistance or not.
 
   Add alias for @shared, @client and @server
+
+  Refactor wsEventHandler in server (receives array, sends object?)
