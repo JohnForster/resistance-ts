@@ -9,7 +9,7 @@ interface AppState {
   game: GameData;
   status: 'idle' | 'pending' | 'inLobby' | 'inGame';
   eventEmitter?: WSEventEmitter;
-  player?: { name: string; playerID: string };
+  player: { name: string; playerID: string };
 }
 
 // ! Hard coded
@@ -39,6 +39,11 @@ export default class App extends PureComponent<{}, AppState> {
     this.state.eventEmitter.send<CreateEvent>('create_game', { hostID: this.state.player.playerID });
     this.setState({ status: 'pending' });
   };
+
+  get isHost(): boolean {
+    if (!this.state.game) return false;
+    return this.state.player.playerID === this.state.game.hostID;
+  }
 
   onGameUpdate = (data: GameUpdateEvent['data']): void => {
     // TODO set status
