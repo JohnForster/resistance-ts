@@ -50,6 +50,14 @@ export interface GameUpdateEvent extends EventTemplate {
   data: GameData;
 }
 
+export interface BeginGameEvent extends EventTemplate {
+  event: 'beginGame';
+  data: {
+    gameID: string;
+    playerIDs: string[];
+  };
+}
+
 export type WSEvent =
   | CreateEvent
   | JoinEvent
@@ -59,7 +67,8 @@ export type WSEvent =
   | ErrorEvent
   | JoinEvent
   | PlayerDataEvent
-  | GameUpdateEvent;
+  | GameUpdateEvent
+  | BeginGameEvent;
 
 export type EventByName<E extends WSEvent['event'], T = WSEvent> = T extends { event: E } ? T : never;
 

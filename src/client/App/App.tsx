@@ -1,6 +1,13 @@
 import React, { PureComponent, Fragment } from 'react';
 import { LandingPage } from './Pages';
-import { CreateEvent, JoinEvent, PlayerDataEvent, MessageEvent, GameUpdateEvent } from '../../shared/types/eventTypes';
+import {
+  CreateEvent,
+  JoinEvent,
+  PlayerDataEvent,
+  MessageEvent,
+  GameUpdateEvent,
+  BeginGameEvent,
+} from '../../shared/types/eventTypes';
 import WSEventEmitter from '../helpers/wsEventEmitter';
 import LobbyPage from './Pages/Lobby';
 import { GameData } from '../../shared/types/gameData';
@@ -40,22 +47,17 @@ export default class App extends PureComponent<{}, AppState> {
     this.setState({ status: 'pending' });
   };
 
-  get isHost(): boolean {
-    if (!this.state.game) return false;
-    return this.state.player.playerID === this.state.game.hostID;
-  }
-
   onGameUpdate = (data: GameUpdateEvent['data']): void => {
     // TODO set status
     this.setState({ game: data });
   };
 
-  joinGame = (gameID: string): void => {
-    this.state.eventEmitter.send<JoinEvent>('join_game', { gameID });
+  onPlayerUpdate = (data: PlayerDataEvent['data']): void => {
+    this.setState({ player: data });
   };
 
-  onPlayerUpdate = (data: PlayerDataEvent['data']): void => {
-    this.setState({ player: data }, () => console.log('app state:', this.state));
+  joinGame = (gameID: string): void => {
+    this.state.eventEmitter.send<JoinEvent>('join_game', { gameID });
   };
 
   testMessage = (): void => {
@@ -72,6 +74,13 @@ export default class App extends PureComponent<{}, AppState> {
     this.setState({ player });
   };
 
+  beginGame = (): void => {
+    this.state.eventEmitter.send<BeginGameEvent>('beginGame', {
+      gameID: this.state.game.gameID,
+      playerIDs: this.state.game.players.map(p => p.id),
+    });
+  };
+
   render(): JSX.Element {
     return (
       <Fragment>
@@ -86,7 +95,7 @@ export default class App extends PureComponent<{}, AppState> {
             />
           </When>
           <When condition={this.state.game.round === 0}>
-            <LobbyPage game={this.state.game} />
+            <LobbyPage game={this.state.game} player={this.state.player} beginGame={this.beginGame} />
           </When>
           <When condition={this.state.game.round > 0}>In Game</When>
         </Choose>
