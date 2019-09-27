@@ -6,6 +6,11 @@ import { GameUpdateEvent } from '../../shared/types/eventTypes';
 
 interface Player extends User {
   character?: 'resistance' | 'spy';
+  hasConfirmedCharacter?: boolean;
+}
+
+interface SecretData {
+  [key: string]: any;
 }
 
 export default class Game {
@@ -17,7 +22,7 @@ export default class Game {
   private _hasBegun = false;
   private _round = 0;
   private _roundData: {} = {};
-  private _stage: 'characterAssignment' | 'nominate' | 'nominationVote' | 'missionVote' = null;
+  private _stage: 'lobby' | 'characterAssignment' | 'nominate' | 'nominationVote' | 'missionVote' = 'lobby';
 
   private NUMBER_OF_SPIES: { [key: number]: number } = {
     2: 1, // Here for dev purposes only
@@ -48,9 +53,11 @@ export default class Game {
   constructor(host: User) {
     this._id = generateID();
     this._host = host;
+    this._stage = 'lobby';
   }
 
-  sendGameUpdate = (player: User, privateData?: any): void => {
+  sendGameUpdate = (player: User): void => {
+    const privateData = this.getSecretData(player);
     const payload: GameUpdateEvent = {
       event: 'gameUpdate',
       data: {
@@ -69,18 +76,14 @@ export default class Game {
   };
 
   addPlayer(player: User, isHost = false): void {
-    console.log('adding player...', player.id);
     this._players.push(player);
     console.log('Players:', this._players.map(p => p.id).join(', '));
     if (isHost && !this._host) this._host = player;
     this.sendUpdateToAllPlayers();
   }
 
-  sendUpdateToAllPlayers = (fn?: (player: Player) => any): void => {
-    this._players.forEach(player => {
-      const data = fn && fn(player);
-      this.sendGameUpdate(player, data);
-    });
+  sendUpdateToAllPlayers = (): void => {
+    this._players.forEach(this.sendGameUpdate);
   };
 
   allocateTeams = (): void => {
@@ -93,20 +96,24 @@ export default class Game {
     this._resistance.push(...players);
   };
 
-  beginGame(): void {
-    this.allocateTeams();
-    this._stage = 'characterAssignment';
-    this.sendUpdateToAllPlayers(player => {
+  getSecretData = (player: Player): SecretData => {
+    if (this._stage === 'characterAssignment') {
       if (this._spies.includes(player)) {
         return {
           character: 'spy',
           spies: this._spies.map(p => p.name),
         };
       }
-      return {
-        character: 'resistance',
-      };
-    });
+      return { character: 'resistance' };
+    }
+
+    return null;
+  };
+
+  beginGame(): void {
+    this.allocateTeams();
+    this._stage = 'characterAssignment';
+    this.sendUpdateToAllPlayers();
     this._hasBegun = true;
   }
 }

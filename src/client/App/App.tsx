@@ -11,6 +11,7 @@ import {
 import WSEventEmitter from '../helpers/wsEventEmitter';
 import LobbyPage from './Pages/Lobby';
 import { GameData } from '../../shared/types/gameData';
+import CharacterPage from './Pages/Character';
 
 interface AppState {
   game: GameData;
@@ -81,6 +82,8 @@ export default class App extends PureComponent<{}, AppState> {
     });
   };
 
+  confirmCharacter = (): void => {};
+
   render(): JSX.Element {
     return (
       <Fragment>
@@ -94,8 +97,11 @@ export default class App extends PureComponent<{}, AppState> {
               submitName={this.submitName}
             />
           </When>
-          <When condition={this.state.game.round === 0}>
+          <When condition={this.state.game.round === 0 && this.state.game.stage === 'lobby'}>
             <LobbyPage game={this.state.game} player={this.state.player} beginGame={this.beginGame} />
+          </When>
+          <When condition={this.state.game.round === 0 && this.state.game.stage === 'characterAssignment'}>
+            <CharacterPage game={this.state.game} confirmCharacter={this.confirmCharacter} />
           </When>
           <When condition={this.state.game.round > 0}>In Game</When>
         </Choose>
