@@ -6,7 +6,6 @@ interface EventTemplate {
 }
 
 // TODO Remove exports of individual events in favour of using EventByName<'close'> etc.
-
 export interface CloseEvent extends EventTemplate {
   event: 'close';
   data: null; // TBD
