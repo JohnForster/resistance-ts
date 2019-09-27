@@ -21,7 +21,7 @@ export default class User {
       event: 'playerData',
       data: {
         playerID: this.id,
-        inGame: !!this.game,
+        name: this.name,
       },
     };
     this.ws.send(JSON.stringify(payload));

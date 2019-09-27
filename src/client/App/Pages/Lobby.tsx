@@ -15,7 +15,7 @@ export default class LobbyPage extends PureComponent<LobbyPageProps, LobbyPageSt
         <p>Game ID: {this.props.game.gameID}</p>
         <h3>Players</h3>
         {this.props.game.players.map((p, i) => (
-          <p key={`player-${i}`}>{JSON.stringify(p)}</p>
+          <p key={`player-${i}`}>{p.name}</p>
         ))}
       </Fragment>
     );

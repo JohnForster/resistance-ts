@@ -2,7 +2,6 @@ import React, { PureComponent, Fragment } from 'react';
 import { LandingPage } from './Pages';
 import { CreateEvent, JoinEvent, PlayerDataEvent, MessageEvent, GameUpdateEvent } from '../../shared/types/eventTypes';
 import WSEventEmitter from '../helpers/wsEventEmitter';
-import ClientPlayer from './clientGame/clientPlayer';
 import LobbyPage from './Pages/Lobby';
 import { GameData } from '../../shared/types/gameData';
 
@@ -10,7 +9,7 @@ interface AppState {
   game: GameData;
   status: 'idle' | 'pending' | 'inLobby' | 'inGame';
   eventEmitter?: WSEventEmitter;
-  player?: ClientPlayer;
+  player?: { name: string; playerID: string };
 }
 
 // ! Hard coded
@@ -20,6 +19,7 @@ export default class App extends PureComponent<{}, AppState> {
   state: AppState = {
     game: null,
     status: 'idle',
+    player: { playerID: null, name: null },
   };
 
   componentDidMount(): void {
@@ -29,14 +29,14 @@ export default class App extends PureComponent<{}, AppState> {
     eventEmitter.bind('message', msg => console.log('message received: ', msg));
     eventEmitter.bind('error', msg => console.error('error received: ', msg));
 
-    eventEmitter.bind('playerData', this.createPlayer);
+    eventEmitter.bind('playerData', this.onPlayerUpdate);
     eventEmitter.bind('gameUpdate', this.onGameUpdate);
 
     this.setState({ eventEmitter });
   }
 
   hostGame = (): void => {
-    this.state.eventEmitter.send<CreateEvent>('create_game', { hostID: this.state.player.id });
+    this.state.eventEmitter.send<CreateEvent>('create_game', { hostID: this.state.player.playerID });
     this.setState({ status: 'pending' });
   };
 
@@ -49,13 +49,22 @@ export default class App extends PureComponent<{}, AppState> {
     this.state.eventEmitter.send<JoinEvent>('join_game', { gameID });
   };
 
-  createPlayer = (data: PlayerDataEvent['data']): void => {
-    const player = new ClientPlayer(data.playerID);
-    this.setState({ player }, () => console.log('app state:', this.state));
+  onPlayerUpdate = (data: PlayerDataEvent['data']): void => {
+    this.setState({ player: data }, () => console.log('app state:', this.state));
   };
 
   testMessage = (): void => {
     this.state.eventEmitter.send<MessageEvent>('message', 'Test message');
+  };
+
+  submitName = (name: string): void => {
+    this.state.eventEmitter.send<PlayerDataEvent>('playerData', {
+      ...this.state.player,
+      name,
+    });
+
+    const player = { ...this.state.player, name };
+    this.setState({ player });
   };
 
   render(): JSX.Element {
@@ -68,6 +77,7 @@ export default class App extends PureComponent<{}, AppState> {
               joinGame={this.joinGame}
               player={this.state.player}
               testMessage={this.testMessage}
+              submitName={this.submitName}
             />
           </When>
           <When condition={this.state.game.round === 0}>

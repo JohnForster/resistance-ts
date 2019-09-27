@@ -3,7 +3,14 @@ import { Request } from 'express';
 
 import Game from '../models/game';
 import User from '../models/user';
-import { CreateEvent, PlayerDataEvent, JoinEvent, ErrorEvent, GameUpdateEvent } from '../../shared/types/eventTypes';
+import {
+  CreateEvent,
+  PlayerDataEvent,
+  JoinEvent,
+  ErrorEvent,
+  GameUpdateEvent,
+  WSEvent,
+} from '../../shared/types/eventTypes';
 import { WebsocketRequestHandler } from 'express-ws';
 
 export default class WSEventHandler {
@@ -36,6 +43,7 @@ export default class WSEventHandler {
     console.log('Event received:', event);
     if (event === 'create_game') this.createGame(user, data);
     if (event === 'join_game') this.joinGame(user, data);
+    if (event === 'playerData') this.updatePlayerData(user, data);
   };
 
   private createGame = (user: User, data: CreateEvent['data']): void => {
@@ -63,6 +71,11 @@ export default class WSEventHandler {
     game.sendGameUpdate(user);
   };
 
+  private updatePlayerData = (user: User, data: PlayerDataEvent['data']): void => {
+    if (user.id !== data.playerID) throw new Error(`ID mismatch: '${user.id}' stored, '${data.playerID}' received`);
+    user.name = data.name;
+  };
+
   private createNewUser = (ws: WebSocket, req: Request): User => {
     if (this.users.has(req.ip)) {
       const user = this.users.get(req.ip);
@@ -75,7 +88,7 @@ export default class WSEventHandler {
 
     this.users.set(req.ip, user);
 
-    const payload: PlayerDataEvent = { event: 'playerData', data: { playerID: user.id, inGame: false } };
+    const payload: PlayerDataEvent = { event: 'playerData', data: { playerID: user.id, name: null } };
     user.ws.send(JSON.stringify(payload));
 
     return user;

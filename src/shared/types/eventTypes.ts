@@ -1,4 +1,5 @@
 import { GameData } from './gameData';
+import { PlayerData } from './playerData';
 interface EventTemplate {
   event: string;
   data: any;
@@ -54,10 +55,7 @@ export interface ErrorEvent extends EventTemplate {
 
 export interface PlayerDataEvent extends EventTemplate {
   event: 'playerData';
-  data: {
-    playerID: string;
-    inGame: boolean;
-  };
+  data: PlayerData;
 }
 
 // export interface UpdatePlayersEvent extends EventTemplate {
