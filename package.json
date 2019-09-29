@@ -2,10 +2,13 @@
   "name": "resistance",
   "version": "0.0.1",
   "description": "Mobile app for playing \"The Resistance\" board game",
-  "main": "index.js",
+  "main": "build/server.js",
   "repository": "github.com/johnforster/resistance",
   "author": "John Forster",
   "license": "MIT",
+  "engines": {
+    "node": "10.x"
+  },
   "scripts": {
     "start": "NODE_ENV=production node build/server.js",
     "build": "yarn build:client && yarn build:server",
