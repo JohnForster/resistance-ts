@@ -30,7 +30,7 @@ app.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, middlePath, '/dist/index.html'));
 });
 
-const port = isDev ? 8080 : 8081;
+const port = isDev ? 8080 : process.env.PORT;
 
 // Listen on local IP (for connecting over LAN)
 if (isDev) {
