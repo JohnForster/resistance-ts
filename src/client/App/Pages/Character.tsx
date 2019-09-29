@@ -13,19 +13,20 @@ export default class CharacterPage extends PureComponent<CharacterPageProps, Cha
     return (
       <Fragment>
         <Choose>
-          <When condition={this.props.game.privateData.character === 'resistance'}>
+          <When condition={this.props.game.secretData.character === 'resistance'}>
             <h2>You are part of the RESISTANCE!</h2>
           </When>
-          <When condition={this.props.game.privateData.character === 'spy'}>
+          <When condition={this.props.game.secretData.character === 'spy'}>
             <h2>
               You are a <strong>SPY</strong>
             </h2>
             <p>The spies in this game are....</p>
-            {this.props.game.privateData.spies.map((s, i) => (
+            {this.props.game.secretData.spies.map((s, i) => (
               <strong key={`spy-${i}`}>{s}</strong>
             ))}
           </When>
         </Choose>
+        <button onClick={this.props.confirmCharacter}>OK</button>
       </Fragment>
     );
   }

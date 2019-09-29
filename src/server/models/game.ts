@@ -3,14 +3,11 @@ import shuffle from 'lodash.shuffle';
 import User from './user';
 import generateID from '../utils/generateID';
 import { GameUpdateEvent } from '../../shared/types/eventTypes';
+import { GameData } from '../../shared/types/gameData';
 
 interface Player extends User {
   character?: 'resistance' | 'spy';
   hasConfirmedCharacter?: boolean;
-}
-
-interface SecretData {
-  [key: string]: any;
 }
 
 export default class Game {
@@ -57,7 +54,7 @@ export default class Game {
   }
 
   sendGameUpdate = (player: User): void => {
-    const privateData = this.getSecretData(player);
+    const secretData = this.getSecretData(player);
     const payload: GameUpdateEvent = {
       event: 'gameUpdate',
       data: {
@@ -68,7 +65,7 @@ export default class Game {
         players: this._players.map(p => ({ name: p.name, id: p.id })),
         hostID: this._host.id,
         roundData: this._roundData,
-        privateData,
+        secretData,
       },
     };
 
@@ -96,7 +93,7 @@ export default class Game {
     this._resistance.push(...players);
   };
 
-  getSecretData = (player: Player): SecretData => {
+  getSecretData = (player: Player): GameData['secretData'] => {
     if (this._stage === 'characterAssignment') {
       if (this._spies.includes(player)) {
         return {

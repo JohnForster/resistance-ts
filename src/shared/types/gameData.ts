@@ -1,3 +1,8 @@
+interface CharacterData {
+  character: 'resistance' | 'spy';
+  spies?: string[];
+}
+
 export interface GameData {
   gameID: string;
   round: number;
@@ -9,5 +14,5 @@ export interface GameData {
     id: string;
   }[];
   roundData: {};
-  privateData: any;
+  secretData?: CharacterData;
 }
