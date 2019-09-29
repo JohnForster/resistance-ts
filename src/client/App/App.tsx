@@ -19,9 +19,8 @@ interface AppState {
   eventEmitter?: WSEventEmitter;
   player: { name: string; playerID: string };
 }
-
-// ! Hard coded
-const CONNECTION_URL = `ws://${window.location.host}/ws`;
+const address = process.env.DEV_SERVER || window.location.host;
+const CONNECTION_URL = `ws://${address}/ws`;
 
 export default class App extends PureComponent<{}, AppState> {
   state: AppState = {

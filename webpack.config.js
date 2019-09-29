@@ -1,9 +1,10 @@
 /* eslint-disable */
-
 const path = require('path')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HTMLWebpackPlugin = require('html-webpack-plugin')
+const webpack = require('webpack')
+const ip = require('ip')
 
 module.exports = {
   mode: process.env.NODE_ENV,
@@ -43,6 +44,14 @@ module.exports = {
     new CopyWebpackPlugin([{
       from: 'src/client/assets',
       to: 'assets'
-    }], { copyUnmodified: true })
+    }], { copyUnmodified: true }),
+    new webpack.DefinePlugin({
+      'process.env.DEV_SERVER': JSON.stringify(`${ip.address()}:${process.env.PORT}`),
+    }),
   ],
+  devServer: {
+    port: 8080,
+    host: '0.0.0.0',
+    useLocalIp: true
+  }
 };

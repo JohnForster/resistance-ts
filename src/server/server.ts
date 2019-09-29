@@ -30,13 +30,13 @@ app.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, middlePath, '/dist/index.html'));
 });
 
-const port = isDev ? 8080 : process.env.PORT;
+const port = parseInt(process.env.PORT);
 
 // Listen on local IP (for connecting over LAN)
 if (isDev) {
   getLocalIP().then(address => {
     app.listen(port, '0.0.0.0');
-    console.log(`App available at http://${address}:${port}`);
+    console.log(`server available at http://${address}:${port}`);
   });
 } else {
   // Will need to work out how this works in prod
