@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import { GameData } from '../../../shared/types/gameData';
+import { GameData } from '../../../../shared/types/gameData';
 
 export interface CharacterPageProps {
   confirmCharacter: () => void;

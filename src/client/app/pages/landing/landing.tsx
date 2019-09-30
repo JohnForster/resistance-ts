@@ -1,5 +1,6 @@
-import React, { PureComponent, Fragment, ChangeEvent } from 'react';
-import { PlayerData } from '../../../shared/types/playerData';
+import React, { PureComponent, Fragment } from 'react';
+import { PlayerData } from '../../../../shared/types/playerData';
+import Page from '../../components/Page';
 
 export interface LandingPageProps {
   hostGame: () => void;
@@ -37,29 +38,27 @@ export class LandingPage extends PureComponent<LandingPageProps, LandingPageStat
 
   render(): JSX.Element {
     return (
-      <Fragment>
-        The Resistance
+      <Page>
+        <h1>The Resistance</h1>
         <Choose>
           <When condition={!this.props.player.name}>
-            Enter your name!
+            <p>Enter your name!</p>
             <input type="text" value={this.state.nameValue} onChange={this.handleChange('nameValue')} />
+            <br />
             <button onClick={(): void => this.props.submitName(this.state.nameValue)}>Join</button>
           </When>
           <Otherwise>
-            <button onClick={this.props.testMessage}>Send Message</button>
-            <br />
+            <p>
+              Welcome <span>{this.props.player.name}</span>
+            </p>
             <button onClick={this.props.hostGame}>Host</button>
             <br />
-            <form onSubmit={this.handleSubmit}>
-              <label>
-                Game Code:
-                <input type="text" value={this.state.formValue} onChange={this.handleChange('formValue')} />
-              </label>
-            </form>
+            <p>Game Code:</p>
+            <input type="text" value={this.state.formValue} onChange={this.handleChange('formValue')} />
             <button onClick={(): void => this.props.joinGame(this.state.formValue)}>Join</button>
           </Otherwise>
         </Choose>
-      </Fragment>
+      </Page>
     );
   }
 }

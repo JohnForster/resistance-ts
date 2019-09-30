@@ -5,5 +5,5 @@
     ],
     "@babel/typescript"
   ],
-  "plugins": ["@babel/plugin-proposal-class-properties", "jsx-control-statements"]
+  "plugins": ["@babel/plugin-proposal-class-properties", "jsx-control-statements", "babel-plugin-styled-components"]
 }

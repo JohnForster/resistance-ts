@@ -1,6 +1,8 @@
 import React, { PureComponent, Fragment } from 'react';
-import { GameData } from '../../../shared/types/gameData';
-import { PlayerData } from '../../../shared/types/playerData';
+import { GameData } from '../../../../shared/types/gameData';
+import { PlayerData } from '../../../../shared/types/playerData';
+import * as Styled from './styled';
+import Page from '../../components/Page';
 
 export interface LobbyPageProps {
   game: GameData;
@@ -17,19 +19,23 @@ export default class LobbyPage extends PureComponent<LobbyPageProps, LobbyPageSt
 
   render(): JSX.Element {
     return (
-      <Fragment>
+      <Page>
         <h1>Lobby</h1>
-        <p>Game ID: {this.props.game.gameID}</p>
+        <p>Game ID: </p>
+        <Styled.GameID>{this.props.game.gameID}</Styled.GameID>
+
         <h3>Players</h3>
-        {this.props.game.players.map((p, i) => (
-          <p key={`player-${i}`}>{p.name}</p>
-        ))}
+        <Styled.PlayerContainer>
+          {this.props.game.players.map((p, i) => (
+            <p key={`player-${i}`}>{p.name}</p>
+          ))}
+        </Styled.PlayerContainer>
         <If condition={this.isHost}>
           <button onClick={this.props.beginGame} disabled={this.props.game.players.length < 2}>
             Begin Game
           </button>
         </If>
-      </Fragment>
+      </Page>
     );
   }
 }
