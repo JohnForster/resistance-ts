@@ -48,7 +48,7 @@ module.exports = {
       to: 'assets'
     }], { copyUnmodified: true }),
     new webpack.DefinePlugin({
-      'process.env.DEV_SERVER': JSON.stringify(`${ip.address()}:${process.env.PORT}`),
+      'process.env.DEV_SERVER': process.env.NODE_ENV === 'development' ? JSON.stringify(`${ip.address()}:${process.env.PORT}`) : false,
     }),
   ],
   devServer: {
