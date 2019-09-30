@@ -6,6 +6,8 @@ const HTMLWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
 const ip = require('ip')
 
+console.log('process.env.PORT:', process.env.PORT)
+
 module.exports = {
   mode: process.env.NODE_ENV,
   entry: './src/client/index.tsx',
