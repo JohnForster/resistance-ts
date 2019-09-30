@@ -1,8 +1,8 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent } from 'react';
 import { GameData } from '../../../../shared/types/gameData';
 import { PlayerData } from '../../../../shared/types/playerData';
 import * as Styled from './styled';
-import Page from '../../components/Page';
+import Page from '../../components/page';
 
 export interface LobbyPageProps {
   game: GameData;

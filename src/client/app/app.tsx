@@ -9,10 +9,9 @@ import {
   BeginGameEvent,
 } from '../../shared/types/eventTypes';
 import WSEventEmitter from '../helpers/wsEventEmitter';
-import LobbyPage from './pages/lobby/lobby';
+import LobbyPage from './pages/Lobby';
 import { GameData } from '../../shared/types/gameData';
-import CharacterPage from './pages/character/character';
-import * as Styled from './styles/styled';
+import CharacterPage from './pages/Character';
 
 interface AppState {
   game: GameData;
@@ -39,7 +38,6 @@ export default class App extends PureComponent<{}, AppState> {
 
     eventEmitter.bind('playerData', this.onPlayerUpdate);
     eventEmitter.bind('gameUpdate', this.onGameUpdate);
-    // eventEmitter.open() after bindings?
 
     this.setState({ eventEmitter });
   }
@@ -87,8 +85,7 @@ export default class App extends PureComponent<{}, AppState> {
 
   render(): JSX.Element {
     return (
-      <Styled.AppContainer>
-        <Styled.Global />
+      <Fragment>
         <Choose>
           <When condition={!this.state.game}>
             <LandingPage
@@ -107,7 +104,7 @@ export default class App extends PureComponent<{}, AppState> {
           </When>
           <When condition={this.state.game.round > 0}>In Game</When>
         </Choose>
-      </Styled.AppContainer>
+      </Fragment>
     );
   }
 }
