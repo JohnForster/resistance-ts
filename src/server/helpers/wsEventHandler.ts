@@ -16,17 +16,18 @@ export default class WSEventHandler {
   }
 
   public middleWare: WebsocketRequestHandler = (ws, req): void => {
-    const isExistingUser = this.users.has(req.ip);
+    const playerID = req.cookies.playerID;
+    const isExistingUser = this.users.has(playerID);
+    console.log(`Player ${isExistingUser ? 'EXISTS' : 'does not exist'} with ID '${playerID}'`);
     if (isExistingUser) {
-      const user = this.users.get(req.ip);
+      const user = this.users.get(playerID);
       user.ws = ws.on('message', this.handleMessage(user));
       user.sendPlayerData();
-      if (user.game) {
-        // TODO refactor to user.sendGameUpdate()
-        user.game.sendGameUpdate(user);
-      }
+      // TODO refactor to user.sendGameUpdate()
+      if (user.game) user.game.sendGameUpdate(user);
     } else {
-      const user = this.createNewUser(ws, req);
+      console.log(new Date() + ' Recieved a new connection from origin ' + req.ip);
+      const user = this.createNewUser(ws);
       user.ws = ws.on('message', this.handleMessage(user));
     }
   };
@@ -78,17 +79,10 @@ export default class WSEventHandler {
     game.beginGame();
   };
 
-  private createNewUser = (ws: WebSocket, req: Request): User => {
-    if (this.users.has(req.ip)) {
-      const user = this.users.get(req.ip);
-      user.sendPlayerData();
-      return;
-    }
+  private createNewUser = (ws: WebSocket): User => {
+    const user = new User(ws);
 
-    const user = new User(ws, req.ip);
-    console.log(new Date() + ' Recieved a new connection from origin ' + req.ip);
-
-    this.users.set(req.ip, user);
+    this.users.set(user.id, user);
 
     const payload: PlayerDataEvent = { event: 'playerData', data: { playerID: user.id, name: null } };
     user.send(payload);

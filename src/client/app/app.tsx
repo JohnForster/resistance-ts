@@ -20,11 +20,9 @@ interface AppState {
   eventEmitter?: WSEventEmitter;
   player: { name: string; playerID: string };
 }
-console.log('Client NODE_ENV:', process.env.NODE_ENV);
-console.log('Client API_ADDRESS:', process.env.API_ADDRESS);
 
-const address = process.env.DEV_API_ADDRESS || window.location.host;
-const CONNECTION_URL = `ws://${address}/ws`;
+const API_ADDRESS = process.env.DEV_API_ADDRESS || window.location.host;
+const CONNECTION_URL = `ws://${API_ADDRESS}/ws`;
 
 export default class App extends PureComponent<{}, AppState> {
   state: AppState = {
@@ -42,8 +40,9 @@ export default class App extends PureComponent<{}, AppState> {
 
     eventEmitter.bind('playerData', this.onPlayerUpdate);
     eventEmitter.bind('gameUpdate', this.onGameUpdate);
-    // eventEmitter.open() after bindings?
+    // ? eventEmitter.open() after bindings?
 
+    // Either send user data or request user data
     this.setState({ eventEmitter });
   }
 
@@ -58,6 +57,7 @@ export default class App extends PureComponent<{}, AppState> {
   };
 
   onPlayerUpdate = (data: PlayerDataEvent['data']): void => {
+    document.cookie = `playerID=${data.playerID}`;
     this.setState({ player: data });
   };
 
@@ -82,7 +82,6 @@ export default class App extends PureComponent<{}, AppState> {
   beginGame = (): void => {
     this.state.eventEmitter.send<BeginGameEvent>('beginGame', {
       gameID: this.state.game.gameID,
-      playerIDs: this.state.game.players.map(p => p.id),
     });
   };
 

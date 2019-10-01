@@ -1,15 +1,23 @@
 import express, { Response, Request } from 'express';
 import path from 'path';
 import createWebSocket from 'express-ws';
+import cookieParser from 'cookie-parser';
 
 import getLocalIP from './utils/getLocalIP';
 import User from './models/user';
 import Game from './models/game';
 import WSEventHandler from './helpers/wsEventHandler';
 
+console.log(
+  '\x1b[34m',
+  '------------------------------------------------------------------------------------------------',
+  '\x1b[0m',
+);
+
 const isDev = process.env.NODE_ENV === 'development';
 
 const { app } = createWebSocket(express());
+app.use(cookieParser());
 
 // Could users and games be stored within WSEventHandler?
 const users = new Map<string, User>();

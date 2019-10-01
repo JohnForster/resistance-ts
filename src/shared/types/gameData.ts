@@ -11,7 +11,6 @@ export interface GameData {
   playerID: string;
   players: {
     name: string;
-    id: string;
   }[];
   roundData: {};
   secretData?: CharacterData;

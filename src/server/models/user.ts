@@ -2,18 +2,17 @@ import WebSocket from 'ws';
 import generateID from '../utils/generateID';
 import Game from './game';
 import { PlayerDataEvent, WSEvent } from '../../shared/types/eventTypes';
+import uuidv4 from 'uuid/v4';
 
 export default class User {
   public id: string;
   public ws: WebSocket;
-  public ip: string;
   public game: Game;
   public name: string;
 
-  constructor(ws: WebSocket, ip: string) {
+  constructor(ws: WebSocket) {
     this.ws = ws;
-    this.ip = ip;
-    this.id = generateID().toLowerCase();
+    this.id = uuidv4();
   }
 
   public sendPlayerData = (): void => {

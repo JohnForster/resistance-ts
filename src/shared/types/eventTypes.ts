@@ -54,7 +54,6 @@ export interface BeginGameEvent extends EventTemplate {
   event: 'beginGame';
   data: {
     gameID: string;
-    playerIDs: string[];
   };
 }
 

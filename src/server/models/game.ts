@@ -62,7 +62,7 @@ export default class Game {
         round: this._round,
         stage: this._stage,
         playerID: player.id,
-        players: this._players.map(p => ({ name: p.name, id: p.id })),
+        players: this._players.map(p => ({ name: p.name })),
         hostID: this._host.id,
         roundData: this._roundData,
         secretData,
