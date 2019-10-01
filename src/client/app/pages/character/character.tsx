@@ -1,5 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { GameData } from '../../../../shared/types/gameData';
+import Page from '../../components/page';
 
 export interface CharacterPageProps {
   confirmCharacter: () => void;
@@ -11,7 +12,7 @@ interface CharacterPageState {}
 export default class CharacterPage extends PureComponent<CharacterPageProps, CharacterPageState> {
   render(): JSX.Element {
     return (
-      <Fragment>
+      <Page>
         <Choose>
           <When condition={this.props.game.secretData.character === 'resistance'}>
             <h2>You are part of the RESISTANCE!</h2>
@@ -27,7 +28,7 @@ export default class CharacterPage extends PureComponent<CharacterPageProps, Cha
           </When>
         </Choose>
         <button onClick={this.props.confirmCharacter}>OK</button>
-      </Fragment>
+      </Page>
     );
   }
 }

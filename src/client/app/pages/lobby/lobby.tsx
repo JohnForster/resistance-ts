@@ -30,11 +30,18 @@ export default class LobbyPage extends PureComponent<LobbyPageProps, LobbyPageSt
             <p key={`player-${i}`}>{p.name}</p>
           ))}
         </Styled.PlayerContainer>
-        <If condition={this.isHost}>
-          <button onClick={this.props.beginGame} disabled={this.props.game.players.length < 2}>
-            Begin Game
-          </button>
-        </If>
+        <Choose>
+          <When condition={this.isHost}>
+            <button onClick={this.props.beginGame} disabled={this.props.game.players.length < 2}>
+              Begin Game
+            </button>
+          </When>
+          <When condition={!this.isHost}>
+            <p>
+              Waiting for <span>{this.props.game.hostName}</span> to start the game.
+            </p>
+          </When>
+        </Choose>
       </Page>
     );
   }

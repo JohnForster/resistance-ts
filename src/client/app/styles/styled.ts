@@ -13,7 +13,6 @@ export const Global = createGlobalStyle`
     border-radius: 0;
     padding: 10px;
     margin: 10px 0px;
-    margin-bottom: 8vh;
     border: 0px;
     background: #7D98A1;
     font-size: 20px;
@@ -38,13 +37,14 @@ export const Global = createGlobalStyle`
   p {
     margin: 1vh;
   }
+
 `;
 
 export const AppContainer = styled.div`
   display: flex;
   justify-content: center;
   text-align: center;
-  height: 97vh;
+  height: 80vh;
   h1 {
     font-family: 'Turret Road';
   }

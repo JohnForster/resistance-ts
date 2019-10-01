@@ -1,21 +1,22 @@
+COMPLETED
+
 Add server stuff for creating a player on connection. ✅
+Probably need to use cookies/local storage for user identification rather than IP? ✅
+Display name entry page before host/join page. ✅
+Deal with beginning of game - showing if you are resistance or not. ✅
+Add Styled components✅
 
-Probably need to use cookies/local storage for user identification rather than IP?
-
-Encapsulate websocket interactions within a service
+______________________________________________________________________________________
+FEATURES:
 
 Add quit game functionality in lobby
+Remove hostID
 
+______________________________________________________________________________________
+TECH DEBT:
+
+Encapsulate websocket interactions within a service
 Replace event types with EventByName<'eventName'>
-
-TODO NEXT:
-  - Display name entry page before host/join page. ✅
-  - Deal with beginning of game - showing if you are resistance or not. ✅
-
-  Add alias for @shared, @client and @server
-
-  Refactor wsEventHandler in server (receives array, sends object?)
-
-  Relace string union types with enums
-
-  Add Styled components
+Add alias for @shared, @client and @server
+Refactor wsEventHandler in server (receives array, sends object?)
+Relace string union types with enums
