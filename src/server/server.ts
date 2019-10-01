@@ -30,7 +30,7 @@ app.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, middlePath, '/dist/index.html'));
 });
 
-const port = parseInt(process.env.PORT);
+const port = parseInt(process.env.PORT || '8080');
 
 // Listen on local IP (for connecting over LAN)
 if (isDev) {

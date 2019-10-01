@@ -20,7 +20,10 @@ interface AppState {
   eventEmitter?: WSEventEmitter;
   player: { name: string; playerID: string };
 }
-const address = process.env.DEV_SERVER || window.location.host;
+console.log('Client NODE_ENV:', process.env.NODE_ENV);
+console.log('Client API_ADDRESS:', process.env.API_ADDRESS);
+
+const address = process.env.DEV_API_ADDRESS || window.location.host;
 const CONNECTION_URL = `ws://${address}/ws`;
 
 export default class App extends PureComponent<{}, AppState> {

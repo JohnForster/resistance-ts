@@ -8,7 +8,7 @@ export default class WSEventEmitter {
   constructor(url: string) {
     this.websocket = new W3CWebSocket(url);
     this.websocket.onclose = (): void => this.execute('close', null);
-    this.websocket.onopen = (): void => this.execute('open', null);
+    this.websocket.onopen = (): void => this.execute('open', 'opening');
     this.websocket.onmessage = this.onMessage;
   }
 

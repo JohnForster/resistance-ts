@@ -7,7 +7,13 @@ const webpack = require('webpack')
 const ip = require('ip')
 
 console.log('process.env.PORT:', process.env.PORT)
-const DEV_SERVER = process.env.NODE_ENV === 'development' && `${ip.address()}:${process.env.PORT}`
+const isDev = process.env.NODE_ENV === 'development'
+console.log('NODE_ENV:', process.env.NODE_ENV)
+console.log('isDev:', isDev)
+const DEV_API_ADDRESS = `${ip.address()}:${process.env.PORT}`
+console.log(DEV_API_ADDRESS)
+
+
 
 module.exports = {
   mode: process.env.NODE_ENV,
@@ -49,7 +55,7 @@ module.exports = {
       to: 'assets'
     }], { copyUnmodified: true }),
     new webpack.DefinePlugin({
-      'process.env.DEV_SERVER': DEV_SERVER && JSON.stringify(DEV_SERVER),
+      'process.env.DEV_API_ADDRESS': isDev && JSON.stringify(DEV_API_ADDRESS),
     }),
   ],
   devServer: {
