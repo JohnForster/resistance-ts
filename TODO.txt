@@ -9,6 +9,9 @@ Add Styled components✅
 ______________________________________________________________________________________
 FEATURES:
 
+Confirm allegiance & monitor confirmations
+Implement NOMINATION & VOTING
+Implement MISSIONS
 Add quit game functionality in lobby
 Remove hostID
 
