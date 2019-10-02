@@ -7,12 +7,14 @@ import {
   MessageEvent,
   GameUpdateEvent,
   BeginGameEvent,
+  ConfirmEvent,
 } from '../../shared/types/eventTypes';
 import WSEventEmitter from '../helpers/wsEventEmitter';
 import LobbyPage from './pages/lobby/lobby';
 import { GameData } from '../../shared/types/gameData';
 import CharacterPage from './pages/character/character';
 import * as Styled from './styles/styled';
+import { GameID } from './pages/lobby/styled';
 
 interface AppState {
   game: GameData;
@@ -85,7 +87,12 @@ export default class App extends PureComponent<{}, AppState> {
     });
   };
 
-  confirmCharacter = (): void => {};
+  confirmCharacter = (): void => {
+    this.state.eventEmitter.send<ConfirmEvent>('confirm', {
+      gameID: this.state.game.gameID,
+      playerID: this.state.player.playerID,
+    });
+  };
 
   render(): JSX.Element {
     return (

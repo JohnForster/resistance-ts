@@ -57,6 +57,14 @@ export interface BeginGameEvent extends EventTemplate {
   };
 }
 
+export interface ConfirmEvent extends EventTemplate {
+  event: 'confirm';
+  data: {
+    gameID: string;
+    playerID: string;
+  };
+}
+
 export type WSEvent =
   | CreateEvent
   | JoinEvent
@@ -67,7 +75,8 @@ export type WSEvent =
   | JoinEvent
   | PlayerDataEvent
   | GameUpdateEvent
-  | BeginGameEvent;
+  | BeginGameEvent
+  | ConfirmEvent;
 
 export type EventByName<E extends WSEvent['event'], T = WSEvent> = T extends { event: E } ? T : never;
 

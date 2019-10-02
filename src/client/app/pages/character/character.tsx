@@ -1,4 +1,4 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent } from 'react';
 import { GameData } from '../../../../shared/types/gameData';
 import Page from '../../components/page';
 
@@ -7,9 +7,16 @@ export interface CharacterPageProps {
   game: GameData;
 }
 
-interface CharacterPageState {}
+interface CharacterPageState {
+  hasConfirmed: boolean;
+}
 
 export default class CharacterPage extends PureComponent<CharacterPageProps, CharacterPageState> {
+  confirmCharacter = (): void => {
+    this.props.confirmCharacter();
+    this.setState({ hasConfirmed: true });
+  };
+
   render(): JSX.Element {
     return (
       <Page>
@@ -27,7 +34,9 @@ export default class CharacterPage extends PureComponent<CharacterPageProps, Cha
             ))}
           </When>
         </Choose>
-        <button onClick={this.props.confirmCharacter}>OK</button>
+        <button disabled={this.state.hasConfirmed} onClick={this.confirmCharacter}>
+          OK
+        </button>
       </Page>
     );
   }
