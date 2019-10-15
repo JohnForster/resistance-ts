@@ -16,7 +16,8 @@
     "build:server": "NODE_ENV=production babel src/server -d build --extensions .ts",
     "start:dev": "PORT=9001 NODE_ENV=development concurrently 'yarn start:dev:client' 'yarn start:dev:server'",
     "start:dev:server": "ts-node-dev --project src/server/tsconfig.json --respawn --transpileOnly src/server/server.ts",
-    "start:dev:client": "webpack-dev-server --hot"
+    "start:dev:client": "webpack-dev-server --hot",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
