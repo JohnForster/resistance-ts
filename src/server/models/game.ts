@@ -116,11 +116,17 @@ export default class Game {
     this._hasBegun = true;
   }
 
+  startRound(roundNumber: number): void {
+    console.log(`Starting round ${roundNumber}...`);
+  }
+
   confirmCharacter = (playerID: string): void => {
     const player = this._players.find(p => p.id === playerID);
     if (!player) return console.error(`No player found with id ${playerID}`);
     player.hasConfirmedCharacter = true;
-    this._roundData.unconfirmedPlayers = this._players.filter(p => !p.hasConfirmedCharacter).map(p => p.name);
+    const unconfirmedPlayers = this._players.filter(p => !p.hasConfirmedCharacter).map(p => p.name);
+    this._roundData.unconfirmedPlayers = unconfirmedPlayers;
     this.sendUpdateToAllPlayers();
+    if (unconfirmedPlayers.length === 0) this.startRound(1);
   };
 }
