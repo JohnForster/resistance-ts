@@ -13,17 +13,12 @@ export interface LobbyPageProps {
 interface LobbyPageState {}
 
 export default class LobbyPage extends PureComponent<LobbyPageProps, LobbyPageState> {
-  get isHost(): boolean {
-    return this.props.player.playerID === this.props.game.hostID;
-  }
-
   render(): JSX.Element {
     return (
       <Page>
         <h1>Lobby</h1>
         <p>Game ID: </p>
         <Styled.GameID>{this.props.game.gameID}</Styled.GameID>
-
         <h3>Players</h3>
         <Styled.PlayerContainer>
           {this.props.game.players.map((p, i) => (
@@ -31,12 +26,12 @@ export default class LobbyPage extends PureComponent<LobbyPageProps, LobbyPageSt
           ))}
         </Styled.PlayerContainer>
         <Choose>
-          <When condition={this.isHost}>
+          <When condition={this.props.game.isHost}>
             <button onClick={this.props.beginGame} disabled={this.props.game.players.length < 2}>
               Begin Game
             </button>
           </When>
-          <When condition={!this.isHost}>
+          <When condition={!this.props.game.isHost}>
             <p>
               Waiting for <span>{this.props.game.hostName}</span> to start the game.
             </p>

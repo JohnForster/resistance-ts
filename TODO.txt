@@ -1,4 +1,7 @@
-COMPLETED
+                              ##### TODO LIST #####
+
+______________________________________________________________________________________
+COMPLETED:
 
 Add server stuff for creating a player on connection. ✅
 Probably need to use cookies/local storage for user identification rather than IP? ✅
@@ -9,11 +12,18 @@ Add Styled components✅
 ______________________________________________________________________________________
 FEATURES:
 
-Confirm allegiance & monitor confirmations
-Implement NOMINATION & VOTING
+Confirm allegiance and monitor confirmations
+Implement NOMINATION and VOTING
 Implement MISSIONS
 Add quit game functionality in lobby
 Remove hostID
+Prevent homescreen from flashing up before changing to latest screen?
+
+______________________________________________________________________________________
+BUGS:
+
+No handling of 'disconnected' event in server
+Opening two tabs allows one user to have two websocket connections open? - Close one websocket on opening another.
 
 ______________________________________________________________________________________
 TECH DEBT:
@@ -23,3 +33,4 @@ Replace event types with EventByName<'eventName'>
 Add alias for @shared, @client and @server
 Refactor wsEventHandler in server (receives array, sends object?)
 Relace string union types with enums
+

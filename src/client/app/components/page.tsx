@@ -7,6 +7,11 @@ interface PageState {}
 
 export default class Page extends PureComponent<PageProps, PageState> {
   render(): JSX.Element {
-    return <Styled.PageContainer>{this.props.children}</Styled.PageContainer>;
+    return (
+      <Styled.PageContainer>
+        <h1>Stop Being A Perfectionist</h1>
+        {this.props.children}
+      </Styled.PageContainer>
+    );
   }
 }

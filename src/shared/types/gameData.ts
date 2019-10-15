@@ -7,11 +7,12 @@ export interface GameData {
   gameID: string;
   round: number;
   stage: 'lobby' | 'characterAssignment' | 'nominate' | 'nominationVote' | 'missionVote';
-  hostID: string;
+  hostName: string;
+  isHost: boolean;
   playerID: string;
   players: {
     name: string;
   }[];
-  roundData: {};
+  roundData: any;
   secretData?: CharacterData;
 }

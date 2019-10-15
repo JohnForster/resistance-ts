@@ -18,7 +18,7 @@ export default class Game {
   private _resistance: Player[] = [];
   private _hasBegun = false;
   private _round = 0;
-  private _roundData: {} = {};
+  private _roundData: any = {};
   private _stage: 'lobby' | 'characterAssignment' | 'nominate' | 'nominationVote' | 'missionVote' = 'lobby';
 
   private NUMBER_OF_SPIES: { [key: number]: number } = {
@@ -63,8 +63,9 @@ export default class Game {
         round: this._round,
         stage: this._stage,
         playerID: player.id,
+        isHost: this._host === player,
         players: this._players.map(p => ({ name: p.name })),
-        hostID: this._host.id,
+        hostName: this._host.name,
         roundData: this._roundData,
         secretData,
       },
@@ -114,4 +115,12 @@ export default class Game {
     this.sendUpdateToAllPlayers();
     this._hasBegun = true;
   }
+
+  confirmCharacter = (playerID: string): void => {
+    const player = this._players.find(p => p.id === playerID);
+    if (!player) return console.error(`No player found with id ${playerID}`);
+    player.hasConfirmedCharacter = true;
+    this._roundData.unconfirmedPlayers = this._players.filter(p => !p.hasConfirmedCharacter).map(p => p.name);
+    this.sendUpdateToAllPlayers();
+  };
 }

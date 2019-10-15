@@ -3,7 +3,14 @@ import { Request } from 'express';
 
 import Game from '../models/game';
 import User from '../models/user';
-import { CreateEvent, PlayerDataEvent, JoinEvent, ErrorEvent, BeginGameEvent } from '../../shared/types/eventTypes';
+import {
+  CreateEvent,
+  PlayerDataEvent,
+  JoinEvent,
+  ErrorEvent,
+  BeginGameEvent,
+  ConfirmEvent,
+} from '../../shared/types/eventTypes';
 import { WebsocketRequestHandler } from 'express-ws';
 
 export default class WSEventHandler {
@@ -39,6 +46,7 @@ export default class WSEventHandler {
     if (event === 'join_game') this.joinGame(user, data);
     if (event === 'playerData') this.updatePlayerData(user, data);
     if (event === 'beginGame') this.beginGame(user, data);
+    if (event === 'confirm') this.confirmCharacter(user, data);
   };
 
   private createGame = (user: User, data: CreateEvent['data']): void => {
@@ -88,5 +96,12 @@ export default class WSEventHandler {
     user.send(payload);
 
     return user;
+  };
+
+  private confirmCharacter = (user: User, data: ConfirmEvent['data']): void => {
+    if (user.game.id !== data.gameID) return console.error('Recieved gameID does not match stored gameID');
+    if (user.id !== data.playerID) return console.error('Recieved playerID does not match stored playerID');
+    const game = this.games.get(data.gameID);
+    game.confirmCharacter(data.playerID);
   };
 }

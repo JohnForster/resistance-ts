@@ -12,6 +12,14 @@ interface CharacterPageState {
 }
 
 export default class CharacterPage extends PureComponent<CharacterPageProps, CharacterPageState> {
+  state: CharacterPageState = {
+    hasConfirmed: false,
+  };
+
+  get hasConfirmed() {
+    this.props.game.roundData.con;
+  }
+
   confirmCharacter = (): void => {
     this.props.confirmCharacter();
     this.setState({ hasConfirmed: true });
@@ -37,6 +45,9 @@ export default class CharacterPage extends PureComponent<CharacterPageProps, Cha
         <button disabled={this.state.hasConfirmed} onClick={this.confirmCharacter}>
           OK
         </button>
+        <If condition={this.state.hasConfirmed && this.props.game && this.props.game.roundData.unconfirmedPlayers}>
+          <p>Waiting for {this.props.game.roundData.unconfirmedPlayers.join(', ')} to confirm...</p>
+        </If>
       </Page>
     );
   }
