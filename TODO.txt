@@ -33,4 +33,4 @@ Replace event types with EventByName<'eventName'>
 Add alias for @shared, @client and @server
 Refactor wsEventHandler in server (receives array, sends object?)
 Relace string union types with enums
-
+Types for RoundData

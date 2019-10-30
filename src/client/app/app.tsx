@@ -23,9 +23,6 @@ interface AppState {
   player: { name: string; playerID: string };
 }
 
-const API_ADDRESS = process.env.DEV_API_ADDRESS || window.location.host;
-const CONNECTION_URL = `ws://${API_ADDRESS}/ws`;
-
 export default class App extends PureComponent<{}, AppState> {
   state: AppState = {
     game: null,
@@ -33,8 +30,13 @@ export default class App extends PureComponent<{}, AppState> {
     player: { playerID: null, name: null },
   };
 
+  get connectionURL(): string {
+    const APIAddress = process.env.DEV_API_ADDRESS || window.location.host;
+    return `ws://${APIAddress}/ws`;
+  }
+
   componentDidMount(): void {
-    const eventEmitter = new WSEventEmitter(CONNECTION_URL);
+    const eventEmitter = new WSEventEmitter(this.connectionURL);
 
     // Temporary for message/error
     eventEmitter.bind('message', msg => console.log('message received: ', msg));
@@ -54,11 +56,11 @@ export default class App extends PureComponent<{}, AppState> {
   };
 
   onGameUpdate = (data: GameUpdateEvent['data']): void => {
-    // TODO set status
     this.setState({ game: data });
   };
 
   onPlayerUpdate = (data: PlayerDataEvent['data']): void => {
+    // Use a library for dealing with cookies?
     document.cookie = `playerID=${data.playerID}`;
     this.setState({ player: data });
   };
@@ -72,26 +74,19 @@ export default class App extends PureComponent<{}, AppState> {
   };
 
   submitName = (name: string): void => {
-    this.state.eventEmitter.send<PlayerDataEvent>('playerData', {
-      ...this.state.player,
-      name,
-    });
-
     const player = { ...this.state.player, name };
+    this.state.eventEmitter.send<PlayerDataEvent>('playerData', player);
     this.setState({ player });
   };
 
   beginGame = (): void => {
-    this.state.eventEmitter.send<BeginGameEvent>('beginGame', {
-      gameID: this.state.game.gameID,
-    });
+    const gameID = this.state.game.gameID;
+    this.state.eventEmitter.send<BeginGameEvent>('beginGame', { gameID });
   };
 
   confirmCharacter = (): void => {
-    this.state.eventEmitter.send<ConfirmEvent>('confirm', {
-      gameID: this.state.game.gameID,
-      playerID: this.state.player.playerID,
-    });
+    const { gameID, playerID } = this.state.game;
+    this.state.eventEmitter.send<ConfirmEvent>('confirm', { gameID, playerID });
   };
 
   render(): JSX.Element {
