@@ -9,6 +9,8 @@ export interface GameData {
   stage: 'lobby' | 'characterAssignment' | 'nominate' | 'nominationVote' | 'missionVote';
   hostName: string;
   isHost: boolean;
+  leaderName: string;
+  isLeader: boolean;
   playerID: string;
   players: {
     name: string;

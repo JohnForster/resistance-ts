@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { PlayerData } from '../../../../shared/types/playerData';
-import Page from '../../components/page';
+import Page from '../../components/page/page';
 
 export interface LandingPageProps {
   hostGame: () => void;

@@ -1,4 +1,4 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent } from 'react';
 import { LandingPage } from './pages';
 import {
   CreateEvent,
@@ -15,6 +15,7 @@ import { GameData } from '../../shared/types/gameData';
 import CharacterPage from './pages/character/character';
 import * as Styled from './styles/styled';
 import { GameID } from './pages/lobby/styled';
+import InGamePage from './pages/inGame/inGame';
 
 interface AppState {
   game: GameData;
@@ -109,7 +110,9 @@ export default class App extends PureComponent<{}, AppState> {
           <When condition={this.state.game.round === 0 && this.state.game.stage === 'characterAssignment'}>
             <CharacterPage game={this.state.game} confirmCharacter={this.confirmCharacter} />
           </When>
-          <When condition={this.state.game.round > 0}>In Game</When>
+          <When condition={this.state.game.round > 0}>
+            <InGamePage game={this.state.game} />
+          </When>
         </Choose>
       </Styled.AppContainer>
     );

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { GameData } from '../../../../shared/types/gameData';
-import Page from '../../components/page';
+import Page from '../../components/page/page';
 
 export interface CharacterPageProps {
   confirmCharacter: () => void;
@@ -15,10 +15,6 @@ export default class CharacterPage extends PureComponent<CharacterPageProps, Cha
   state: CharacterPageState = {
     hasConfirmed: false,
   };
-
-  get hasConfirmed() {
-    this.props.game.roundData.con;
-  }
 
   confirmCharacter = (): void => {
     this.props.confirmCharacter();

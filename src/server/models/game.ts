@@ -10,16 +10,18 @@ interface Player extends User {
   hasConfirmedCharacter?: boolean;
 }
 
+// TODO separate stages into separate classes?
 export default class Game {
   private _id: string;
-  private _host: User;
   private _players: Player[] = [];
+  private _hasBegun = false;
+  private _host: User;
   private _spies: Player[] = [];
   private _resistance: Player[] = [];
-  private _hasBegun = false;
   private _round = 0;
   private _roundData: any = {};
   private _stage: 'lobby' | 'characterAssignment' | 'nominate' | 'nominationVote' | 'missionVote' = 'lobby';
+  private _leaderIndex = 0;
 
   private NUMBER_OF_SPIES: { [key: number]: number } = {
     2: 1, // Here for dev purposes only
@@ -48,11 +50,19 @@ export default class Game {
     return this._host;
   }
 
+  private get leader(): Player {
+    return this._players[this._leaderIndex];
+  }
+
   constructor(host: User) {
     this._id = generateID();
     this._host = host;
     this._stage = 'lobby';
   }
+
+  sendUpdateToAllPlayers = (): void => {
+    this._players.forEach(this.sendGameUpdate);
+  };
 
   sendGameUpdate = (player: User): void => {
     const secretData = this.getSecretData(player);
@@ -63,36 +73,17 @@ export default class Game {
         round: this._round,
         stage: this._stage,
         playerID: player.id,
-        isHost: this._host === player,
-        players: this._players.map(p => ({ name: p.name })),
         hostName: this._host.name,
+        isHost: this._host === player,
+        leaderName: this.leader.name,
+        isLeader: this.leader === player,
+        players: this._players.map(p => ({ name: p.name })),
         roundData: this._roundData,
         secretData,
       },
     };
 
     player.ws.send(JSON.stringify(payload));
-  };
-
-  addPlayer(player: User, isHost = false): void {
-    this._players.push(player);
-    console.log('Players:', this._players.map(p => p.id).join(', '));
-    if (isHost && !this._host) this._host = player;
-    this.sendUpdateToAllPlayers();
-  }
-
-  sendUpdateToAllPlayers = (): void => {
-    this._players.forEach(this.sendGameUpdate);
-  };
-
-  allocateTeams = (): void => {
-    const players = shuffle([...this._players]);
-    const numberOfSpies = this.NUMBER_OF_SPIES[players.length];
-    // if (this.characters.merlin)
-    for (let i = 0; i < numberOfSpies; i++) {
-      this._spies.push(players.pop());
-    }
-    this._resistance.push(...players);
   };
 
   getSecretData = (player: Player): GameData['secretData'] => {
@@ -109,16 +100,50 @@ export default class Game {
     return null;
   };
 
-  beginGame(): void {
+  addPlayer(player: User, isHost = false): void {
+    this._players.push(player);
+    console.log('Players:', this._players.map(p => p.id).join(', '));
+    if (isHost && !this._host) this._host = player;
+    this.sendUpdateToAllPlayers();
+  }
+
+  allocateTeams = (): void => {
+    const players = shuffle([...this._players]);
+    const numberOfSpies = this.NUMBER_OF_SPIES[players.length];
+    // if (this.characters.merlin)
+    for (let i = 0; i < numberOfSpies; i++) {
+      this._spies.push(players.pop());
+    }
+    this._resistance.push(...players);
+  };
+
+  beginGame = (): void => {
     this.allocateTeams();
     this._stage = 'characterAssignment';
     this.sendUpdateToAllPlayers();
+    this._players = shuffle(this._players);
     this._hasBegun = true;
-  }
+  };
 
-  startRound(roundNumber: number): void {
-    console.log(`Starting round ${roundNumber}...`);
-  }
+  startRound = (roundNumber: number): void => {
+    this._round = roundNumber;
+    this.beginNominationRound(0);
+    this.sendUpdateToAllPlayers();
+  };
+
+  beginNominationRound = (rejections: number) => {
+    // if (rejections >= 5) this.badGuysWin()
+    this._leaderIndex = (this._leaderIndex + 1) % this._players.length;
+    this._stage = 'nominate';
+    this._roundData = {
+      leader: this._players[this._leaderIndex].name,
+      nominatedPlayers: [],
+    };
+  };
+
+  nominate = (playerID: User['id']): void => {
+    console.log('Nominated player with id', playerID);
+  };
 
   confirmCharacter = (playerID: string): void => {
     const player = this._players.find(p => p.id === playerID);

@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { GameData } from '../../../../shared/types/gameData';
 import { PlayerData } from '../../../../shared/types/playerData';
 import * as Styled from './styled';
-import Page from '../../components/page';
+import Page from '../../components/page/page';
 
 export interface LobbyPageProps {
   game: GameData;
