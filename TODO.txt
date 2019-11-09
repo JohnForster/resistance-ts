@@ -8,11 +8,11 @@ Probably need to use cookies/local storage for user identification rather than I
 Display name entry page before host/join page. ✅
 Deal with beginning of game - showing if you are resistance or not. ✅
 Add Styled components✅
+Confirm allegiance and monitor confirmations ✅
 
 ______________________________________________________________________________________
 FEATURES:
 
-Confirm allegiance and monitor confirmations
 Implement NOMINATION and VOTING
 Implement MISSIONS
 Add quit game functionality in lobby
@@ -28,9 +28,14 @@ Opening two tabs allows one user to have two websocket connections open? - Close
 ______________________________________________________________________________________
 TECH DEBT:
 
+Refactor game.ts into multiple classes. (Nomination round, character selection round etc.)
+  - And mirror these changes in the front-end
 Encapsulate websocket interactions within a service
 Replace event types with EventByName<'eventName'>
 Add alias for @shared, @client and @server
 Refactor wsEventHandler in server (receives array, sends object?)
-Relace string union types with enums
+Replace string union types with enums (USE CONST ENUM)
+Replace characters, allegiance, event types etc. with string enums
+BEST PRACTICE: replace ports with enums
+
 Types for RoundData

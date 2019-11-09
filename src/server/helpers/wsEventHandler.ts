@@ -1,7 +1,7 @@
 import WebSocket, { Data } from 'ws';
 import { Request } from 'express';
 
-import Game from '../models/game';
+import Game from '../models/game/game';
 import User from '../models/user';
 import {
   CreateEvent,
@@ -12,6 +12,7 @@ import {
   ConfirmEvent,
 } from '../../shared/types/eventTypes';
 import { WebsocketRequestHandler } from 'express-ws';
+import { RoundName } from '../../shared/types/gameData';
 
 export default class WSEventHandler {
   users: Map<string, User>;
@@ -24,8 +25,9 @@ export default class WSEventHandler {
 
   public middleWare: WebsocketRequestHandler = (ws, req): void => {
     const playerID = req.cookies.playerID;
+    console.log('req.cookies:', req.cookies);
     const isExistingUser = this.users.has(playerID);
-    console.log(`Player ${isExistingUser ? 'EXISTS' : 'does not exist'} with ID '${playerID}'`);
+    console.log(`Player ${isExistingUser ? 'exists' : 'does not exist'} with ID '${playerID}'`);
     if (isExistingUser) {
       const user = this.users.get(playerID);
       user.ws = ws.on('message', this.handleMessage(user));
@@ -102,6 +104,8 @@ export default class WSEventHandler {
     if (user.game.id !== data.gameID) return console.error('Recieved gameID does not match stored gameID');
     if (user.id !== data.playerID) return console.error('Recieved playerID does not match stored playerID');
     const game = this.games.get(data.gameID);
+    if (game.currentRound !== RoundName.characterAssignment)
+      return console.error('Can only confirm character during characterAssignment stage');
     game.confirmCharacter(data.playerID);
   };
 }

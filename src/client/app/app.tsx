@@ -62,6 +62,7 @@ export default class App extends PureComponent<{}, AppState> {
 
   onPlayerUpdate = (data: PlayerDataEvent['data']): void => {
     // Use a library for dealing with cookies?
+    console.log('setting cookie && state');
     document.cookie = `playerID=${data.playerID}`;
     this.setState({ player: data });
   };

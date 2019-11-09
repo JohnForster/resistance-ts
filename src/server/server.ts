@@ -2,17 +2,15 @@ import express, { Response, Request } from 'express';
 import path from 'path';
 import createWebSocket from 'express-ws';
 import cookieParser from 'cookie-parser';
+import chalk from 'chalk';
+import tty from 'tty';
 
 import getLocalIP from './utils/getLocalIP';
 import User from './models/user';
-import Game from './models/game';
+import Game from './models/game/game';
 import WSEventHandler from './helpers/wsEventHandler';
 
-console.log(
-  '\x1b[34m',
-  '------------------------------------------------------------------------------------------------',
-  '\x1b[0m',
-);
+console.log(chalk.blue('-'.repeat(100)));
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -44,7 +42,7 @@ const port = parseInt(process.env.PORT || '8080');
 if (isDev) {
   getLocalIP().then(address => {
     app.listen(port, '0.0.0.0');
-    console.log(`server available at http://${address}:${port}`);
+    console.log(`Server available at ${chalk.green(`http://${address}:${port}`)}`);
   });
 } else {
   // Will need to work out how this works in prod

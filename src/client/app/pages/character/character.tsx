@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { GameData } from '../../../../shared/types/gameData';
+import { GameData, CharacterSecretData, CharacterRoundData } from '../../../../shared/types/gameData';
 import Page from '../../components/page/page';
 
 export interface CharacterPageProps {
@@ -16,6 +16,14 @@ export default class CharacterPage extends PureComponent<CharacterPageProps, Cha
     hasConfirmed: false,
   };
 
+  get secretData(): CharacterSecretData {
+    return this.props.game.secretData;
+  }
+
+  get roundData(): CharacterRoundData {
+    return this.props.game.roundData;
+  }
+
   confirmCharacter = (): void => {
     this.props.confirmCharacter();
     this.setState({ hasConfirmed: true });
@@ -24,11 +32,12 @@ export default class CharacterPage extends PureComponent<CharacterPageProps, Cha
   render(): JSX.Element {
     return (
       <Page>
+        Character Confirmation Page
         <Choose>
-          <When condition={this.props.game.secretData.character === 'resistance'}>
+          <When condition={this.secretData && this.secretData.allegiance === 'resistance'}>
             <h2>You are part of the RESISTANCE!</h2>
           </When>
-          <When condition={this.props.game.secretData.character === 'spy'}>
+          <When condition={this.props.game.secretData.allegiance === 'spies'}>
             <h2>
               You are a <strong>SPY</strong>
             </h2>
@@ -42,7 +51,7 @@ export default class CharacterPage extends PureComponent<CharacterPageProps, Cha
           OK
         </button>
         <If condition={this.state.hasConfirmed && this.props.game && this.props.game.roundData.unconfirmedPlayers}>
-          <p>Waiting for {this.props.game.roundData.unconfirmedPlayers.join(', ')} to confirm...</p>
+          <p>Waiting for {this.roundData && this.roundData.unconfirmedPlayers.join(', ')} to confirm...</p>
         </If>
       </Page>
     );

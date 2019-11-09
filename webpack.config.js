@@ -1,26 +1,25 @@
 /* eslint-disable */
 const path = require('path')
+const chalk = require('chalk')
+const ip = require('ip')
+
+const webpack = require('webpack')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HTMLWebpackPlugin = require('html-webpack-plugin')
-const webpack = require('webpack')
-const ip = require('ip')
 
-console.log('process.env.PORT:', process.env.PORT)
 const isDev = process.env.NODE_ENV === 'development'
-console.log('NODE_ENV:', process.env.NODE_ENV)
-console.log('isDev:', isDev)
 const DEV_API_ADDRESS = `${ip.address()}:${process.env.PORT}`
-console.log(DEV_API_ADDRESS)
 
-
+console.log('NODE_ENV:', chalk.bold.yellow(JSON.stringify(process.env.NODE_ENV)))
+console.log('    PORT:', chalk.bold.yellow(process.env.PORT))
 
 module.exports = {
   mode: process.env.NODE_ENV,
   entry: './src/client/index.tsx',
   output: {
     path: path.resolve(__dirname, 'build/dist'),
-    // publicPath: 'https://playTheResistance.io/public'
+    publicPath: isDev ? undefined : 'playresistance.herokuapp.com/dist',
     filename: 'bundle.js',
   },
   module: {

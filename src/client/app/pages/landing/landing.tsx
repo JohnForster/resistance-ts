@@ -21,8 +21,6 @@ export class LandingPage extends PureComponent<LandingPageProps, LandingPageStat
     nameValue: '',
   };
 
-  handleClick = (): void => {};
-
   handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (this.state.formValue.length !== 5) return;
@@ -31,8 +29,8 @@ export class LandingPage extends PureComponent<LandingPageProps, LandingPageStat
 
   handleChange = (fieldName: 'formValue' | 'nameValue') => (event: React.ChangeEvent<HTMLInputElement>): void => {
     event.preventDefault();
-    const newState = {};
-    (newState as Pick<LandingPageState, typeof fieldName>)[fieldName] = event.target.value;
+    const newValue = fieldName === 'formValue' ? event.target.value.toUpperCase() : event.target.value;
+    const newState = { [fieldName]: newValue } as Pick<LandingPageState, typeof fieldName>;
     this.setState(newState);
   };
 

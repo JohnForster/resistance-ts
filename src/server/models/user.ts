@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 import generateID from '../utils/generateID';
-import Game from './game';
+import Game from './game/game';
 import { PlayerDataEvent, WSEvent } from '../../shared/types/eventTypes';
 import uuidv4 from 'uuid/v4';
 

@@ -8,7 +8,7 @@ export const button = styled.button`
 export const Side = styled.div`
   flex: 1;
   text-align: right;
-  margin-left: 5px;
+  margin: 0 5px;
 `;
 
 export const Center = styled.div`
