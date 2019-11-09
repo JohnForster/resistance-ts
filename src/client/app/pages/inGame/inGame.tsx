@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { GameData } from '../../../../shared/types/gameData';
+import { GameData, RoundData, NominationRoundData } from '../../../../shared/types/gameData';
 import Page from '../../components/page/page';
 import { PlayerContainer } from '../lobby/styled';
 import NominateButton from '../../components/nominateButton/nominatebutton';
@@ -22,6 +22,15 @@ export default class InGamePage extends PureComponent<InGamePageProps, InGamePag
     this.setState({ selectedPlayers });
   };
 
+  get roundData(): NominationRoundData {
+    if (!this.isNominationRound(this.props.game.roundData)) throw new Error("This isn't nomination round data!");
+    return this.props.game.roundData;
+  }
+
+  isNominationRound = (roundData: RoundData): roundData is NominationRoundData => {
+    return !!(roundData as NominationRoundData).playersToNominate;
+  };
+
   render(): JSX.Element {
     return (
       <Page>
@@ -29,8 +38,8 @@ export default class InGamePage extends PureComponent<InGamePageProps, InGamePag
           <When condition={this.props.game.isLeader}>
             <h2>You are the leader!</h2>
             <h3>
-              Mission No.{this.props.game.round}. Nominate {this.props.game.roundData.playersToNominate} players to
-              perform this mission.
+              Mission No.{this.props.game.round}. Nominate {this.roundData.playersToNominate} players to perform this
+              mission.
             </h3>
             {this.props.game.players.map((player, i) => (
               <NominateButton

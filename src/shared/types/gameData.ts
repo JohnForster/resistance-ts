@@ -22,12 +22,16 @@ export const enum RoundName {
   lobby = 'lobby',
 }
 
-export type RoundData = CharacterRoundData;
+export type RoundData = CharacterRoundData | NominationRoundData;
 
 export type SecretData = CharacterSecretData;
 
 export interface CharacterRoundData {
   unconfirmedPlayerNames: string[];
+}
+
+export interface NominationRoundData {
+  playersToNominate: number;
 }
 
 export interface CharacterSecretData {
