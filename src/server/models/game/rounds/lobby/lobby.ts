@@ -1,9 +1,10 @@
 import { Rules } from '../../../../data/gameRules';
-import Round from '../round';
+import { Round } from '../round';
 import { RoundName } from '../../../../../shared/types/gameData';
 import { Player } from '../../game';
+import User from '../../../user';
 
-export default class Lobby implements Round {
+export class Lobby implements Round {
   public roundName = RoundName.lobby;
   public isActive = true;
 
@@ -14,8 +15,12 @@ export default class Lobby implements Round {
 
   public getSecretData = (): null => null;
 
-  constructor(players: Player[], rules: Rules) {
+  constructor(players: Player[]) {
     this._players = players;
-    this._rules = rules;
+  }
+
+  addPlayer(player: User, isHost = false): void {
+    this._players.push(player);
+    console.log('Players:', this._players.map(p => p.id).join(', '));
   }
 }

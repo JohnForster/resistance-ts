@@ -38,7 +38,6 @@ export default class CharacterPage extends PureComponent<CharacterPageProps, Cha
     const roundData = this.isCharacterRound(this.props.game.roundData) && this.props.game.roundData;
     return (
       <Page>
-        Character Confirmation Page
         <Choose>
           <When condition={this.secretData && this.secretData.allegiance === 'resistance'}>
             <h2>You are part of the RESISTANCE!</h2>

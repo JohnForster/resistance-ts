@@ -5,14 +5,17 @@ import generateID from '../../utils/generateID';
 import { GameUpdateEvent } from '../../../shared/types/eventTypes';
 // import { GameData, RoundData, RoundDataByName } from '../../../shared/types/gameData';
 import RULES, { Rules, Character } from '../../data/gameRules';
-import CharacterRound from './rounds/characterRound/characterRound';
-import Round from './rounds/round';
+// import CharacterRound from './rounds/characterRound/characterRound';
+// import Round from './rounds/round';
+import { Round, Lobby, CharacterRound, NominationRound } from './rounds/index';
 import { RoundName } from '../../../shared/types/gameData';
+import typeGuard from '../../utils/typeGuard';
 
 export interface Player extends User {
   allegiance?: 'resistance' | 'spies';
   character?: Character;
   hasConfirmedCharacter?: boolean;
+  isLeader: boolean;
 }
 
 // TODO separate stages into separate classes?
@@ -28,7 +31,6 @@ export default class Game {
   // private _stage: RoundName = 'lobby';
   private _leaderIndex = 0;
   private _rules: Rules;
-  private _characterRound: CharacterRound;
 
   // ? Could be a set?
   // ? private _characters: Set<Character>;
@@ -63,7 +65,7 @@ export default class Game {
   constructor(host: User) {
     this._id = generateID();
     this._host = host;
-    // this._stage = 'lobby';
+    this._currentRound = new Lobby(this._players);
   }
 
   sendUpdateToAllPlayers = (): void => {
@@ -84,6 +86,7 @@ export default class Game {
       event: 'gameUpdate',
       data: {
         gameID: this._id,
+        // TODO replace this._round with this._currentRound.roundNumber? Or store in roundData?
         round: this._round,
         stage: this._currentRound.roundName,
         playerID: player.id,
@@ -98,20 +101,30 @@ export default class Game {
     };
   };
 
-  addPlayer(player: User, isHost = false): void {
-    if (this.hasBegun) return;
-    this._players.push(player);
-    console.log('Players:', this._players.map(p => p.id).join(', '));
+  // addPlayer(player: User, isHost = false): void {
+  //   if (this.hasBegun) return;
+  //   this._players.push(player);
+  //   console.log('Players:', this._players.map(p => p.id).join(', '));
+  //   if (isHost && !this._host) this._host = player;
+  //   this.sendUpdateToAllPlayers();
+  // }
+
+  isRound = <T extends Round>(round: Round): round is T => {
+    return round.roundName === name;
+  };
+
+  addPlayer = (player: User, isHost = false): void => {
+    if (!typeGuard(this._currentRound, Lobby)) throw new Error('Lobby is closed');
+    this._currentRound.addPlayer(player, isHost);
     if (isHost && !this._host) this._host = player;
     this.sendUpdateToAllPlayers();
-  }
+  };
 
   beginGame = (characters: { [C in Character]?: boolean } = {}): void => {
     this._rules = RULES[this._players.length];
     const characterRound = new CharacterRound(this._players, this._rules);
     characterRound.allocateTeams();
 
-    this._characterRound = characterRound;
     this._currentRound = characterRound;
 
     // this._stage = characterRound.roundName;
@@ -123,10 +136,22 @@ export default class Game {
   };
 
   confirmCharacter = (playerID: string): void => {
+    if (!typeGuard(this._currentRound, CharacterRound)) {
+      throw new Error('Cannot confirm player outside of character round');
+    }
     // if (this.currentRound.roundName !== RoundName.characterAssignment)
     //   return console.error('CharacterRound not in Progress');
-    if (!this._characterRound.isActive) return console.error('Character round already complete');
-    this._characterRound.confirmCharacter(playerID);
+    // if (!this._currentRound.isActive) return console.error('Character round already complete');
+    this._currentRound.confirmCharacter(playerID);
+    this.sendUpdateToAllPlayers();
+    if (this._currentRound.isReadyToStart) this.startRound(1);
+  };
+
+  startRound = (roundNumber: number): void => {
+    const nominationRound = new NominationRound(this._players, this._rules, roundNumber, this._leaderIndex);
+    this._currentRound = nominationRound;
+    this._round = roundNumber;
+    // nominationRound.beginNominations(0);
     this.sendUpdateToAllPlayers();
   };
 

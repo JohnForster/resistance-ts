@@ -2,14 +2,14 @@ import { Player } from '../../game';
 import { Rules, Character } from '../../../../data/gameRules';
 import { shuffle } from 'lodash';
 import { CharacterRoundData, CharacterSecretData, RoundName } from '../../../../../shared/types/gameData';
-import Round from '../round';
+import { Round } from '../round';
 
 interface Teams {
   spies: Player[];
   resistance: Player[];
 }
 
-export default class CharacterRound implements Round {
+export class CharacterRound implements Round {
   public readonly roundName = RoundName.characterAssignment;
   public isActive = true;
 

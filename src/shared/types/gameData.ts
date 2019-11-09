@@ -31,7 +31,9 @@ export interface CharacterRoundData {
 }
 
 export interface NominationRoundData {
+  leader: string;
   playersToNominate: number;
+  failsRequired: number;
 }
 
 export interface CharacterSecretData {
@@ -42,4 +44,4 @@ export interface CharacterSecretData {
 
 // export type RoundData = NominationRoundData | { roundName: null };
 
-// export type RoundDataByName<R extends GameData['stage'], T = RoundData> = T extends { roundName: R } ? T : never;
+// export type RoundDataByName<R extends RoundName, T = RoundData> = T extends { roundName: R } ? T : never;
