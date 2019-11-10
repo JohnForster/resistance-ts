@@ -1,15 +1,15 @@
 import shuffle from 'lodash.shuffle';
 
 import User from '../user';
-import generateID from '../../utils/generateID';
-import { GameUpdateEvent, EventType } from '../../../shared/types/eventTypes';
-// import { GameData, RoundData, RoundDataByName } from '../../../shared/types/gameData';
-import RULES, { Rules, Character } from '../../data/gameRules';
+import generateID from '@server/utils/generateID';
+import { EventByName, EventType } from '@shared/types/eventTypes';
+// import { GameData, RoundData, RoundDataByName } from '@shared/types/gameData';
+import RULES, { Rules, Character } from '@server/data/gameRules';
 // import CharacterRound from './rounds/characterRound/characterRound';
 // import Round from './rounds/round';
 import { Round, Lobby, CharacterRound, NominationRound } from './rounds/index';
-import { RoundName } from '../../../shared/types/gameData';
-import typeGuard from '../../utils/typeGuard';
+import { RoundName } from '@shared/types/gameData';
+import typeGuard from '@server/utils/typeGuard';
 
 export interface Player extends User {
   allegiance?: 'resistance' | 'spies';
@@ -77,7 +77,7 @@ export default class Game {
     player.send(payload);
   };
 
-  generatePayload = (player: User): GameUpdateEvent => {
+  generatePayload = (player: User): EventByName<EventType.gameUpdate> => {
     const secretData = (this._currentRound && this._currentRound.getSecretData(player.id)) || null;
     const roundData = (this._currentRound && this._currentRound.getRoundData()) || null;
     console.log('this._currentRound:', this._currentRound);

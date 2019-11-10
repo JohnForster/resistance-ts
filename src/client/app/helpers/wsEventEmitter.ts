@@ -1,5 +1,5 @@
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
-import { WSEvent, Callbacks, Callback, EventType } from '../../../shared/types/eventTypes';
+import { WSEvent, Callbacks, Callback, EventType } from '@shared/types/eventTypes';
 
 export default class WSEventEmitter {
   private websocket: W3CWebSocket;

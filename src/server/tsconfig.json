@@ -4,8 +4,13 @@
     "noImplicitAny": true,
     "esModuleInterop": true,
     "module": "commonjs",
-    "target": "es6",
-    "types": []
+    "target": "es5",
+    "types": [],
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["../shared/*"],
+      "@server/*": ["./*"],
+    }
   },
   "files": ["server.ts"]
 }

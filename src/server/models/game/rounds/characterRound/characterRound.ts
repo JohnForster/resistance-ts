@@ -1,7 +1,7 @@
 import { Player } from '../../game';
 import { Rules, Character } from '../../../../data/gameRules';
 import { shuffle } from 'lodash';
-import { CharacterRoundData, CharacterSecretData, RoundName } from '../../../../../shared/types/gameData';
+import { CharacterRoundData, CharacterSecretData, RoundName } from '@shared/types/gameData';
 import { Round } from '../round';
 
 interface Teams {

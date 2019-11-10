@@ -34,7 +34,7 @@ Encapsulate websocket interactions within a service
 Replace event types with EventByName<'eventName'>
 Add alias for @shared, @client and @server
 Refactor wsEventHandler in server (receives array, sends object?)
-Replace string union types with enums (USE CONST ENUM)
+Replace string union types with enums
 Replace characters, allegiance, event types etc. with string enums
 BEST PRACTICE: replace ports with enums
 

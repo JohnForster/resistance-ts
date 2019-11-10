@@ -6,7 +6,12 @@
     "module": "commonjs",
     "target": "es6",
     "jsx": "react",
-    "types": ["react"]
+    "types": ["react"],
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["../shared/*"],
+      "@client/*": ["./*"],
+    }
   },
   "files": ["index.tsx", "./types/index.d.ts"]
 }

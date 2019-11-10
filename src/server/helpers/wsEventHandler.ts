@@ -1,20 +1,10 @@
 import WebSocket, { Data } from 'ws';
-import { Request } from 'express';
+import { WebsocketRequestHandler } from 'express-ws';
 
 import Game from '../models/game/game';
 import User from '../models/user';
-import {
-  CreateEvent,
-  PlayerDataEvent,
-  JoinEvent,
-  ErrorEvent,
-  BeginGameEvent,
-  ConfirmEvent,
-  EventType,
-  EventByName,
-} from '../../shared/types/eventTypes';
-import { WebsocketRequestHandler } from 'express-ws';
-import { RoundName } from '../../shared/types/gameData';
+import { EventType, EventByName } from '@shared/types/eventTypes';
+import { RoundName } from '@shared/types/gameData';
 
 export default class WSEventHandler {
   users: Map<string, User>;
@@ -63,12 +53,16 @@ export default class WSEventHandler {
     game.addPlayer(user, true);
   };
 
-  private joinGame = (user: User, data: JoinEvent['data']): void => {
+  private joinGame = (user: User, data: EventByName<EventType.joinGame>['data']): void => {
     const game = this.games.get(data.gameID);
     if (!game) {
       console.error(`No game found with ID '${data.gameID}'`);
       console.error(`Current games: ${this.games.keys}`);
-      return user.send({ event: 'error', data: `Game with id ${data.gameID} not found.` } as ErrorEvent);
+      const payload: EventByName<EventType.error> = {
+        event: EventType.error,
+        data: `Game with id ${data.gameID} not found.`,
+      };
+      return user.send(payload);
     }
     game.addPlayer(user);
     user.game = game;
@@ -76,12 +70,12 @@ export default class WSEventHandler {
     game.sendGameUpdate(user);
   };
 
-  private updatePlayerData = (user: User, data: PlayerDataEvent['data']): void => {
+  private updatePlayerData = (user: User, data: EventByName<EventType.playerData>['data']): void => {
     if (user.id !== data.playerID) throw new Error(`ID mismatch: '${user.id}' stored, '${data.playerID}' received`);
     user.name = data.name;
   };
 
-  private beginGame = (user: User, data: BeginGameEvent['data']): void => {
+  private beginGame = (user: User, data: EventByName<EventType.beginGame>['data']): void => {
     const game = this.games.get(data.gameID);
     let errorMessage;
     if (game.hasBegun) errorMessage = 'This game has already begun';
@@ -96,13 +90,16 @@ export default class WSEventHandler {
 
     this.users.set(user.id, user);
 
-    const payload: PlayerDataEvent = { event: EventType.playerData, data: { playerID: user.id, name: null } };
+    const payload: EventByName<EventType.playerData> = {
+      event: EventType.playerData,
+      data: { playerID: user.id, name: null },
+    };
     user.send(payload);
 
     return user;
   };
 
-  private confirmCharacter = (user: User, data: ConfirmEvent['data']): void => {
+  private confirmCharacter = (user: User, data: EventByName<EventType.confirm>['data']): void => {
     if (user.game.id !== data.gameID) return console.error('Recieved gameID does not match stored gameID');
     if (user.id !== data.playerID) return console.error('Recieved playerID does not match stored playerID');
     const game = this.games.get(data.gameID);

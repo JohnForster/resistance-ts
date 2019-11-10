@@ -1,4 +1,4 @@
-export const enum Character {
+export enum Character {
   Merlin = 'merlin',
   Assassin = 'assassin',
   Percival = 'percival',

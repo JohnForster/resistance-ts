@@ -5,5 +5,19 @@
     ],
     "@babel/typescript"
   ],
-  "plugins": ["@babel/plugin-proposal-class-properties", "jsx-control-statements", "babel-plugin-styled-components"]
+  "plugins": [
+    [
+      "babel-plugin-module-resolver", {
+        "root": ["."],
+        "alias": {
+          "@shared": "./src/shared",
+          "@server": "./src/server",
+          "@client": "./src/client"
+        }
+      }
+    ],
+    "@babel/plugin-proposal-class-properties",
+    "jsx-control-statements",
+    "babel-plugin-styled-components"
+  ]
 }

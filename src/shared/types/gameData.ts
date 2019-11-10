@@ -1,3 +1,4 @@
+// ! should not be using things from server in shared
 import { Character } from '../../server/data/gameRules';
 
 export interface GameData {
@@ -16,7 +17,7 @@ export interface GameData {
   secretData?: SecretData;
 }
 
-export const enum RoundName {
+export enum RoundName {
   characterAssignment = 'characterAssignment',
   nomination = 'nomination',
   lobby = 'lobby',

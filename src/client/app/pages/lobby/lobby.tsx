@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
-import { GameData } from '../../../../shared/types/gameData';
-import { PlayerData } from '../../../../shared/types/playerData';
+import { GameData } from '@shared/types/gameData';
+import { PlayerData } from '@shared/types/playerData';
 import * as Styled from './styled';
 import Page from '../../components/page/page';
 

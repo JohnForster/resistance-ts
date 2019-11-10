@@ -1,6 +1,6 @@
 import { Rules } from '../../../../data/gameRules';
 import { Round } from '../round';
-import { RoundName } from '../../../../../shared/types/gameData';
+import { RoundName } from '@shared/types/gameData';
 import { Player } from '../../game';
 import User from '../../../user';
 

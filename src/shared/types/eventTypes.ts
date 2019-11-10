@@ -6,58 +6,58 @@ interface EventTemplate {
 }
 
 // TODO Remove exports of individual events in favour of using EventByName<'close'> etc.
-export interface CloseEvent extends EventTemplate {
+interface CloseEvent extends EventTemplate {
   event: EventType.close;
   data: null; // TBD
 }
 
-export interface OpenEvent extends EventTemplate {
+interface OpenEvent extends EventTemplate {
   event: EventType.open;
   data: null; // TBD
 }
 
-export interface CreateEvent extends EventTemplate {
+interface CreateEvent extends EventTemplate {
   event: EventType.createGame;
   data: {
     hostID: string;
   };
 }
 
-export interface JoinEvent extends EventTemplate {
+interface JoinEvent extends EventTemplate {
   event: EventType.joinGame;
   data: {
     gameID: string;
   };
 }
 
-export interface MessageEvent extends EventTemplate {
+interface MessageEvent extends EventTemplate {
   event: EventType.message;
   data: string;
 }
 
-export interface ErrorEvent extends EventTemplate {
+interface ErrorEvent extends EventTemplate {
   event: EventType.error;
   data: string;
 }
 
-export interface PlayerDataEvent extends EventTemplate {
+interface PlayerDataEvent extends EventTemplate {
   event: EventType.playerData;
   data: PlayerData;
 }
 
-export interface GameUpdateEvent extends EventTemplate {
+interface GameUpdateEvent extends EventTemplate {
   event: EventType.gameUpdate;
   data: GameData;
 }
 
-export interface BeginGameEvent extends EventTemplate {
+interface BeginGameEvent extends EventTemplate {
   event: EventType.beginGame;
   data: {
     gameID: string;
   };
 }
 
-export interface ConfirmEvent extends EventTemplate {
+interface ConfirmEvent extends EventTemplate {
   event: EventType.confirm;
   data: {
     gameID: string;
