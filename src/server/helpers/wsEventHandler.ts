@@ -10,6 +10,8 @@ import {
   ErrorEvent,
   BeginGameEvent,
   ConfirmEvent,
+  EventType,
+  EventByName,
 } from '../../shared/types/eventTypes';
 import { WebsocketRequestHandler } from 'express-ws';
 import { RoundName } from '../../shared/types/gameData';
@@ -44,15 +46,15 @@ export default class WSEventHandler {
   private handleMessage = (user: User) => (msg: Data): void => {
     const [event, data] = JSON.parse(msg as string);
     console.log('Event received:', event);
-    if (event === 'create_game') this.createGame(user, data);
-    if (event === 'join_game') this.joinGame(user, data);
-    if (event === 'playerData') this.updatePlayerData(user, data);
-    if (event === 'beginGame') this.beginGame(user, data);
-    if (event === 'confirm') this.confirmCharacter(user, data);
+    if (event === EventType.createGame) this.createGame(user /*, data*/);
+    if (event === EventType.joinGame) this.joinGame(user, data);
+    if (event === EventType.playerData) this.updatePlayerData(user, data);
+    if (event === EventType.beginGame) this.beginGame(user, data);
+    if (event === EventType.confirm) this.confirmCharacter(user, data);
   };
 
-  private createGame = (user: User, data: CreateEvent['data']): void => {
-    if (this.games.get(user.id)) return user.send({ event: 'error', data: 'game already exists' });
+  private createGame = (user: User /* data: EventByName<EventType.createGame>['data'] */): void => {
+    if (this.games.get(user.id)) return user.send({ event: EventType.error, data: 'game already exists' });
 
     const game = new Game(user);
     this.games.set(game.id, game);
@@ -84,7 +86,7 @@ export default class WSEventHandler {
     let errorMessage;
     if (game.hasBegun) errorMessage = 'This game has already begun';
     if (game.host.id !== user.id) errorMessage = 'Only the host can begin the game';
-    if (errorMessage) return user.send({ event: 'error', data: errorMessage });
+    if (errorMessage) return user.send({ event: EventType.error, data: errorMessage });
 
     game.beginGame();
   };
@@ -94,7 +96,7 @@ export default class WSEventHandler {
 
     this.users.set(user.id, user);
 
-    const payload: PlayerDataEvent = { event: 'playerData', data: { playerID: user.id, name: null } };
+    const payload: PlayerDataEvent = { event: EventType.playerData, data: { playerID: user.id, name: null } };
     user.send(payload);
 
     return user;

@@ -1,5 +1,5 @@
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
-import { WSEvent, Callbacks, Callback } from '../../shared/types/eventTypes';
+import { WSEvent, Callbacks, Callback, EventType } from '../../../shared/types/eventTypes';
 
 export default class WSEventEmitter {
   private websocket: W3CWebSocket;
@@ -7,8 +7,8 @@ export default class WSEventEmitter {
 
   constructor(url: string) {
     this.websocket = new W3CWebSocket(url);
-    this.websocket.onclose = (): void => this.execute('close', null);
-    this.websocket.onopen = (): void => this.execute('open', 'opening');
+    this.websocket.onclose = (): void => this.execute(EventType.close, null);
+    this.websocket.onopen = (): void => this.execute(EventType.open, 'opening');
     this.websocket.onmessage = this.onMessage;
   }
 

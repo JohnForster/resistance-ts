@@ -8,15 +8,15 @@ import {
   GameUpdateEvent,
   BeginGameEvent,
   ConfirmEvent,
+  EventType,
 } from '../../shared/types/eventTypes';
-import WSEventEmitter from '../helpers/wsEventEmitter';
+import WSEventEmitter from './helpers/wsEventEmitter';
 import LobbyPage from './pages/lobby/lobby';
 import { GameData } from '../../shared/types/gameData';
 import CharacterPage from './pages/character/character';
-import * as Styled from './styles/styled';
-import { GameID } from './pages/lobby/styled';
 import InGamePage from './pages/inGame/inGame';
 
+import * as Styled from './styles/styled';
 interface AppState {
   game: GameData;
   status: 'idle' | 'pending' | 'inLobby' | 'inGame';
@@ -40,11 +40,11 @@ export default class App extends PureComponent<{}, AppState> {
     const eventEmitter = new WSEventEmitter(this.connectionURL);
 
     // Temporary for message/error
-    eventEmitter.bind('message', msg => console.log('message received: ', msg));
-    eventEmitter.bind('error', msg => console.error('error received: ', msg));
+    eventEmitter.bind(EventType.message, msg => console.log('message received: ', msg));
+    eventEmitter.bind(EventType.error, msg => console.error('error received: ', msg));
 
-    eventEmitter.bind('playerData', this.onPlayerUpdate);
-    eventEmitter.bind('gameUpdate', this.onGameUpdate);
+    eventEmitter.bind(EventType.playerData, this.onPlayerUpdate);
+    eventEmitter.bind(EventType.gameUpdate, this.onGameUpdate);
     // ? eventEmitter.open() after bindings?
 
     // Either send user data or request user data
@@ -52,7 +52,7 @@ export default class App extends PureComponent<{}, AppState> {
   }
 
   hostGame = (): void => {
-    this.state.eventEmitter.send<CreateEvent>('create_game', { hostID: this.state.player.playerID });
+    this.state.eventEmitter.send<CreateEvent>(EventType.createGame, { hostID: this.state.player.playerID });
     this.setState({ status: 'pending' });
   };
 
@@ -68,27 +68,27 @@ export default class App extends PureComponent<{}, AppState> {
   };
 
   joinGame = (gameID: string): void => {
-    this.state.eventEmitter.send<JoinEvent>('join_game', { gameID });
+    this.state.eventEmitter.send<JoinEvent>(EventType.joinGame, { gameID });
   };
 
   testMessage = (): void => {
-    this.state.eventEmitter.send<MessageEvent>('message', 'Test message');
+    this.state.eventEmitter.send<MessageEvent>(EventType.message, 'Test message');
   };
 
   submitName = (name: string): void => {
     const player = { ...this.state.player, name };
-    this.state.eventEmitter.send<PlayerDataEvent>('playerData', player);
+    this.state.eventEmitter.send<PlayerDataEvent>(EventType.playerData, player);
     this.setState({ player });
   };
 
   beginGame = (): void => {
     const gameID = this.state.game.gameID;
-    this.state.eventEmitter.send<BeginGameEvent>('beginGame', { gameID });
+    this.state.eventEmitter.send<BeginGameEvent>(EventType.beginGame, { gameID });
   };
 
   confirmCharacter = (): void => {
     const { gameID, playerID } = this.state.game;
-    this.state.eventEmitter.send<ConfirmEvent>('confirm', { gameID, playerID });
+    this.state.eventEmitter.send<ConfirmEvent>(EventType.confirm, { gameID, playerID });
   };
 
   render(): JSX.Element {

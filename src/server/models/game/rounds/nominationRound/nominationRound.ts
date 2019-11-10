@@ -1,6 +1,6 @@
 import { Rules } from '../../../../data/gameRules';
 import { Round } from '../round';
-import { RoundName, RoundDataByName, NominationRoundData } from '../../../../../shared/types/gameData';
+import { RoundName, NominationRoundData } from '../../../../../shared/types/gameData';
 import { Player } from '../../game';
 
 export class NominationRound implements Round {

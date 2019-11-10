@@ -27,9 +27,15 @@ export default class InGamePage extends PureComponent<InGamePageProps, InGamePag
     return this.props.game.roundData;
   }
 
+  get isCorrectNumberOfNominations(): boolean {
+    return this.state.selectedPlayers.length === this.roundData.playersToNominate;
+  }
+
   isNominationRound = (roundData: RoundData): roundData is NominationRoundData => {
     return !!(roundData as NominationRoundData).playersToNominate;
   };
+
+  submitNames = (): void => {};
 
   render(): JSX.Element {
     return (
@@ -49,6 +55,9 @@ export default class InGamePage extends PureComponent<InGamePageProps, InGamePag
                 isSelected={this.state.selectedPlayers[i]}
               />
             ))}
+            <button onClick={this.submitNames} disabled={!this.isCorrectNumberOfNominations}>
+              Submit
+            </button>
           </When>
           <When condition={!this.props.game.isLeader}>
             <h2>

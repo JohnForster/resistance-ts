@@ -1,68 +1,81 @@
 import { GameData } from './gameData';
 import { PlayerData } from './playerData';
 interface EventTemplate {
-  event: string;
+  event: EventType;
   data: any;
 }
 
 // TODO Remove exports of individual events in favour of using EventByName<'close'> etc.
 export interface CloseEvent extends EventTemplate {
-  event: 'close';
+  event: EventType.close;
   data: null; // TBD
 }
 
 export interface OpenEvent extends EventTemplate {
-  event: 'open';
+  event: EventType.open;
   data: null; // TBD
 }
 
 export interface CreateEvent extends EventTemplate {
-  event: 'create_game';
+  event: EventType.createGame;
   data: {
     hostID: string;
   };
 }
 
 export interface JoinEvent extends EventTemplate {
-  event: 'join_game';
+  event: EventType.joinGame;
   data: {
     gameID: string;
   };
 }
 
 export interface MessageEvent extends EventTemplate {
-  event: 'message';
+  event: EventType.message;
   data: string;
 }
 
 export interface ErrorEvent extends EventTemplate {
-  event: 'error';
+  event: EventType.error;
   data: string;
 }
 
 export interface PlayerDataEvent extends EventTemplate {
-  event: 'playerData';
+  event: EventType.playerData;
   data: PlayerData;
 }
 
 export interface GameUpdateEvent extends EventTemplate {
-  event: 'gameUpdate';
+  event: EventType.gameUpdate;
   data: GameData;
 }
 
 export interface BeginGameEvent extends EventTemplate {
-  event: 'beginGame';
+  event: EventType.beginGame;
   data: {
     gameID: string;
   };
 }
 
 export interface ConfirmEvent extends EventTemplate {
-  event: 'confirm';
+  event: EventType.confirm;
   data: {
     gameID: string;
     playerID: string;
   };
+}
+
+export enum EventType {
+  confirm = 'confirm',
+  beginGame = 'beginGame',
+  createGame = 'createGame',
+  joinGame = 'joinGame',
+  message = 'message',
+  close = 'close',
+  open = 'open',
+  error = 'error',
+  playerData = 'playerData',
+  gameUpdate = 'gameUpdate',
 }
 
 export type WSEvent =

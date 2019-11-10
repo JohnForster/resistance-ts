@@ -2,7 +2,7 @@ import shuffle from 'lodash.shuffle';
 
 import User from '../user';
 import generateID from '../../utils/generateID';
-import { GameUpdateEvent } from '../../../shared/types/eventTypes';
+import { GameUpdateEvent, EventType } from '../../../shared/types/eventTypes';
 // import { GameData, RoundData, RoundDataByName } from '../../../shared/types/gameData';
 import RULES, { Rules, Character } from '../../data/gameRules';
 // import CharacterRound from './rounds/characterRound/characterRound';
@@ -15,7 +15,7 @@ export interface Player extends User {
   allegiance?: 'resistance' | 'spies';
   character?: Character;
   hasConfirmedCharacter?: boolean;
-  isLeader: boolean;
+  isLeader?: boolean;
 }
 
 // TODO separate stages into separate classes?
@@ -83,7 +83,7 @@ export default class Game {
     console.log('this._currentRound:', this._currentRound);
     console.log('roundData:', roundData);
     return {
-      event: 'gameUpdate',
+      event: EventType.gameUpdate,
       data: {
         gameID: this._id,
         // TODO replace this._round with this._currentRound.roundNumber? Or store in roundData?
