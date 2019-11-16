@@ -16,6 +16,13 @@ export class NominationRound implements Round {
     return this._leaderIndex;
   }
 
+  constructor(players: Player[], rules: Rules, roundNumber: number, leaderIndex: number) {
+    this._players = players;
+    this._rules = rules;
+    this._roundNumber = roundNumber;
+    this._leaderIndex = leaderIndex;
+  }
+
   public getRoundData = (): NominationRoundData => ({
     leader: this._players[this._leaderIndex].name,
     playersToNominate: this._rules.missions[this._roundNumber].players,
@@ -23,11 +30,4 @@ export class NominationRound implements Round {
   });
 
   public getSecretData = (): null => null;
-
-  constructor(players: Player[], rules: Rules, roundNumber: number, leaderIndex: number) {
-    this._players = players;
-    this._rules = rules;
-    this._roundNumber = roundNumber;
-    this._leaderIndex = leaderIndex;
-  }
 }

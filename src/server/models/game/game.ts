@@ -3,12 +3,12 @@ import shuffle from 'lodash.shuffle';
 import User from '../user';
 import generateID from '@server/utils/generateID';
 import { EventByName, EventType } from '@shared/types/eventTypes';
+import { Character, RoundName } from '@shared/types/gameData';
 // import { GameData, RoundData, RoundDataByName } from '@shared/types/gameData';
-import RULES, { Rules, Character } from '@server/data/gameRules';
+import RULES, { Rules } from '@server/data/gameRules';
 // import CharacterRound from './rounds/characterRound/characterRound';
 // import Round from './rounds/round';
 import { Round, Lobby, CharacterRound, NominationRound } from './rounds/index';
-import { RoundName } from '@shared/types/gameData';
 import typeGuard from '@server/utils/typeGuard';
 
 export interface Player extends User {
@@ -94,7 +94,7 @@ export default class Game {
         isHost: this._host === player,
         leaderName: this.leader.name,
         isLeader: this.leader === player,
-        players: this._players.map(p => ({ name: p.name })),
+        players: this._players.map(p => ({ name: p.name, id: p.id })),
         roundData,
         secretData,
       },
@@ -152,6 +152,14 @@ export default class Game {
     this._currentRound = nominationRound;
     this._round = roundNumber;
     // nominationRound.beginNominations(0);
+    this.sendUpdateToAllPlayers();
+  };
+
+  nominate = (nominatedPlayerIDs: string[]): void => {
+    if (!typeGuard(this._currentRound, NominationRound)) {
+      throw new Error('Cannot nominate players outside of nomination round');
+    }
+    // this._currentRound = new VotingRound(this._players, this._rules, 1, []);
     this.sendUpdateToAllPlayers();
   };
 

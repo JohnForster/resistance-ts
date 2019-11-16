@@ -1,11 +1,3 @@
-export enum Character {
-  Merlin = 'merlin',
-  Assassin = 'assassin',
-  Percival = 'percival',
-  Morgana = 'morgana',
-  Mordred = 'mordred',
-}
-
 export interface Rules {
   numberOfSpies: number;
   numberOfResistance: number;

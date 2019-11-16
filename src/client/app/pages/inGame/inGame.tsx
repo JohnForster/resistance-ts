@@ -6,19 +6,22 @@ import NominateButton from '../../components/nominateButton/nominatebutton';
 
 export interface InGamePageProps {
   game: GameData;
+  submitNominations: (playerIDs: Set<string>) => void;
 }
 
-interface InGamePageState {}
+interface InGamePageState {
+  selectedPlayers: Set<string>;
+}
 
 // ! REFACTOR INTO NOMINATION/VOTING ETC. COMPONENTS
 export default class InGamePage extends PureComponent<InGamePageProps, InGamePageState> {
-  state = {
-    selectedPlayers: new Array(this.props.game.players.length).fill(false),
+  state: InGamePageState = {
+    selectedPlayers: new Set<string>(),
   };
 
-  onSelect = (index: number) => (): void => {
-    const selectedPlayers = [...this.state.selectedPlayers];
-    selectedPlayers[index] = !selectedPlayers[index];
+  onSelect = (playerID: string) => (): void => {
+    const selectedPlayers = new Set(this.state.selectedPlayers);
+    selectedPlayers.has(playerID) ? selectedPlayers.delete(playerID) : selectedPlayers.add(playerID);
     this.setState({ selectedPlayers });
   };
 
@@ -28,14 +31,17 @@ export default class InGamePage extends PureComponent<InGamePageProps, InGamePag
   }
 
   get isCorrectNumberOfNominations(): boolean {
-    return this.state.selectedPlayers.length === this.roundData.playersToNominate;
+    return this.state.selectedPlayers.size === this.roundData.playersToNominate;
   }
 
   isNominationRound = (roundData: RoundData): roundData is NominationRoundData => {
     return !!(roundData as NominationRoundData).playersToNominate;
   };
 
-  submitNames = (): void => {};
+  submit = (): void => {
+    if (!this.isCorrectNumberOfNominations) return;
+    this.props.submitNominations(this.state.selectedPlayers);
+  };
 
   render(): JSX.Element {
     return (
@@ -51,11 +57,11 @@ export default class InGamePage extends PureComponent<InGamePageProps, InGamePag
               <NominateButton
                 key={`nominateButton-${i}`}
                 name={player.name}
-                select={this.onSelect(i)}
-                isSelected={this.state.selectedPlayers[i]}
+                select={this.onSelect(player.id)}
+                isSelected={this.state.selectedPlayers.has(player.id)}
               />
             ))}
-            <button onClick={this.submitNames} disabled={!this.isCorrectNumberOfNominations}>
+            <button onClick={this.submit} disabled={!this.isCorrectNumberOfNominations}>
               Submit
             </button>
           </When>

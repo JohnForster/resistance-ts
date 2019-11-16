@@ -41,6 +41,7 @@ export default class WSEventHandler {
     if (event === EventType.playerData) this.updatePlayerData(user, data);
     if (event === EventType.beginGame) this.beginGame(user, data);
     if (event === EventType.confirm) this.confirmCharacter(user, data);
+    if (event === EventType.nominate) this.nominatePlayer(user, data);
   };
 
   private createGame = (user: User /* data: EventByName<EventType.createGame>['data'] */): void => {
@@ -106,5 +107,13 @@ export default class WSEventHandler {
     if (game.currentRound !== RoundName.characterAssignment)
       return console.error('Can only confirm character during characterAssignment stage');
     game.confirmCharacter(data.playerID);
+  };
+
+  private nominatePlayer = (user: User, data: EventByName<EventType.nominate>['data']): void => {
+    if (user.game.id !== data.gameID) return console.error('Recieved gameID does not match stored gameID');
+    if (user.id !== data.playerID) return console.error('Recieved playerID does not match stored playerID');
+    const game = this.games.get(user.game.id);
+    if (game.currentRound !== RoundName.nomination) return console.error('Can only nominate during nomination stage');
+    game.nominate(data.nominatedPlayerIDs);
   };
 }

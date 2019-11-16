@@ -65,7 +65,16 @@ interface ConfirmEvent extends EventTemplate {
   };
 }
 
-export enum EventType {
+interface NominateEvent extends EventTemplate {
+  event: EventType.nominate;
+  data: {
+    gameID: string;
+    playerID: string;
+    nominatedPlayerIDs: string[];
+  };
+}
+
+export const enum EventType {
   confirm = 'confirm',
   beginGame = 'beginGame',
   createGame = 'createGame',
@@ -76,6 +85,7 @@ export enum EventType {
   error = 'error',
   playerData = 'playerData',
   gameUpdate = 'gameUpdate',
+  nominate = 'nominate',
 }
 
 export type WSEvent =
@@ -89,7 +99,8 @@ export type WSEvent =
   | PlayerDataEvent
   | GameUpdateEvent
   | BeginGameEvent
-  | ConfirmEvent;
+  | ConfirmEvent
+  | NominateEvent;
 
 export type EventByName<E extends WSEvent['event'], T = WSEvent> = T extends { event: E } ? T : never;
 

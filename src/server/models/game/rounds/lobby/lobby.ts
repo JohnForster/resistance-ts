@@ -1,4 +1,4 @@
-import { Rules } from '../../../../data/gameRules';
+import { Rules } from '@server/data/gameRules';
 import { Round } from '../round';
 import { RoundName } from '@shared/types/gameData';
 import { Player } from '../../game';

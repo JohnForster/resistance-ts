@@ -34,6 +34,7 @@ export default class App extends PureComponent<{}, AppState> {
     eventEmitter.bind(EventType.message, msg => console.log('message received: ', msg));
     eventEmitter.bind(EventType.error, msg => console.error('error received: ', msg));
 
+    // Register listeners
     eventEmitter.bind(EventType.playerData, this.onPlayerUpdate);
     eventEmitter.bind(EventType.gameUpdate, this.onGameUpdate);
     // ? eventEmitter.open() after bindings?
@@ -84,6 +85,15 @@ export default class App extends PureComponent<{}, AppState> {
     this.state.eventEmitter.send<EventByName<EventType.confirm>>(EventType.confirm, { gameID, playerID });
   };
 
+  submitNominations = (playerIDs: Set<string>): void => {
+    const { gameID, playerID } = this.state.game;
+    this.state.eventEmitter.send<EventByName<EventType.nominate>>(EventType.nominate, {
+      gameID,
+      playerID,
+      nominatedPlayerIDs: Array.from(playerIDs),
+    });
+  };
+
   render(): JSX.Element {
     return (
       <Styled.AppContainer>
@@ -105,7 +115,7 @@ export default class App extends PureComponent<{}, AppState> {
             <CharacterPage game={this.state.game} confirmCharacter={this.confirmCharacter} />
           </When>
           <When condition={this.state.game.round > 0}>
-            <InGamePage game={this.state.game} />
+            <InGamePage game={this.state.game} submitNominations={(): void => {}} />
           </When>
         </Choose>
       </Styled.AppContainer>
