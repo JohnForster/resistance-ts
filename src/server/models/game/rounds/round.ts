@@ -1,4 +1,6 @@
-import { RoundData, SecretData, RoundName } from '@shared/types/gameData';
+import { RoundData, SecretData } from '@shared/types/gameData';
+import { RoundName } from '@server/types/enums';
+type RoundName = typeof RoundName[keyof typeof RoundName];
 
 export interface Round {
   roundName: RoundName;

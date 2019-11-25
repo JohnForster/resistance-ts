@@ -1,7 +1,8 @@
 import { Player } from '../../game';
 import { Rules } from '../../../../data/gameRules';
 import { shuffle } from 'lodash';
-import { CharacterRoundData, CharacterSecretData, RoundName } from '@shared/types/gameData';
+import { CharacterRoundData, CharacterSecretData } from '@shared/types/gameData';
+import { RoundName } from '@server/types/enums';
 import { Round } from '../round';
 
 interface Teams {
@@ -28,7 +29,7 @@ export class CharacterRound implements Round {
   constructor(players: Player[], rules: Rules) {
     this.players = players;
     this.rules = rules;
-    this._roundData = { unconfirmedPlayerNames: players.map(p => p.name) };
+    this._roundData = { roundName: 'characterAssignment', unconfirmedPlayerNames: players.map(p => p.name) };
   }
 
   // allocateTeams = (characters: Set<Character> = new Set()): void => {

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { GameData, CharacterSecretData, CharacterRoundData, RoundData } from '@shared/types/gameData';
+import { GameData, CharacterSecretData, CharacterRoundData, RoundData } from '@shared/types/gameData.d';
 import Page from '../../components/page/page';
 
 export interface CharacterPageProps {

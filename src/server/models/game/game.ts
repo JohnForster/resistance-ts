@@ -2,14 +2,16 @@ import shuffle from 'lodash.shuffle';
 
 import User from '../user';
 import generateID from '@server/utils/generateID';
-import { EventByName, EventType } from '@shared/types/eventTypes';
-import { Character, RoundName } from '@shared/types/gameData';
-// import { GameData, RoundData, RoundDataByName } from '@shared/types/gameData';
+import { EventByName } from '@shared/types/eventTypes';
+// import { GameData, RoundData, RoundDataByName } from '@shared/types/gameData.d';
 import RULES, { Rules } from '@server/data/gameRules';
 // import CharacterRound from './rounds/characterRound/characterRound';
 // import Round from './rounds/round';
 import { Round, Lobby, CharacterRound, NominationRound } from './rounds/index';
 import typeGuard from '@server/utils/typeGuard';
+import { EventType, Character, RoundName } from '@server/types/enums';
+type Character = typeof Character[keyof typeof Character];
+type RoundName = typeof RoundName[keyof typeof RoundName];
 
 export interface Player extends User {
   allegiance?: 'resistance' | 'spies';
@@ -77,7 +79,7 @@ export default class Game {
     player.send(payload);
   };
 
-  generatePayload = (player: User): EventByName<EventType.gameUpdate> => {
+  generatePayload = (player: User): EventByName<typeof EventType.gameUpdate> => {
     const secretData = (this._currentRound && this._currentRound.getSecretData(player.id)) || null;
     const roundData = (this._currentRound && this._currentRound.getRoundData()) || null;
     console.log('this._currentRound:', this._currentRound);
@@ -159,6 +161,7 @@ export default class Game {
     if (!typeGuard(this._currentRound, NominationRound)) {
       throw new Error('Cannot nominate players outside of nomination round');
     }
+    console.log('Nominated player ids:', ...nominatedPlayerIDs);
     // this._currentRound = new VotingRound(this._players, this._rules, 1, []);
     this.sendUpdateToAllPlayers();
   };

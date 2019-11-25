@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { LandingPage } from './pages';
-import { EventByName, EventType } from '@shared/types/eventTypes';
+import { EventByName, DataByEventName } from '@shared/types/eventTypes';
+import { EventType } from '@client/types/event';
 import WSEventEmitter from './helpers/wsEventEmitter';
 import LobbyPage from './pages/lobby/lobby';
 import { GameData } from '@shared/types/gameData';
@@ -44,17 +45,17 @@ export default class App extends PureComponent<{}, AppState> {
   }
 
   hostGame = (): void => {
-    this.state.eventEmitter.send<EventByName<EventType.createGame>>(EventType.createGame, {
+    this.state.eventEmitter.send<typeof EventType.createGame>(EventType.createGame, {
       hostID: this.state.player.playerID,
     });
     this.setState({ status: 'pending' });
   };
 
-  onGameUpdate = (data: EventByName<EventType.gameUpdate>['data']): void => {
+  onGameUpdate = (data: EventByName<typeof EventType.gameUpdate>['data']): void => {
     this.setState({ game: data });
   };
 
-  onPlayerUpdate = (data: EventByName<EventType.playerData>['data']): void => {
+  onPlayerUpdate = (data: DataByEventName<typeof EventType.playerData>): void => {
     // Use a library for dealing with cookies?
     console.log('setting cookie && state');
     document.cookie = `playerID=${data.playerID}`;
@@ -62,32 +63,32 @@ export default class App extends PureComponent<{}, AppState> {
   };
 
   joinGame = (gameID: string): void => {
-    this.state.eventEmitter.send<EventByName<EventType.joinGame>>(EventType.joinGame, { gameID });
+    this.state.eventEmitter.send<typeof EventType.joinGame>(EventType.joinGame, { gameID });
   };
 
   testMessage = (): void => {
-    this.state.eventEmitter.send<EventByName<EventType.message>>(EventType.message, 'Test message');
+    this.state.eventEmitter.send<typeof EventType.message>(EventType.message, 'Test message');
   };
 
   submitName = (name: string): void => {
     const player = { ...this.state.player, name };
-    this.state.eventEmitter.send<EventByName<EventType.playerData>>(EventType.playerData, player);
+    this.state.eventEmitter.send<typeof EventType.playerData>(EventType.playerData, player);
     this.setState({ player });
   };
 
   beginGame = (): void => {
     const gameID = this.state.game.gameID;
-    this.state.eventEmitter.send<EventByName<EventType.beginGame>>(EventType.beginGame, { gameID });
+    this.state.eventEmitter.send<typeof EventType.beginGame>(EventType.beginGame, { gameID });
   };
 
   confirmCharacter = (): void => {
     const { gameID, playerID } = this.state.game;
-    this.state.eventEmitter.send<EventByName<EventType.confirm>>(EventType.confirm, { gameID, playerID });
+    this.state.eventEmitter.send<typeof EventType.confirm>(EventType.confirm, { gameID, playerID });
   };
 
   submitNominations = (playerIDs: Set<string>): void => {
     const { gameID, playerID } = this.state.game;
-    this.state.eventEmitter.send<EventByName<EventType.nominate>>(EventType.nominate, {
+    this.state.eventEmitter.send<typeof EventType.nominate>(EventType.nominate, {
       gameID,
       playerID,
       nominatedPlayerIDs: Array.from(playerIDs),

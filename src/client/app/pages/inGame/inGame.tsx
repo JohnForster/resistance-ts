@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { GameData, RoundData, NominationRoundData } from '@shared/types/gameData';
+import { GameData, RoundData, NominationRoundData } from '@shared/types/gameData.d';
 import Page from '../../components/page/page';
 import { PlayerContainer } from '../lobby/styled';
 import NominateButton from '../../components/nominateButton/nominatebutton';

@@ -1,7 +1,6 @@
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
-import { EventByName, WSEvent, Callbacks, Callback } from '@shared/types/eventTypes';
-import { EventType } from '@client/types/event';
-type EventType = typeof EventType[keyof typeof EventType];
+import { EventByName, Callbacks, Callback } from '@shared/types/eventTypes';
+import { EventType } from '@shared/types/enums';
 
 export default class WSEventEmitter {
   private websocket: W3CWebSocket;
@@ -14,19 +13,13 @@ export default class WSEventEmitter {
     this.websocket.onmessage = this.onMessage;
   }
 
-  public send = <T extends EventType, W extends WSEvent = EventByName<T>>(
-    eventType: W['event'],
-    data: W['data'],
-  ): WSEventEmitter => {
+  public send = <T extends WSEvent>(eventType: T['event'], data: T['data']): WSEventEmitter => {
     const payload = JSON.stringify([eventType, data]);
     this.websocket.send(payload);
     return this;
   };
 
-  public bind = <T extends EventType, W extends WSEvent = EventByName<T>>(
-    eventType: W['event'],
-    cb: Callback<W>,
-  ): WSEventEmitter => {
+  public bind = <T extends WSEvent>(eventType: T['event'], cb: Callback<T>): WSEventEmitter => {
     if (!this.callbacks[eventType]) this.callbacks[eventType] = [];
     this.callbacks[eventType].push(cb);
     return this;
@@ -38,11 +31,8 @@ export default class WSEventEmitter {
     this.execute(json.event, json.data);
   };
 
-  private execute = <T extends EventType, W extends WSEvent = EventByName<T>>(
-    eventName: W['event'],
-    data: W['data'],
-  ): void => {
-    const chain: Callback<W>[] = this.callbacks[eventName] || [];
+  private execute = <T extends WSEvent>(eventName: T['event'], data: T['data']): void => {
+    const chain: Callback<T>[] = this.callbacks[eventName] || [];
     chain.forEach(cb => cb(data));
   };
 }

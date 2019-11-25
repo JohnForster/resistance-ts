@@ -1,6 +1,7 @@
 import { Rules } from '../../../../data/gameRules';
 import { Round } from '../round';
-import { RoundName, NominationRoundData } from '@shared/types/gameData';
+import { NominationRoundData } from '@shared/types/gameData';
+import { RoundName } from '@server/types/enums';
 import { Player } from '../../game';
 
 export class NominationRound implements Round {
@@ -24,6 +25,7 @@ export class NominationRound implements Round {
   }
 
   public getRoundData = (): NominationRoundData => ({
+    roundName: RoundName.nomination,
     leader: this._players[this._leaderIndex].name,
     playersToNominate: this._rules.missions[this._roundNumber].players,
     failsRequired: this._rules.missions[this._roundNumber].failsRequired,

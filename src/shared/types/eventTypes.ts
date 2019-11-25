@@ -1,64 +1,80 @@
 import { GameData } from './gameData';
 import { PlayerData } from './playerData';
+import { EventTypeEnum } from './enums';
+
+const EventType: EventTypeEnum = {
+  confirm: 'confirm',
+  beginGame: 'beginGame',
+  createGame: 'createGame',
+  joinGame: 'joinGame',
+  message: 'message',
+  close: 'close',
+  open: 'open',
+  error: 'error',
+  playerData: 'playerData',
+  gameUpdate: 'gameUpdate',
+  nominate: 'nominate',
+} as const;
+type EventType = typeof EventType[keyof EventTypeEnum];
+
 interface EventTemplate {
   event: EventType;
   data: any;
 }
 
-// TODO Remove exports of individual events in favour of using EventByName<'close'> etc.
 interface CloseEvent extends EventTemplate {
-  event: EventType.close;
+  event: EventType;
   data: null; // TBD
 }
 
 interface OpenEvent extends EventTemplate {
-  event: EventType.open;
+  event: typeof EventType.open;
   data: null; // TBD
 }
 
 interface CreateEvent extends EventTemplate {
-  event: EventType.createGame;
+  event: typeof EventType.createGame;
   data: {
     hostID: string;
   };
 }
 
 interface JoinEvent extends EventTemplate {
-  event: EventType.joinGame;
+  event: typeof EventType.joinGame;
   data: {
     gameID: string;
   };
 }
 
 interface MessageEvent extends EventTemplate {
-  event: EventType.message;
+  event: typeof EventType.message;
   data: string;
 }
 
 interface ErrorEvent extends EventTemplate {
-  event: EventType.error;
+  event: typeof EventType.error;
   data: string;
 }
 
 interface PlayerDataEvent extends EventTemplate {
-  event: EventType.playerData;
+  event: typeof EventType.playerData;
   data: PlayerData;
 }
 
 interface GameUpdateEvent extends EventTemplate {
-  event: EventType.gameUpdate;
+  event: typeof EventType.gameUpdate;
   data: GameData;
 }
 
 interface BeginGameEvent extends EventTemplate {
-  event: EventType.beginGame;
+  event: typeof EventType.beginGame;
   data: {
     gameID: string;
   };
 }
 
 interface ConfirmEvent extends EventTemplate {
-  event: EventType.confirm;
+  event: typeof EventType.confirm;
   data: {
     gameID: string;
     playerID: string;
@@ -66,26 +82,12 @@ interface ConfirmEvent extends EventTemplate {
 }
 
 interface NominateEvent extends EventTemplate {
-  event: EventType.nominate;
+  event: typeof EventType.nominate;
   data: {
     gameID: string;
     playerID: string;
     nominatedPlayerIDs: string[];
   };
-}
-
-export const enum EventType {
-  confirm = 'confirm',
-  beginGame = 'beginGame',
-  createGame = 'createGame',
-  joinGame = 'joinGame',
-  message = 'message',
-  close = 'close',
-  open = 'open',
-  error = 'error',
-  playerData = 'playerData',
-  gameUpdate = 'gameUpdate',
-  nominate = 'nominate',
 }
 
 export type WSEvent =
@@ -102,7 +104,8 @@ export type WSEvent =
   | ConfirmEvent
   | NominateEvent;
 
-export type EventByName<E extends WSEvent['event'], T = WSEvent> = T extends { event: E } ? T : never;
+export type EventByName<E extends EventType, T = WSEvent> = T extends { event: E } ? T : never;
+export type DataByEventName<T extends EventType, E extends WSEvent = EventByName<T>> = E['data'];
 
 export type Callback<T extends WSEvent> = (data: T['data']) => void;
 
