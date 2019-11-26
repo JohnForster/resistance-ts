@@ -1,4 +1,4 @@
-import { EventTypeEnum } from '../../shared/types/eventTypes';
+import { EventTypeEnum } from '../../shared/types/enums';
 
 export const EventType: EventTypeEnum = {
   confirm: 'confirm',

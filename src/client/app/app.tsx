@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { LandingPage } from './pages';
-import { EventByName, DataByEventName } from '@shared/types/eventTypes';
+import { EventByName } from '@shared/types/eventTypes';
 import { EventType } from '@client/types/event';
 import WSEventEmitter from './helpers/wsEventEmitter';
 import LobbyPage from './pages/lobby/lobby';
@@ -55,7 +55,7 @@ export default class App extends PureComponent<{}, AppState> {
     this.setState({ game: data });
   };
 
-  onPlayerUpdate = (data: DataByEventName<typeof EventType.playerData>): void => {
+  onPlayerUpdate = (data: EventByName<typeof EventType.playerData>['data']): void => {
     // Use a library for dealing with cookies?
     console.log('setting cookie && state');
     document.cookie = `playerID=${data.playerID}`;

@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
-import { GameData, CharacterSecretData, CharacterRoundData, RoundData } from '@shared/types/gameData.d';
+import { GameData, CharacterSecretData, CharacterRoundData, RoundData } from '@shared/types/gameData';
 import Page from '../../components/page/page';
+import listString from '../../helpers/listString';
 
 export interface CharacterPageProps {
   confirmCharacter: () => void;
@@ -56,7 +57,7 @@ export default class CharacterPage extends PureComponent<CharacterPageProps, Cha
           OK
         </button>
         <If condition={!!(this.state.hasConfirmed && this.props.game && roundData.unconfirmedPlayerNames)}>
-          <p>Waiting for {this.roundData && this.roundData.unconfirmedPlayerNames.join(', ')} to confirm...</p>
+          <p>Waiting for {listString(this.roundData.unconfirmedPlayerNames, 'and')} to confirm...</p>
         </If>
       </Page>
     );
