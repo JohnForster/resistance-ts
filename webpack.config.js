@@ -19,7 +19,7 @@ module.exports = {
   entry: './src/client/index.tsx',
   output: {
     path: path.resolve(__dirname, 'build/dist'),
-    publicPath: isDev ? undefined : 'playresistance.herokuapp.com/dist',
+    publicPath: isDev ? undefined : 'playresistance.herokuapp.com/',
     filename: 'bundle.js',
   },
   module: {
