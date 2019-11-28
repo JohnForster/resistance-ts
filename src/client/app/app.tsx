@@ -5,6 +5,7 @@ import { EventType } from '@client/types/event';
 import WSEventEmitter from './helpers/wsEventEmitter';
 import LobbyPage from './pages/lobby/lobby';
 import { GameData } from '@shared/types/gameData';
+import Background from './components/background/background';
 
 import * as Styled from './styles/styled';
 interface AppState {
@@ -104,32 +105,34 @@ export default class App extends PureComponent<{}, AppState> {
 
   render(): JSX.Element {
     return (
-      <Styled.AppContainer>
+      <Background>
         <Styled.Global />
-        <Choose>
-          <When condition={!this.state.game}>
-            <LandingPage
-              hostGame={this.hostGame}
-              joinGame={this.joinGame}
-              player={this.state.player}
-              testMessage={this.testMessage}
-              submitName={this.submitName}
-            />
-          </When>
-          <When condition={this.state.game.missionNumber === 0 && this.state.game.stage === 'lobby'}>
-            <LobbyPage game={this.state.game} player={this.state.player} beginGame={this.beginGame} />
-          </When>
-          <When condition={this.state.game.missionNumber === 0 && this.state.game.stage === 'characterAssignment'}>
-            <CharacterPage game={this.state.game} confirmCharacter={this.confirmCharacter} />
-          </When>
-          <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'nomination'}>
-            <InGamePage game={this.state.game} submitNominations={this.submitNominations} />
-          </When>
-          <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'voting'}>
-            <VotingPage game={this.state.game} submitVote={this.submitVote} />
-          </When>
-        </Choose>
-      </Styled.AppContainer>
+        <Styled.AppContainer>
+          <Choose>
+            <When condition={!this.state.game}>
+              <LandingPage
+                hostGame={this.hostGame}
+                joinGame={this.joinGame}
+                player={this.state.player}
+                testMessage={this.testMessage}
+                submitName={this.submitName}
+              />
+            </When>
+            <When condition={this.state.game.missionNumber === 0 && this.state.game.stage === 'lobby'}>
+              <LobbyPage game={this.state.game} player={this.state.player} beginGame={this.beginGame} />
+            </When>
+            <When condition={this.state.game.missionNumber === 0 && this.state.game.stage === 'characterAssignment'}>
+              <CharacterPage game={this.state.game} confirmCharacter={this.confirmCharacter} />
+            </When>
+            <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'nomination'}>
+              <InGamePage game={this.state.game} submitNominations={this.submitNominations} />
+            </When>
+            <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'voting'}>
+              <VotingPage game={this.state.game} submitVote={this.submitVote} />
+            </When>
+          </Choose>
+        </Styled.AppContainer>
+      </Background>
     );
   }
 }
