@@ -25,4 +25,5 @@ export type EventTypeEnum = {
   playerData: 'playerData';
   gameUpdate: 'gameUpdate';
   nominate: 'nominate';
+  vote: 'vote';
 };

@@ -33,6 +33,7 @@ app.use(express.static(publicPath));
 
 // Send index.html when visiting '/'
 app.get('/', (req: Request, res: Response) => {
+  console.log('req.cookies:', req.cookies);
   res.sendFile(path.join(__dirname, middlePath, '/dist/index.html'));
 });
 
@@ -46,5 +47,6 @@ if (isDev) {
   });
 } else {
   // Will need to work out how this works in prod
+  console.log('listening on port:', port);
   app.listen(port);
 }

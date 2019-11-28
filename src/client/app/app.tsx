@@ -1,12 +1,10 @@
 import React, { PureComponent } from 'react';
-import { LandingPage } from './pages';
+import { LandingPage, CharacterPage, InGamePage, VotingPage } from './pages';
 import { EventByName } from '@shared/types/eventTypes';
 import { EventType } from '@client/types/event';
 import WSEventEmitter from './helpers/wsEventEmitter';
 import LobbyPage from './pages/lobby/lobby';
 import { GameData } from '@shared/types/gameData';
-import CharacterPage from './pages/character/character';
-import InGamePage from './pages/inGame/inGame';
 
 import * as Styled from './styles/styled';
 interface AppState {
@@ -95,6 +93,15 @@ export default class App extends PureComponent<{}, AppState> {
     });
   };
 
+  submitVote = (playerApproves: boolean): void => {
+    const { gameID, playerID } = this.state.game;
+    this.state.eventEmitter.send<typeof EventType.vote>(EventType.vote, {
+      gameID,
+      playerID,
+      playerApproves,
+    });
+  };
+
   render(): JSX.Element {
     return (
       <Styled.AppContainer>
@@ -109,14 +116,17 @@ export default class App extends PureComponent<{}, AppState> {
               submitName={this.submitName}
             />
           </When>
-          <When condition={this.state.game.round === 0 && this.state.game.stage === 'lobby'}>
+          <When condition={this.state.game.missionNumber === 0 && this.state.game.stage === 'lobby'}>
             <LobbyPage game={this.state.game} player={this.state.player} beginGame={this.beginGame} />
           </When>
-          <When condition={this.state.game.round === 0 && this.state.game.stage === 'characterAssignment'}>
+          <When condition={this.state.game.missionNumber === 0 && this.state.game.stage === 'characterAssignment'}>
             <CharacterPage game={this.state.game} confirmCharacter={this.confirmCharacter} />
           </When>
-          <When condition={this.state.game.round > 0}>
-            <InGamePage game={this.state.game} submitNominations={(): void => {}} />
+          <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'nomination'}>
+            <InGamePage game={this.state.game} submitNominations={this.submitNominations} />
+          </When>
+          <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'voting'}>
+            <VotingPage game={this.state.game} submitVote={this.submitVote} />
           </When>
         </Choose>
       </Styled.AppContainer>

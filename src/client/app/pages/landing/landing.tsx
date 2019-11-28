@@ -43,7 +43,7 @@ export class LandingPage extends PureComponent<LandingPageProps, LandingPageStat
             <p>Enter your name!</p>
             <input type="text" value={this.state.nameValue} onChange={this.handleChange('nameValue')} />
             <br />
-            <button onClick={(): void => this.props.submitName(this.state.nameValue)}>Join</button>
+            <button onClick={(): void => this.props.submitName(this.state.nameValue)}>Enter Name</button>
           </When>
           <Otherwise>
             <p>

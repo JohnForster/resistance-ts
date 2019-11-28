@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { GameData, CharacterSecretData, CharacterRoundData, RoundData } from '@shared/types/gameData';
+import { GameData, CharacterSecretData, CharacterRoundData, RoundData, SecretData } from '@shared/types/gameData';
 import Page from '../../components/page/page';
 import listString from '../../helpers/listString';
 
@@ -12,18 +12,19 @@ interface CharacterPageState {
   hasConfirmed: boolean;
 }
 
-export default class CharacterPage extends PureComponent<CharacterPageProps, CharacterPageState> {
+export class CharacterPage extends PureComponent<CharacterPageProps, CharacterPageState> {
   state: CharacterPageState = {
     hasConfirmed: false,
   };
 
-  get secretData(): CharacterSecretData {
-    return this.props.game.secretData;
-  }
-
   get roundData(): CharacterRoundData {
     if (!this.isCharacterRound(this.props.game.roundData)) throw new Error("This isn't character data!");
     return this.props.game.roundData;
+  }
+
+  get secretData(): CharacterSecretData {
+    if (!this.isCharacterSecret(this.props.game.secretData)) throw new Error("This isn't character data!");
+    return this.props.game.secretData;
   }
 
   confirmCharacter = (): void => {
@@ -35,6 +36,10 @@ export default class CharacterPage extends PureComponent<CharacterPageProps, Cha
     return !!(roundData as CharacterRoundData).unconfirmedPlayerNames;
   };
 
+  isCharacterSecret = (secretData: SecretData): secretData is CharacterSecretData => {
+    return !!(secretData as CharacterSecretData).allegiance;
+  };
+
   render(): JSX.Element {
     const roundData = this.isCharacterRound(this.props.game.roundData) && this.props.game.roundData;
     return (
@@ -43,12 +48,12 @@ export default class CharacterPage extends PureComponent<CharacterPageProps, Cha
           <When condition={this.secretData && this.secretData.allegiance === 'resistance'}>
             <h2>You are part of the RESISTANCE!</h2>
           </When>
-          <When condition={this.props.game.secretData.allegiance === 'spies'}>
+          <When condition={this.secretData.allegiance === 'spies'}>
             <h2>
               You are a <strong>SPY</strong>
             </h2>
             <p>The spies in this game are....</p>
-            {this.props.game.secretData.spies.map((s, i) => (
+            {this.secretData.spies.map((s, i) => (
               <strong key={`spy-${i}`}>{s}</strong>
             ))}
           </When>

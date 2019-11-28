@@ -7,7 +7,7 @@ import { EventByName } from '@shared/types/eventTypes';
 import RULES, { Rules } from '@server/data/gameRules';
 // import CharacterRound from './rounds/characterRound/characterRound';
 // import Round from './rounds/round';
-import { Round, Lobby, CharacterRound, NominationRound } from './rounds/index';
+import { Round, Lobby, CharacterRound, NominationRound, VotingRound } from './rounds/index';
 import typeGuard from '@server/utils/typeGuard';
 import { EventType, Character, RoundName } from '@server/types/enums';
 type Character = typeof Character[keyof typeof Character];
@@ -28,7 +28,7 @@ export default class Game {
   private _host: User;
   // private _spies: Player[] = [];
   // private _resistance: Player[] = [];
-  private _round = 0;
+  private _missionNumber = 0;
   // private _roundData: RoundData = {};
   // private _stage: RoundName = 'lobby';
   private _leaderIndex = 0;
@@ -82,14 +82,12 @@ export default class Game {
   generatePayload = (player: User): EventByName<typeof EventType.gameUpdate> => {
     const secretData = (this._currentRound && this._currentRound.getSecretData(player.id)) || null;
     const roundData = (this._currentRound && this._currentRound.getRoundData()) || null;
-    console.log('this._currentRound:', this._currentRound);
-    console.log('roundData:', roundData);
     return {
       event: EventType.gameUpdate,
       data: {
         gameID: this._id,
         // TODO replace this._round with this._currentRound.roundNumber? Or store in roundData?
-        round: this._round,
+        missionNumber: this._missionNumber,
         stage: this._currentRound.roundName,
         playerID: player.id,
         hostName: this._host.name,
@@ -102,14 +100,6 @@ export default class Game {
       },
     };
   };
-
-  // addPlayer(player: User, isHost = false): void {
-  //   if (this.hasBegun) return;
-  //   this._players.push(player);
-  //   console.log('Players:', this._players.map(p => p.id).join(', '));
-  //   if (isHost && !this._host) this._host = player;
-  //   this.sendUpdateToAllPlayers();
-  // }
 
   isRound = <T extends Round>(round: Round): round is T => {
     return round.roundName === name;
@@ -137,6 +127,10 @@ export default class Game {
     this._characters = characters;
   };
 
+  incrementLeaderIndex = (): void => {
+    this._leaderIndex = (this._leaderIndex + 1) % this._players.length;
+  };
+
   confirmCharacter = (playerID: string): void => {
     if (!typeGuard(this._currentRound, CharacterRound)) {
       throw new Error('Cannot confirm player outside of character round');
@@ -150,9 +144,10 @@ export default class Game {
   };
 
   startRound = (roundNumber: number): void => {
+    console.log('Starting round', roundNumber);
     const nominationRound = new NominationRound(this._players, this._rules, roundNumber, this._leaderIndex);
     this._currentRound = nominationRound;
-    this._round = roundNumber;
+    this._missionNumber = roundNumber;
     // nominationRound.beginNominations(0);
     this.sendUpdateToAllPlayers();
   };
@@ -162,8 +157,30 @@ export default class Game {
       throw new Error('Cannot nominate players outside of nomination round');
     }
     console.log('Nominated player ids:', ...nominatedPlayerIDs);
-    // this._currentRound = new VotingRound(this._players, this._rules, 1, []);
+    // TODO Check players are in this game?
+    // TODO Check the right number of players are nominated etc.
+    // ! Hard coded value here
+    const votingRoundNumber = 1;
+    this._currentRound = new VotingRound(this._players, this._rules, votingRoundNumber, nominatedPlayerIDs);
     this.sendUpdateToAllPlayers();
+  };
+
+  vote = (playerID: string, approves: boolean): void => {
+    if (!typeGuard(this._currentRound, VotingRound)) {
+      throw new Error('Cannot vote outside of voting round');
+    }
+    this._currentRound.vote(playerID, approves);
+    this.sendUpdateToAllPlayers();
+    if (!this._currentRound.hasVoteCompleted) return;
+    this._currentRound.countVotes();
+    this.sendUpdateToAllPlayers();
+    if (this._currentRound.voteSucceded) {
+      // this._currentRound = new MissionRound();
+    }
+    if (!this._currentRound.voteSucceded) {
+      this.incrementLeaderIndex();
+      this.startRound(this._missionNumber);
+    }
   };
 
   // startRound = (roundNumber: number): void => {

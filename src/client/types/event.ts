@@ -12,4 +12,5 @@ export const EventType: EventTypeEnum = {
   playerData: 'playerData',
   gameUpdate: 'gameUpdate',
   nominate: 'nominate',
+  vote: 'vote',
 } as const;

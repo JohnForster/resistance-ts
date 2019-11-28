@@ -17,9 +17,9 @@ export default class WSEventHandler {
 
   public middleWare: WebsocketRequestHandler = (ws, req): void => {
     const playerID = req.cookies.playerID;
-    console.log('req.cookies:', req.cookies);
     const isExistingUser = this.users.has(playerID);
-    console.log(`Player ${isExistingUser ? 'exists' : 'does not exist'} with ID '${playerID}'`);
+    console.log('req.cookie:', req.cookies);
+    console.log(`${isExistingUser ? 'Player found' : 'does not exist'} with ID '${playerID}'`);
     if (isExistingUser) {
       const user = this.users.get(playerID);
       user.ws = ws.on('message', this.handleMessage(user));
@@ -36,12 +36,18 @@ export default class WSEventHandler {
   private handleMessage = (user: User) => (msg: Data): void => {
     const [event, data] = JSON.parse(msg as string);
     console.log('Event received:', event);
-    if (event === EventType.createGame) this.createGame(user /*, data*/);
-    if (event === EventType.joinGame) this.joinGame(user, data);
-    if (event === EventType.playerData) this.updatePlayerData(user, data);
-    if (event === EventType.beginGame) this.beginGame(user, data);
-    if (event === EventType.confirm) this.confirmCharacter(user, data);
-    if (event === EventType.nominate) this.nominatePlayer(user, data);
+
+    if (event === EventType.createGame) return this.createGame(user /*, data*/);
+    if (event === EventType.joinGame) return this.joinGame(user, data);
+    if (event === EventType.playerData) return this.updatePlayerData(user, data);
+    if (event === EventType.beginGame) return this.beginGame(user, data);
+
+    if (user.game.id !== data.gameID) return console.error('Recieved gameID does not match stored gameID');
+    if (user.id !== data.playerID) return console.error('Recieved playerID does not match stored playerID');
+
+    if (event === EventType.confirm) return this.confirmCharacter(user, data);
+    if (event === EventType.nominate) return this.nominatePlayer(user, data);
+    if (event === EventType.vote) return this.handleVote(user, data);
   };
 
   private createGame = (user: User /* data: EventByName<typeof EventType.createGame>['data'] */): void => {
@@ -115,5 +121,11 @@ export default class WSEventHandler {
     const game = this.games.get(user.game.id);
     if (game.currentRound !== RoundName.nomination) return console.error('Can only nominate during nomination stage');
     game.nominate(data.nominatedPlayerIDs);
+  };
+
+  private handleVote = (user: User, data: EventByName<typeof EventType.vote>['data']): void => {
+    const game = this.games.get(data.gameID);
+    if (game.currentRound !== RoundName.voting) return console.error('Can only vote during voting stage');
+    game.vote(user.id, data.playerApproves);
   };
 }
