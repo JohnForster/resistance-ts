@@ -49,11 +49,11 @@ export class LandingPage extends PureComponent<LandingPageProps, LandingPageStat
             <p>
               Welcome <span>{this.props.player.name}</span>
             </p>
-            <button onClick={this.props.hostGame}>Host</button>
+            <button onClick={this.props.hostGame}>Host Game</button>
             <br />
             <p>Game Code:</p>
             <input type="text" value={this.state.formValue} onChange={this.handleChange('formValue')} />
-            <button onClick={(): void => this.props.joinGame(this.state.formValue)}>Join</button>
+            <button onClick={(): void => this.props.joinGame(this.state.formValue)}>Join Game</button>
           </Otherwise>
         </Choose>
       </Page>
