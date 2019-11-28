@@ -7,4 +7,5 @@ export const PageContainer = styled.div`
   height: 100%;
   width: 80%;
   max-width: 60vh;
+  padding-top: 5vh;
 `;

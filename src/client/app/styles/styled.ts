@@ -6,17 +6,13 @@ export const Global = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css?family=Turret+Road');
 
   body {
-    background-color: #6E7E85;
     font-family: 'Turret Road';
-    background-image: url(/assets/bg.jpg);
-    backdrop-filter: blur(10px);
-    background-position: right center;
-    background-size: auto 100%;
-    color: white;
     text-shadow: 2px 2px 8px ${DARK_BLUE}
     margin: 0;
-    height: 100vh;
-    align-self:center
+    height: 100%;
+    align-self:center;
+    color:white;
+    background-color: ${DARK_BLUE}
   }
 
   button {
@@ -52,7 +48,6 @@ export const Global = createGlobalStyle`
   p {
     margin: 1vh;
   }
-
 `;
 
 export const AppContainer = styled.div`

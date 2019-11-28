@@ -21,6 +21,10 @@ export class LandingPage extends PureComponent<LandingPageProps, LandingPageStat
     nameValue: '',
   };
 
+  componentDidMount(): void {
+    document.getElementById('nameInput').focus();
+  }
+
   handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (this.state.formValue.length !== 5) return;
@@ -41,7 +45,7 @@ export class LandingPage extends PureComponent<LandingPageProps, LandingPageStat
         <Choose>
           <When condition={!this.props.player.name}>
             <p>Enter your name!</p>
-            <input type="text" value={this.state.nameValue} onChange={this.handleChange('nameValue')} />
+            <input id="nameInput" type="text" value={this.state.nameValue} onChange={this.handleChange('nameValue')} />
             <br />
             <button onClick={(): void => this.props.submitName(this.state.nameValue)}>Enter Name</button>
           </When>
