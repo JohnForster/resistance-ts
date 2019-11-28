@@ -5,7 +5,6 @@ import { EventType } from '@client/types/event';
 import WSEventEmitter from './helpers/wsEventEmitter';
 import LobbyPage from './pages/lobby/lobby';
 import { GameData } from '@shared/types/gameData';
-import Background from './components/background/background';
 
 import * as Styled from './styles/styled';
 interface AppState {
@@ -105,7 +104,8 @@ export default class App extends PureComponent<{}, AppState> {
 
   render(): JSX.Element {
     return (
-      <Background>
+      <>
+        <Styled.BackgroundImage src="/assets/bg.jpg" />
         <Styled.Global />
         <Styled.AppContainer>
           <Choose>
@@ -132,7 +132,7 @@ export default class App extends PureComponent<{}, AppState> {
             </When>
           </Choose>
         </Styled.AppContainer>
-      </Background>
+      </>
     );
   }
 }

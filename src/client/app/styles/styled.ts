@@ -62,3 +62,13 @@ export const AppContainer = styled.div`
     border: 1px solid black;
   }
 `;
+
+export const BackgroundImage = styled.img`
+  position: fixed;
+  overflow: hidden;
+  top: 50%;
+  left: 40%;
+  transform: translate(-40%, -50%);
+  z-index: -1;
+  filter: blur(3px) brightness(0.9);
+`;
