@@ -54,7 +54,7 @@ export class VotingPage extends PureComponent<VotingPageProps, VotingPageState> 
     console.log(this.secretData);
     return (
       <Page>
-        <h2>Mission No.{this.props.game.missionNumber}</h2>
+        <h1>Mission No.{this.props.game.missionNumber}</h1>
         <h3>{this.props.game.leaderName} has nominated</h3>
         {/* {this.roundData.nominatedPlayers.map((p, i) => (
           <p key={`nominatedPlayer-${i}`}>{p.name}</p>

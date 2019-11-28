@@ -16,6 +16,7 @@ export const Global = createGlobalStyle`
     text-shadow: 2px 2px 8px ${DARK_BLUE}
     margin: 0;
     height: 100vh;
+    align-self:center
   }
 
   button {

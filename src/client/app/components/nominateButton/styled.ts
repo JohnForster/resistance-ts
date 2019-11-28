@@ -3,6 +3,10 @@ import styled from 'styled-components';
 export const button = styled.button`
   display: flex;
   justify-content: center;
+  align-items: center;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 5px 0;
 `;
 
 export const Side = styled.div`
