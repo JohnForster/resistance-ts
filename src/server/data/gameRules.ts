@@ -248,8 +248,9 @@ const prodRules: { [playres: number]: Rules } = {
     },
   },
 };
-
-const isDev = process.env.NODE_ENV === 'development';
-const RULES = { ...prodRules, ...(isDev ? devRules : {}) };
+// ! Enable this when a method of preventing games of fewer than 5 people has been implemented
+// const isDev = process.env.NODE_ENV === 'development';
+// const RULES = { ...prodRules, ...(isDev ? devRules : {}) };
+const RULES = { ...devRules, ...prodRules };
 
 export default RULES;
