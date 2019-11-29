@@ -29,7 +29,7 @@ app.ws('/ws', wsEventHandler.middleWare);
 // Publicly expose the '/dist' folder
 const middlePath = isDev ? '../../build' : '';
 const publicPath = path.join(__dirname, middlePath, '/dist');
-app.use(express.static(publicPath));
+app.use(express.static(publicPath, { maxAge: '1h' }));
 
 // Send index.html when visiting '/'
 app.get('/', (req: Request, res: Response) => {
