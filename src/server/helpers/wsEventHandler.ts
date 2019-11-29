@@ -34,7 +34,7 @@ export default class WSEventHandler {
   };
 
   private handleMessage = (user: User) => (msg: Data): void => {
-    if ((msg as string) === 'ping') return;
+    // if ((msg as string) === 'ping') return;
     const [event, data] = JSON.parse(msg as string);
     console.log('Event received:', event);
 

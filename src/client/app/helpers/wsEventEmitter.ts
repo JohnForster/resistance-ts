@@ -12,7 +12,7 @@ export default class WSEventEmitter {
     this.websocket.onclose = (): void => this.execute(EventType.close, null);
     this.websocket.onopen = (): void => this.execute(EventType.open, 'opening');
     this.websocket.onmessage = this.onMessage;
-    this.beginPings();
+    // this.beginPings();
   }
 
   public send = <T extends EventType, W extends WSEvent = EventByName<T>>(
@@ -47,9 +47,9 @@ export default class WSEventEmitter {
     chain.forEach(cb => cb(data));
   };
 
-  private beginPings = (): void => {
-    setInterval(() => {
-      this.websocket.send('ping');
-    }, 5000);
-  };
+  // private beginPings = (): void => {
+  //   setInterval(() => {
+  //     this.websocket.send('ping');
+  //   }, 5000);
+  // };
 }
