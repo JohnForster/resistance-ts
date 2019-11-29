@@ -3,7 +3,6 @@ import path from 'path';
 import createWebSocket from 'express-ws';
 import cookieParser from 'cookie-parser';
 import chalk from 'chalk';
-import tty from 'tty';
 
 import getLocalIP from './utils/getLocalIP';
 import User from './models/user';
