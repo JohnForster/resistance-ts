@@ -5,6 +5,7 @@ const RoundName: RoundNameEnum = {
   nomination: 'nomination',
   lobby: 'lobby',
   voting: 'voting',
+  mission: 'mission',
 };
 type RoundName = typeof RoundName[keyof RoundNameEnum];
 
@@ -67,9 +68,19 @@ export interface CharacterSecretData {
   spies?: string[];
 }
 
-export type RoundData = CharacterRoundData | NominationRoundData | VotingRoundData;
+export interface MissionRoundData {
+  roundName: typeof RoundName.mission;
+  nominatedPlayers: { name: string; id: string }[];
+  unconfirmedPlayers: string[];
+}
 
-export type SecretData = CharacterSecretData | VotingRoundSecretData;
+export interface MissionRoundSecretData {
+  hasVoted: boolean;
+}
+
+export type RoundData = CharacterRoundData | NominationRoundData | VotingRoundData | MissionRoundData;
+
+export type SecretData = CharacterSecretData | VotingRoundSecretData | MissionRoundSecretData;
 
 // export type RoundDataByName<R extends RoundData['roundName'], T = RoundData> = T extends { roundName: R } ? T : never;
 export type RoundDataByName<R extends RoundName, T = RoundData> = T extends { roundName: R } ? T : never;

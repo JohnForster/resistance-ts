@@ -47,12 +47,13 @@ export class VotingRound implements Round {
     this._nominatedPlayers = players.filter(p => nominatedPlayerIDs.includes(p.id));
   }
 
-  public countVotes = () => {
+  public countVotes = (): Player[] => {
     const votesArray = Array.from(this._votes);
     const ayeVotes = votesArray.filter(([, approve]) => approve).length;
     const nayVotes = votesArray.filter(([, approve]) => !approve).length;
     if (ayeVotes + nayVotes !== this._players.length) throw new Error('Incorrect number of votes cast');
     this.voteSucceded = ayeVotes > nayVotes;
+    return this._nominatedPlayers;
   };
 
   public vote = (playerID: string, approves: boolean): void => {

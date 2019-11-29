@@ -5,6 +5,7 @@ export const RoundName: RoundNameEnum = {
   nomination: 'nomination',
   lobby: 'lobby',
   voting: 'voting',
+  mission: 'mission',
 };
 
 export const EventType: EventTypeEnum = {

@@ -7,7 +7,7 @@ import { EventByName } from '@shared/types/eventTypes';
 import RULES, { Rules } from '@server/data/gameRules';
 // import CharacterRound from './rounds/characterRound/characterRound';
 // import Round from './rounds/round';
-import { Round, Lobby, CharacterRound, NominationRound, VotingRound } from './rounds/index';
+import { Round, Lobby, CharacterRound, NominationRound, VotingRound, MissionRound } from './rounds/index';
 import typeGuard from '@server/utils/typeGuard';
 import { EventType, Character, RoundName } from '@server/types/enums';
 type Character = typeof Character[keyof typeof Character];
@@ -172,62 +172,31 @@ export default class Game {
     this._currentRound.vote(playerID, approves);
     this.sendUpdateToAllPlayers();
     if (!this._currentRound.hasVoteCompleted) return;
-    this._currentRound.countVotes();
+    const nominatedPlayers = this._currentRound.countVotes();
     this.sendUpdateToAllPlayers();
-    if (this._currentRound.voteSucceded) {
-      // this._currentRound = new MissionRound();
-    }
     if (!this._currentRound.voteSucceded) {
       this.incrementLeaderIndex();
       this.startRound(this._missionNumber);
     }
+    if (this._currentRound.voteSucceded) {
+      this._currentRound = new MissionRound(this._players, this._rules, this._missionNumber, nominatedPlayers);
+    }
   };
 
-  // startRound = (roundNumber: number): void => {
-  //   this._round = roundNumber;
-  //   this.beginNominationRound(0);
-  //   this.sendUpdateToAllPlayers();
-  // };
+  missionResponse = (playerID: string, isSuccessVote: boolean): void => {
+    if (!typeGuard(this._currentRound, MissionRound)) {
+      throw new Error('Cannot vote outside of voting round');
+    }
+    this._currentRound.confirmVote(playerID, isSuccessVote);
+    this.sendUpdateToAllPlayers();
+  };
 
-  // beginNominationRound = (rejections: number) => {
-  //   // if (rejections >= 5) this.badGuysWin()
-  //   this._leaderIndex = (this._leaderIndex + 1) % this._players.length;
-  //   this._stage = 'nominate';
-  //   const roundData: RoundDataByName<'nominate'> = {
-  //     roundName: 'nominate',
-  //     leader: this._players[this._leaderIndex].name,
-  //     nominatedPlayers: new Set(),
-  //   };
-  //   this._roundData = roundData;
-  // };
-
-  // isNominationRound = (round: RoundData): round is RoundDataByName<'nominate'> => {
-  //   return round.roundName === 'nominate';
-  // };
-
-  // nominate = (playerID: User['id']): void => {
-  //   const player = this.players.find(p => p.id === playerID);
-  //   const roundData = this._roundData as RoundDataByName<'nominate'>;
-  //   (roundData as RoundDataByName<'nominate'>).nominatedPlayers;
-  //   if (this._roundData.nominatedPlayers.has(player)) return;
-  //   this._roundData.nominatedPlayers.push(player);
-  //   console.log('Nominated player with id', playerID);
-  // };
-
-  // undoNominate = (playerID: User['id']): void => {
-  //   const player = this.players.find(p => p.id === playerID);
-  //   if (!this._roundData.nominatedPlayers.includes(player)) return;
-  //   this._roundData.nominatedPlayers.delete(player);
-  //   console.log('Nominated player with id', playerID);
-  // };
-
-  // confirmCharacter = (playerID: string): void => {
-  //   const player = this._players.find(p => p.id === playerID);
-  //   if (!player) return console.error(`No player found with id ${playerID}`);
-  //   player.hasConfirmedCharacter = true;
-  //   const unconfirmedPlayers = this._players.filter(p => !p.hasConfirmedCharacter).map(p => p.name);
-  //   this._roundData.unconfirmedPlayers = unconfirmedPlayers;
-  //   this.sendUpdateToAllPlayers();
-  //   if (unconfirmedPlayers.length === 0) this.startRound(1);
-  // };
+  readyForNextRound = (playerID: string) => {
+    if (!typeGuard(this._currentRound, MissionRound)) {
+      throw new Error('Cannot vote outside of voting round');
+    }
+    this._currentRound.playerIsReady(playerID);
+    if (!this._currentRound.areAllPlayersReady) return;
+    this.startRound(this._missionNumber + 1);
+  };
 }

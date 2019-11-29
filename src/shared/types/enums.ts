@@ -3,6 +3,7 @@ export type RoundNameEnum = {
   nomination: 'nomination';
   lobby: 'lobby';
   voting: 'voting';
+  mission: 'mission';
 };
 
 export type CharacterEnum = {
