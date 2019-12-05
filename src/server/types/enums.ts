@@ -6,6 +6,7 @@ export const RoundName: RoundNameEnum = {
   lobby: 'lobby',
   voting: 'voting',
   mission: 'mission',
+  missionResult: 'missionResult',
 };
 
 export const EventType: EventTypeEnum = {
@@ -21,6 +22,7 @@ export const EventType: EventTypeEnum = {
   gameUpdate: 'gameUpdate',
   nominate: 'nominate',
   vote: 'vote',
+  mission: 'mission',
 } as const;
 
 export const Character: CharacterEnum = {

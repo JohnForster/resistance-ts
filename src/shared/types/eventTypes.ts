@@ -15,6 +15,7 @@ const EventType: EventTypeEnum = {
   gameUpdate: 'gameUpdate',
   nominate: 'nominate',
   vote: 'vote',
+  mission: 'mission',
 } as const;
 type EventType = typeof EventType[keyof EventTypeEnum];
 
@@ -100,6 +101,15 @@ interface VoteEvent extends EventTemplate {
   };
 }
 
+interface MissionEvent extends EventTemplate {
+  event: typeof EventType.mission;
+  data: {
+    gameID: string;
+    playerID: string;
+    playerSucceeded: boolean;
+  };
+}
+
 export type WSEvent =
   | CreateEvent
   | JoinEvent
@@ -113,7 +123,8 @@ export type WSEvent =
   | BeginGameEvent
   | ConfirmEvent
   | NominateEvent
-  | VoteEvent;
+  | VoteEvent
+  | MissionEvent;
 
 export type EventByName<E extends EventType, T = WSEvent> = T extends { event: E } ? T : never;
 export type DataByEventName<T extends EventType, E extends WSEvent = EventByName<T>> = E['data'];

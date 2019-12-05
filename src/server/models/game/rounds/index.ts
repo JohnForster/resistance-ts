@@ -4,3 +4,4 @@ export * from './characterRound/characterRound';
 export * from './nominationRound/nominationRound';
 export * from './votingRound/votingRound';
 export * from './mission/mission';
+export * from './missionResult/missionResult';

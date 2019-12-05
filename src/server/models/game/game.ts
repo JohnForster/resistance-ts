@@ -7,7 +7,7 @@ import { EventByName } from '@shared/types/eventTypes';
 import RULES, { Rules } from '@server/data/gameRules';
 // import CharacterRound from './rounds/characterRound/characterRound';
 // import Round from './rounds/round';
-import { Round, Lobby, CharacterRound, NominationRound, VotingRound, MissionRound } from './rounds/index';
+import { Round, Lobby, CharacterRound, NominationRound, VotingRound, MissionRound, MissionResult } from './rounds';
 import typeGuard from '@server/utils/typeGuard';
 import { EventType, Character, RoundName } from '@server/types/enums';
 type Character = typeof Character[keyof typeof Character];
@@ -86,7 +86,6 @@ export default class Game {
       event: EventType.gameUpdate,
       data: {
         gameID: this._id,
-        // TODO replace this._round with this._currentRound.roundNumber? Or store in roundData?
         missionNumber: this._missionNumber,
         stage: this._currentRound.roundName,
         playerID: player.id,
@@ -180,6 +179,7 @@ export default class Game {
     }
     if (this._currentRound.voteSucceded) {
       this._currentRound = new MissionRound(this._players, this._rules, this._missionNumber, nominatedPlayers);
+      this.sendUpdateToAllPlayers();
     }
   };
 
@@ -189,14 +189,16 @@ export default class Game {
     }
     this._currentRound.confirmVote(playerID, isSuccessVote);
     this.sendUpdateToAllPlayers();
+    if (!this._currentRound.isMissionOver) return;
+    this._currentRound = new MissionResult(this._players);
   };
 
-  readyForNextRound = (playerID: string) => {
-    if (!typeGuard(this._currentRound, MissionRound)) {
-      throw new Error('Cannot vote outside of voting round');
+  readyForNextRound = (playerID: string): void => {
+    if (!typeGuard(this._currentRound, MissionResult)) {
+      throw new Error('Cannot confirm readiness outside of mission result round');
     }
     this._currentRound.playerIsReady(playerID);
-    if (!this._currentRound.areAllPlayersReady) return;
+    if (!this._currentRound.everyoneHasConfirmed) return;
     this.startRound(this._missionNumber + 1);
   };
 }

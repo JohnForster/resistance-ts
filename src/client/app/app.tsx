@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { LandingPage, CharacterPage, InGamePage, VotingPage } from './pages';
+import { LandingPage, CharacterPage, InGamePage, VotingPage, MissionPage } from './pages';
 import { EventByName } from '@shared/types/eventTypes';
 import { EventType } from '@client/types/event';
 import WSEventEmitter from './helpers/wsEventEmitter';
@@ -102,6 +102,15 @@ export default class App extends PureComponent<{}, AppState> {
     });
   };
 
+  submitMissionChoice = (playerSucceeded: boolean): void => {
+    const { gameID, playerID } = this.state.game;
+    this.state.eventEmitter.send<typeof EventType.mission>(EventType.mission, {
+      gameID,
+      playerID,
+      playerSucceeded,
+    });
+  };
+
   render(): JSX.Element {
     return (
       <>
@@ -129,6 +138,9 @@ export default class App extends PureComponent<{}, AppState> {
             </When>
             <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'voting'}>
               <VotingPage game={this.state.game} submitVote={this.submitVote} />
+            </When>
+            <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'mission'}>
+              <MissionPage game={this.state.game} completeMission={this.submitMissionChoice} />
             </When>
           </Choose>
         </Styled.AppContainer>

@@ -4,6 +4,7 @@ export type RoundNameEnum = {
   lobby: 'lobby';
   voting: 'voting';
   mission: 'mission';
+  missionResult: 'missionResult';
 };
 
 export type CharacterEnum = {
@@ -27,4 +28,5 @@ export type EventTypeEnum = {
   gameUpdate: 'gameUpdate';
   nominate: 'nominate';
   vote: 'vote';
+  mission: 'mission';
 };
