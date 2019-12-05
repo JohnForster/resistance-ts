@@ -3,7 +3,6 @@ import { Round } from '../round';
 import { MissionRoundData, MissionRoundSecretData } from '@shared/types/gameData';
 import { RoundName } from '@server/types/enums';
 import { Player } from '../../game';
-import { ENGINE_METHOD_DIGESTS } from 'constants';
 
 export class MissionRound implements Round {
   public readonly roundName = RoundName.mission;

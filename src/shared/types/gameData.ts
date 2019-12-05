@@ -81,6 +81,7 @@ export interface MissionRoundSecretData {
 
 export interface MissionResultData {
   unconfirmedPlayers: string[];
+  missionSucceeded: boolean;
 }
 
 export interface MissionResultSecretData {
