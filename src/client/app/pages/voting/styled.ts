@@ -1,9 +1,9 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 /* eslint-disable */
 
-const VoteButton = styled.button`
+export const VoteButton = styled.button`
   font-size: 48px;
-  ${(props: {isGreyed: boolean}) => props.isGreyed && css`
+  ${({isGreyed}: {isGreyed: boolean}) => isGreyed && `
       filter: grayscale(100%);
   `}
   margin: 20px;
@@ -11,20 +11,14 @@ const VoteButton = styled.button`
   background: none;
 `;
 
-const ButtonContainer = styled.div`
+export const ButtonContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: center;
 `;
 
-const ThumbContainer = styled.div`
+export const ThumbContainer = styled.div`
   width: 100%;
   font-size: 72px;
 `
-
-export default {
-  VoteButton,
-  ButtonContainer,
-  ThumbContainer,
-}

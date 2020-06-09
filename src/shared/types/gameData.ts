@@ -80,7 +80,9 @@ export interface MissionRoundSecretData {
 }
 
 export interface MissionResultData {
-  unconfirmedPlayers: string[];
+  roundName: typeof RoundName.missionResult;
+  unconfirmedPlayerNames: string[];
+  missionSucceeded: boolean;
   missionResults: {
     success: number;
     fail: number;

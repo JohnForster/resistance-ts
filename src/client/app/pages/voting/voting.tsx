@@ -3,7 +3,7 @@ import { GameData, RoundData, SecretData, VotingRoundData, VotingRoundSecretData
 import Page from '../../components/page/page';
 import { PlayerContainer } from '../lobby/styled';
 import NominateButton from '../../components/nominateButton/nominatebutton';
-import Styled from './styled';
+import * as Styled from './styled';
 
 import listString from '../../helpers/listString';
 
@@ -63,6 +63,7 @@ export class VotingPage extends PureComponent<VotingPageProps, VotingPageState> 
         <h3>to undertake this mission. Do you think this mission should go ahead?</h3>
         <Choose>
           <When condition={!!this.secretData}>
+            {/* When the player has already made a decision. */}
             <Styled.ThumbContainer>{this.secretData.playerApproves ? '👍' : '👎'}</Styled.ThumbContainer>
             <p>Waiting for {listString(this.roundData.unconfirmedPlayerNames)}</p>
           </When>

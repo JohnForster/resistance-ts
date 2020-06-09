@@ -4,18 +4,18 @@ import Page from '../../components/page/page';
 import { PlayerContainer } from '../lobby/styled';
 import NominateButton from '../../components/nominateButton/nominatebutton';
 
-export interface InGamePageProps {
+export interface NominationPageProps {
   game: GameData;
   submitNominations: (playerIDs: Set<string>) => void;
 }
 
-interface InGamePageState {
+interface NominationPageState {
   selectedPlayers: Set<string>;
 }
 
 // ! REFACTOR INTO NOMINATION/VOTING ETC. COMPONENTS
-export class InGamePage extends PureComponent<InGamePageProps, InGamePageState> {
-  state: InGamePageState = {
+export class NominationPage extends PureComponent<NominationPageProps, NominationPageState> {
+  state: NominationPageState = {
     selectedPlayers: new Set<string>(),
   };
 

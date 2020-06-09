@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { LandingPage, CharacterPage, InGamePage, VotingPage, MissionPage } from './pages';
+import { LandingPage, CharacterPage, NominationPage, VotingPage, MissionPage } from './pages';
 import { EventByName } from '@shared/types/eventTypes';
 import { EventType } from '@client/types/event';
 import WSEventEmitter from './helpers/wsEventEmitter';
@@ -7,6 +7,7 @@ import LobbyPage from './pages/lobby/lobby';
 import { GameData } from '@shared/types/gameData';
 
 import * as Styled from './styles/styled';
+import MissionResultPage from './pages/missionResult/missionResult';
 interface AppState {
   game: GameData;
   status: 'idle' | 'pending' | 'inLobby' | 'inGame';
@@ -111,6 +112,11 @@ export default class App extends PureComponent<{}, AppState> {
     });
   };
 
+  missionResultConfirmReady = (): void => {
+    const { gameID, playerID } = this.state.game;
+    this.state.eventEmitter.send<typeof EventType.confirm>(EventType.confirm, { gameID, playerID });
+  };
+
   render(): JSX.Element {
     return (
       <>
@@ -134,13 +140,16 @@ export default class App extends PureComponent<{}, AppState> {
               <CharacterPage game={this.state.game} confirmCharacter={this.confirmCharacter} />
             </When>
             <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'nomination'}>
-              <InGamePage game={this.state.game} submitNominations={this.submitNominations} />
+              <NominationPage game={this.state.game} submitNominations={this.submitNominations} />
             </When>
             <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'voting'}>
               <VotingPage game={this.state.game} submitVote={this.submitVote} />
             </When>
             <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'mission'}>
               <MissionPage game={this.state.game} completeMission={this.submitMissionChoice} />
+            </When>
+            <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'missionResult'}>
+              <MissionResultPage game={this.state.game} confirmReady={this.missionResultConfirmReady} />
             </When>
           </Choose>
         </Styled.AppContainer>
