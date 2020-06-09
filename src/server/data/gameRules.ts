@@ -19,7 +19,7 @@ const devRules: { [playres: number]: Rules } = {
         failsRequired: 1,
       },
       2: {
-        players: 3,
+        players: 2,
         failsRequired: 1,
       },
       3: {
@@ -27,11 +27,11 @@ const devRules: { [playres: number]: Rules } = {
         failsRequired: 1,
       },
       4: {
-        players: 3,
+        players: 2,
         failsRequired: 1,
       },
       5: {
-        players: 3,
+        players: 2,
         failsRequired: 1,
       },
     },
@@ -90,7 +90,7 @@ const devRules: { [playres: number]: Rules } = {
   },
 };
 
-const prodRules: { [playres: number]: Rules } = {
+const prodRules: { [players: number]: Rules } = {
   5: {
     numberOfSpies: 2,
     numberOfResistance: 3,

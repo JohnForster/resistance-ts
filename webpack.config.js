@@ -12,7 +12,7 @@ const isDev = process.env.NODE_ENV === 'development'
 const DEV_API_ADDRESS = `${ip.address()}:${process.env.PORT}`
 
 console.log('NODE_ENV:', chalk.bold.yellow(JSON.stringify(process.env.NODE_ENV)))
-console.log('    PORT:', chalk.bold.yellow(process.env.PORT))
+if (isDev) console.log('    PORT:', chalk.bold.yellow(process.env.PORT))
 
 module.exports = {
   mode: process.env.NODE_ENV,
