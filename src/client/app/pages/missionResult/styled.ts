@@ -52,7 +52,8 @@ export const Result = styled.div`
 // eslint-disable-next-line
 // @ts-ignore
 export const OverallResult = styled.h1`
-  font-size: 100px;
+  // TODO add media query here
+  font-size: 48px;
 
   animation: slam 1s;
   animation-timing-function: ease-in;

@@ -203,7 +203,8 @@ export default class Game {
     this.sendUpdateToAllPlayers();
     if (!this._currentRound.isMissionOver) return;
     // ! KEEP TRACK OF SCORING HERE. this.progress.rounds[roundNumber] = this._currentRound.allVotes
-    const missionSucceeded = this._rules.missions[this._missionNumber].failsRequired < this._currentRound.allVotes.fail;
+    const failsRequired = this._rules.missions[this._missionNumber].failsRequired;
+    const missionSucceeded = this._currentRound.allVotes.fail < failsRequired;
     this._currentRound = new MissionResult(this._players, this._currentRound.allVotes, missionSucceeded);
     this.sendUpdateToAllPlayers();
   };
