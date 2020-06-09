@@ -2,6 +2,7 @@ import express, { Response, Request } from 'express';
 import path from 'path';
 import createWebSocket from 'express-ws';
 import cookieParser from 'cookie-parser';
+import expressStaticGzip from 'express-static-gzip';
 import chalk from 'chalk';
 
 import getLocalIP from './utils/getLocalIP';
@@ -28,7 +29,12 @@ app.ws('/ws', wsEventHandler.middleWare);
 // Publicly expose the '/dist' folder
 const middlePath = isDev ? '../../build' : '';
 const publicPath = path.join(__dirname, middlePath, '/dist');
-app.use(express.static(publicPath, { maxAge: '1h' }));
+app.use(
+  '/',
+  expressStaticGzip(publicPath, {
+    enableBrotli: true,
+  }),
+);
 
 // Send index.html when visiting '/'
 app.get('/', (req: Request, res: Response) => {

@@ -7,6 +7,7 @@ const webpack = require('webpack')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HTMLWebpackPlugin = require('html-webpack-plugin')
+const CompressionPlugin = require('compression-webpack-plugin')
 
 const isDev = process.env.NODE_ENV === 'development'
 const DEV_API_ADDRESS = `${ip.address()}:${process.env.PORT}`
@@ -43,6 +44,7 @@ module.exports = {
     extensions: ['.ts', '.js', '.tsx', '.jsx', '.json']
   },
   plugins: [
+    new CompressionPlugin(),
     new CleanWebpackPlugin (),
     new HTMLWebpackPlugin ({
       template: 'src/client/index.html',
