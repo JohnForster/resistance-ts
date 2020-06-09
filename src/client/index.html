@@ -2,11 +2,24 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
     <link rel="shortcut icon" href="assets/favicon.ico" type="image/png">
     <title>Resistance</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css?family=Turret+Road');
+      .background {
+        position: fixed;
+        overflow: hidden;
+        top: 50%;
+        left: 40%;
+        transform: translate(-40%, -50%);
+        z-index: -1;
+        filter: blur(3px) brightness(0.9);
+      }
+    </style>
   </head>
   <body>
+    <img src='assets/bg.jpg' class="background" alt="">
     <div id="root" ></div>
   </body>
 </html>

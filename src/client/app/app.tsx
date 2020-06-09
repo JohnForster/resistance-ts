@@ -56,7 +56,7 @@ export default class App extends PureComponent<{}, AppState> {
 
   onPlayerUpdate = (data: EventByName<typeof EventType.playerData>['data']): void => {
     // Use a library for dealing with cookies?
-    console.log('setting cookie && state');
+    console.log(`Setting player cookie: ${data.playerID.slice(0, 6)}...`);
     document.cookie = `playerID=${data.playerID}`;
     this.setState({ player: data });
   };
@@ -121,7 +121,6 @@ export default class App extends PureComponent<{}, AppState> {
   render(): JSX.Element {
     return (
       <>
-        <Styled.BackgroundImage src="/assets/bg.jpg" />
         <Styled.Global />
         <Styled.AppContainer>
           <Choose>

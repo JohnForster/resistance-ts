@@ -15,15 +15,19 @@ Replace string union types with enums ✅
 Add alias for @shared, @client and @server ✅
 Replace event types with EventByName<'eventName'> ✅
 Types for RoundData ✅
+Implement NOMINATION and VOTING ✅
+Implement MISSIONS ✅
+Prevent homescreen from flashing up before changing to latest screen? ✅
 
 ______________________________________________________________________________________
 FEATURES:
 
-Implement NOMINATION and VOTING
-Implement MISSIONS
-Add quit game functionality in lobby
+Show mission progress
+Add quit game functionality in lobby/elsewhere
+Add endgame pages
 Remove hostID
-Prevent homescreen from flashing up before changing to latest screen?
+Character selection
+Characters
 
 ______________________________________________________________________________________
 BUGS:

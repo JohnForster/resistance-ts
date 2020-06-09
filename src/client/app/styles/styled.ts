@@ -3,13 +3,11 @@ import styled, { createGlobalStyle } from 'styled-components';
 const DARK_BLUE = '#1C2C59';
 
 export const Global = createGlobalStyle`
-    @import url('https://fonts.googleapis.com/css?family=Turret+Road');
-
   body {
     font-family: 'Turret Road';
     text-shadow: 2px 2px 8px ${DARK_BLUE}
     margin: 0;
-    height: 100%;
+    /* height: 100%; */
     align-self:center;
     color:white;
     background-color: ${DARK_BLUE}
@@ -61,14 +59,4 @@ export const AppContainer = styled.div`
   input {
     border: 1px solid black;
   }
-`;
-
-export const BackgroundImage = styled.img`
-  position: fixed;
-  overflow: hidden;
-  top: 50%;
-  left: 40%;
-  transform: translate(-40%, -50%);
-  z-index: -1;
-  filter: blur(3px) brightness(0.9);
 `;

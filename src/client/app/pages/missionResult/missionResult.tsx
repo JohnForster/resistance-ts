@@ -24,17 +24,20 @@ const MissionResultPage: React.FC<MissionResultProps> = (props: MissionResultPro
 
   const numberOfSuccesses = roundData.missionResults.success;
   const numberOfFailures = roundData.missionResults.fail;
-  // const numberOfSuccesses = 4;
-  // const numberOfFailures = 1;
 
-  const resultArray: string[] = [...Array(numberOfSuccesses).fill('✊'), ...Array(numberOfFailures).fill('💀')];
+  const buildArray = (success: number, fail: number): string[] => {
+    // TODO If there is only one failure and two are required, make the failure penultimate.
+    return [...Array(success).fill('✊'), ...Array(fail).fill('💀')];
+  };
+
+  const resultArray = buildArray(numberOfSuccesses, numberOfFailures);
 
   return (
     <Page>
       <h1>Mission No.{props.game.missionNumber} Results:</h1>
       <Styled.Results votes={resultArray}>
-        {resultArray.map(r => (
-          <Styled.Result key={`${Math.random()}`}>{r}</Styled.Result>
+        {resultArray.map((r, i) => (
+          <Styled.Result key={`result-${i}`}>{r}</Styled.Result>
         ))}
       </Styled.Results>
       <Styled.OverallResult numOfVotes={resultArray.length}>

@@ -33,11 +33,11 @@ module.exports = {
           }
         }
       },
-      // {
-      //   test: /\.js$/,
-      //   use: ['source-map-loader'],
-      //   enforce: 'pre',
-      // },
+      {
+        test: /\.[tj]sx?$/,
+        use: ['source-map-loader'],
+        enforce: 'pre',
+      },
     ],
   },
   resolve: {

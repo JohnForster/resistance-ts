@@ -8,4 +8,14 @@ export const PageContainer = styled.div`
   width: 80%;
   max-width: 60vh;
   padding-top: 5vh;
+  animation: fade-in 0.5s;
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0%;
+    }
+    100% {
+      opacity: 100%;
+    }
+  }
 `;
