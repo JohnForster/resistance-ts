@@ -106,7 +106,7 @@ export default class Game {
 
   addPlayer = (player: User, isHost = false): void => {
     if (!typeGuard(this._currentRound, Lobby)) throw new Error('Lobby is closed');
-    this._currentRound.addPlayer(player, isHost);
+    if (!this._players.find(p => p.id === player.id)) this._currentRound.addPlayer(player, isHost);
     if (isHost && !this._host) this._host = player;
     this.sendUpdateToAllPlayers();
   };
@@ -190,7 +190,8 @@ export default class Game {
     this._currentRound.confirmVote(playerID, isSuccessVote);
     this.sendUpdateToAllPlayers();
     if (!this._currentRound.isMissionOver) return;
-    this._currentRound = new MissionResult(this._players);
+    // ! KEEP TRACK OF SCORING HERE. this.progress.rounds[roundNumber] = this._currentRound.allVotes
+    this._currentRound = new MissionResult(this._players, this._currentRound.allVotes);
   };
 
   readyForNextRound = (playerID: string): void => {
@@ -198,6 +199,7 @@ export default class Game {
       throw new Error('Cannot confirm readiness outside of mission result round');
     }
     this._currentRound.playerIsReady(playerID);
+    this.sendUpdateToAllPlayers();
     if (!this._currentRound.everyoneHasConfirmed) return;
     this.startRound(this._missionNumber + 1);
   };

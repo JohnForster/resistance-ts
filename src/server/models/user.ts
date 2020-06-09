@@ -27,6 +27,8 @@ export default class User {
   };
 
   public send = (payload: WSEvent): void => {
-    this.ws.send(JSON.stringify(payload));
+    this.ws.send(JSON.stringify(payload), err => {
+      console.warn(`Sending failed to player ${this.id.slice(0, 6)}... (${this.name}) ${err}`);
+    });
   };
 }

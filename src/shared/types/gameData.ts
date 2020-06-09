@@ -72,7 +72,7 @@ export interface CharacterSecretData {
 export interface MissionRoundData {
   roundName: typeof RoundName.mission;
   nominatedPlayers: { name: string; id: string }[];
-  unconfirmedPlayers: string[];
+  playersLeftToVote: string[];
 }
 
 export interface MissionRoundSecretData {
@@ -81,7 +81,10 @@ export interface MissionRoundSecretData {
 
 export interface MissionResultData {
   unconfirmedPlayers: string[];
-  missionSucceeded: boolean;
+  missionResults: {
+    success: number;
+    fail: number;
+  };
 }
 
 export interface MissionResultSecretData {

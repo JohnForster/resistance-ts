@@ -33,32 +33,28 @@ export class MissionRound implements Round {
     if (this._votes.size > this._players.length) throw new Error('WTF');
     return this._votes.size === this._players.length;
   }
-  public playerIsReady = (playerID: string): void => {
-    const player = this._players.find(p => p.id === playerID);
-    if (!player) return console.error(`player with id: ${playerID} is not a part of this game`);
-    this._readyPlayers.add(player);
-  };
+  // public playerIsReady = (playerID: string): void => {
+  //   const player = this._players.find(p => p.id === playerID);
+  //   if (!player) return console.error(`player with id: ${playerID} is not a part of this game`);
+  //   this._readyPlayers.add(player);
+  // };
 
-  public get areAllPlayersReady(): boolean {
-    return this._readyPlayers.size === this._players.length;
-  }
+  // public get areAllPlayersReady(): boolean {
+  //   return this._readyPlayers.size === this._players.length;
+  // }
 
   constructor(players: Player[], rules: Rules, missionNumber: number, nominatedPlayers: Player[]) {
     this._players = players;
-    console.log('this._players:', this._players);
     this._rules = rules;
     this._missionNumber = missionNumber;
     this._nominatedPlayers = nominatedPlayers;
   }
 
-  public getRoundData = (): MissionRoundData => {
-    console.log('inside getRoundData. this._players:', this._players);
-    return {
-      roundName: RoundName.mission,
-      nominatedPlayers: this._nominatedPlayers.map(({ name, id }) => ({ name, id })),
-      unconfirmedPlayers: this._players.filter(p => this._readyPlayers.has(p)).map(p => p.name),
-    };
-  };
+  public getRoundData = (): MissionRoundData => ({
+    roundName: RoundName.mission,
+    nominatedPlayers: this._nominatedPlayers.map(({ name, id }) => ({ name, id })),
+    playersLeftToVote: this._nominatedPlayers.filter(p => !this._votes.has(p.id)).map(p => p.name),
+  });
 
   public getSecretData = (playerID: string): MissionRoundSecretData => ({
     hasVoted: this._votes.has(playerID),
