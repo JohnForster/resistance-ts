@@ -2,7 +2,6 @@ import { Round } from '../round';
 import { Player } from '../../game';
 import { MissionResultData, MissionResultSecretData } from '@shared/types/gameData';
 import { RoundName } from '@server/types/enums';
-import { Key } from 'readline';
 
 export class MissionResult implements Round {
   roundName = RoundName.missionResult;
@@ -20,6 +19,7 @@ export class MissionResult implements Round {
   };
 
   constructor(players: Player[], missionResults: { success: number; fail: number }) {
+    console.log('Creating a MissionResult round...');
     this._players = players;
     this._confirmedPlayers = new Set();
     this._missionResults = missionResults;

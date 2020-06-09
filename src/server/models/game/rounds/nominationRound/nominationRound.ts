@@ -6,6 +6,7 @@ import { Player } from '../../game';
 
 export class NominationRound implements Round {
   public readonly roundName = RoundName.nomination;
+  public readonly nominationRoundNumber: number;
   public isActive = true;
 
   private readonly _players: Player[];
@@ -17,11 +18,18 @@ export class NominationRound implements Round {
     return this._leaderIndex;
   }
 
-  constructor(players: Player[], rules: Rules, roundNumber: number, leaderIndex: number) {
+  constructor(
+    players: Player[],
+    rules: Rules,
+    roundNumber: number,
+    leaderIndex: number,
+    nominationRoundNumber: number,
+  ) {
     this._players = players;
     this._rules = rules;
     this._roundNumber = roundNumber;
     this._leaderIndex = leaderIndex;
+    this.nominationRoundNumber = nominationRoundNumber;
   }
 
   public getRoundData = (): NominationRoundData => ({

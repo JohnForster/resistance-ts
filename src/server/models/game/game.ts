@@ -144,14 +144,23 @@ export default class Game {
 
   startRound = (roundNumber: number): void => {
     console.log('Starting round', roundNumber);
-    const nominationRound = new NominationRound(this._players, this._rules, roundNumber, this._leaderIndex);
-    this._currentRound = nominationRound;
-    this._missionNumber = roundNumber;
-    // nominationRound.beginNominations(0);
+    this.beginNominationRound(1);
     this.sendUpdateToAllPlayers();
   };
 
-  nominate = (nominatedPlayerIDs: string[]): void => {
+  beginNominationRound = (roundNumber: number, nominationRoundNumber = 1): void => {
+    const nominationRound = new NominationRound(
+      this._players,
+      this._rules,
+      roundNumber,
+      this._leaderIndex,
+      nominationRoundNumber,
+    );
+    this._currentRound = nominationRound;
+    this._missionNumber = roundNumber;
+  };
+
+  nominatePlayers = (nominatedPlayerIDs: string[]): void => {
     if (!typeGuard(this._currentRound, NominationRound)) {
       throw new Error('Cannot nominate players outside of nomination round');
     }
@@ -159,7 +168,7 @@ export default class Game {
     // TODO Check players are in this game?
     // TODO Check the right number of players are nominated etc.
     // ! Hard coded value here
-    const votingRoundNumber = 1;
+    const votingRoundNumber = this._currentRound.nominationRoundNumber;
     this._currentRound = new VotingRound(this._players, this._rules, votingRoundNumber, nominatedPlayerIDs);
     this.sendUpdateToAllPlayers();
   };
@@ -170,17 +179,20 @@ export default class Game {
     }
     this._currentRound.vote(playerID, approves);
     this.sendUpdateToAllPlayers();
+
     if (!this._currentRound.hasVoteCompleted) return;
+
     const nominatedPlayers = this._currentRound.countVotes();
     this.sendUpdateToAllPlayers();
     if (!this._currentRound.voteSucceded) {
       this.incrementLeaderIndex();
-      this.startRound(this._missionNumber);
+      this.beginNominationRound(this._missionNumber, this._currentRound.votingRoundNumber + 1);
     }
     if (this._currentRound.voteSucceded) {
       this._currentRound = new MissionRound(this._players, this._rules, this._missionNumber, nominatedPlayers);
-      this.sendUpdateToAllPlayers();
     }
+
+    this.sendUpdateToAllPlayers();
   };
 
   missionResponse = (playerID: string, isSuccessVote: boolean): void => {
@@ -192,9 +204,10 @@ export default class Game {
     if (!this._currentRound.isMissionOver) return;
     // ! KEEP TRACK OF SCORING HERE. this.progress.rounds[roundNumber] = this._currentRound.allVotes
     this._currentRound = new MissionResult(this._players, this._currentRound.allVotes);
+    this.sendUpdateToAllPlayers();
   };
 
-  readyForNextRound = (playerID: string): void => {
+  readyForNextMission = (playerID: string): void => {
     if (!typeGuard(this._currentRound, MissionResult)) {
       throw new Error('Cannot confirm readiness outside of mission result round');
     }

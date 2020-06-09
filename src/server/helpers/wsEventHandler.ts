@@ -122,7 +122,7 @@ export default class WSEventHandler {
     if (user.id !== data.playerID) return console.error('Recieved playerID does not match stored playerID');
     const game = this.games.get(user.game.id);
     if (game.currentRound !== RoundName.nomination) return console.error('Can only nominate during nomination stage');
-    game.nominate(data.nominatedPlayerIDs);
+    game.nominatePlayers(data.nominatedPlayerIDs);
   };
 
   private handleVote = (user: User, data: EventByName<typeof EventType.vote>['data']): void => {
