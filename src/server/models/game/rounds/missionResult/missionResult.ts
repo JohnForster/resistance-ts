@@ -28,8 +28,6 @@ export class MissionResult implements Round {
 
   getRoundData = (): MissionResultData => {
     const unconfirmedPlayerNames = this._players.filter(p => !this._confirmedPlayers.has(p)).map(p => p.name);
-    console.log('unconfirmedPlayers:', unconfirmedPlayerNames);
-    console.log('this._confirmedPlayers:', this._confirmedPlayers);
     return {
       roundName: this.roundName,
       missionResults: this._missionResults,
