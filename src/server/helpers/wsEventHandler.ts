@@ -50,6 +50,7 @@ export default class WSEventHandler {
     if (event === EventType.nominate) return this.nominatePlayer(user, data);
     if (event === EventType.vote) return this.handleVote(user, data);
     if (event === EventType.mission) return this.handleMissionVote(user, data);
+    if (event === EventType.continue) return this.handleReadyForNextRound(user, data);
   };
 
   private createGame = (user: User /* data: EventByName<typeof EventType.createGame>['data'] */): void => {
@@ -135,6 +136,13 @@ export default class WSEventHandler {
     const game = this.games.get(data.gameID);
     if (game.currentRound !== RoundName.mission)
       return console.error('Can only complete a mission during the mission stage');
-    game.missionResponse(data.playerID, data.playerSucceeded);
+    game.missionResponse(data.playerID, data.playerVotedToSucceed);
+  };
+
+  private handleReadyForNextRound = (user: User, data: EventByName<typeof EventType.continue>['data']): void => {
+    const game = this.games.get(data.gameID);
+    if (game.currentRound != RoundName.missionResult)
+      return console.error('Can only continue during the mission result stage');
+    game.readyForNextMission(data.playerID);
   };
 }

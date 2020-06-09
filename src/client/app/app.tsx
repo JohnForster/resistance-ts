@@ -103,18 +103,19 @@ export default class App extends PureComponent<{}, AppState> {
     });
   };
 
-  submitMissionChoice = (playerSucceeded: boolean): void => {
+  submitMissionChoice = (playerVotedToSucceed: boolean): void => {
     const { gameID, playerID } = this.state.game;
     this.state.eventEmitter.send<typeof EventType.mission>(EventType.mission, {
       gameID,
       playerID,
-      playerSucceeded,
+      playerVotedToSucceed,
     });
   };
 
   missionResultConfirmReady = (): void => {
     const { gameID, playerID } = this.state.game;
-    this.state.eventEmitter.send<typeof EventType.confirm>(EventType.confirm, { gameID, playerID });
+    console.log(EventType.continue);
+    this.state.eventEmitter.send<typeof EventType.continue>(EventType.continue, { gameID, playerID });
   };
 
   render(): JSX.Element {

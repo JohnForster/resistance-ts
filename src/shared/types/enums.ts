@@ -29,4 +29,5 @@ export type EventTypeEnum = {
   nominate: 'nominate';
   vote: 'vote';
   mission: 'mission';
+  continue: 'continue';
 };

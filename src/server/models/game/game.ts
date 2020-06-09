@@ -142,22 +142,22 @@ export default class Game {
     if (this._currentRound.isReadyToStart) this.startRound(1);
   };
 
-  startRound = (roundNumber: number): void => {
-    console.log('Starting round', roundNumber);
-    this.beginNominationRound(1);
+  startRound = (missionNumber: number): void => {
+    console.log('Starting round', missionNumber);
+    this.beginNominationRound(missionNumber);
     this.sendUpdateToAllPlayers();
   };
 
-  beginNominationRound = (roundNumber: number, nominationRoundNumber = 1): void => {
+  beginNominationRound = (missionNumber: number, nominationRoundNumber = 1): void => {
     const nominationRound = new NominationRound(
       this._players,
       this._rules,
-      roundNumber,
+      missionNumber,
       this._leaderIndex,
       nominationRoundNumber,
     );
     this._currentRound = nominationRound;
-    this._missionNumber = roundNumber;
+    this._missionNumber = missionNumber;
   };
 
   nominatePlayers = (nominatedPlayerIDs: string[]): void => {
@@ -167,7 +167,6 @@ export default class Game {
     console.log('Nominated player ids:', ...nominatedPlayerIDs);
     // TODO Check players are in this game?
     // TODO Check the right number of players are nominated etc.
-    // ! Hard coded value here
     const votingRoundNumber = this._currentRound.nominationRoundNumber;
     this._currentRound = new VotingRound(this._players, this._rules, votingRoundNumber, nominatedPlayerIDs);
     this.sendUpdateToAllPlayers();
@@ -186,7 +185,8 @@ export default class Game {
     this.sendUpdateToAllPlayers();
     if (!this._currentRound.voteSucceded) {
       this.incrementLeaderIndex();
-      this.beginNominationRound(this._missionNumber, this._currentRound.votingRoundNumber + 1);
+      const votingRound = this._currentRound.votingRoundNumber + 1;
+      this.beginNominationRound(this._missionNumber, votingRound);
     }
     if (this._currentRound.voteSucceded) {
       this._currentRound = new MissionRound(this._players, this._rules, this._missionNumber, nominatedPlayers);
@@ -203,7 +203,8 @@ export default class Game {
     this.sendUpdateToAllPlayers();
     if (!this._currentRound.isMissionOver) return;
     // ! KEEP TRACK OF SCORING HERE. this.progress.rounds[roundNumber] = this._currentRound.allVotes
-    this._currentRound = new MissionResult(this._players, this._currentRound.allVotes);
+    const missionSucceeded = this._rules.missions[this._missionNumber].failsRequired < this._currentRound.allVotes.fail;
+    this._currentRound = new MissionResult(this._players, this._currentRound.allVotes, missionSucceeded);
     this.sendUpdateToAllPlayers();
   };
 

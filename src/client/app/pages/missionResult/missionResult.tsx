@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 
 import Page from '../../components/page/page';
 import { isMissionResultRound } from '../../helpers/typeGuards';
@@ -13,19 +13,19 @@ export interface MissionResultProps {
 }
 
 const MissionResultPage: React.FC<MissionResultProps> = (props: MissionResultProps) => {
-  const [playerApproves, setPlayerApproves] = useState<boolean>(null);
+  const [playerWantsToContinue, setPlayerWantsToContinue] = useState<boolean>(false);
   const roundData = props.game.roundData;
   if (!isMissionResultRound(roundData)) throw new Error("This isn't mission result data!");
 
   const confirm = (): void => {
-    setPlayerApproves(true);
+    setPlayerWantsToContinue(true);
     props.confirmReady();
   };
 
-  // const numberOfSuccesses = roundData.missionResults.success;
-  // const numberOfFailures = roundData.missionResults.fail;
-  const numberOfSuccesses = 4;
-  const numberOfFailures = 1;
+  const numberOfSuccesses = roundData.missionResults.success;
+  const numberOfFailures = roundData.missionResults.fail;
+  // const numberOfSuccesses = 4;
+  // const numberOfFailures = 1;
 
   const resultArray: string[] = [...Array(numberOfSuccesses).fill('✊'), ...Array(numberOfFailures).fill('💀')];
 
@@ -40,10 +40,10 @@ const MissionResultPage: React.FC<MissionResultProps> = (props: MissionResultPro
       <Styled.OverallResult numOfVotes={resultArray.length}>
         {roundData.missionSucceeded ? 'MISSION ACCOMPLISHED' : 'MISSION FAILED'}
       </Styled.OverallResult>
-      <button disabled={playerApproves} onClick={confirm}>
+      <button disabled={playerWantsToContinue} onClick={confirm}>
         Continue
       </button>
-      <If condition={!!(playerApproves && roundData.unconfirmedPlayerNames)}>
+      <If condition={!!(playerWantsToContinue && roundData.unconfirmedPlayerNames)}>
         <p>Waiting for {listString(roundData.unconfirmedPlayerNames, 'and')} to confirm...</p>
       </If>
     </Page>
