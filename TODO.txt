@@ -32,6 +32,7 @@ Characters
 ______________________________________________________________________________________
 BUGS:
 
+No feedback on submitting mission choice.
 No handling of 'disconnected' event in server
 Opening two tabs allows one user to have two websocket connections open? - Close one websocket on opening another.
 
