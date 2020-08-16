@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { GameData, RoundData, NominationRoundData } from '@shared/types/gameData';
 import Page from '../../components/page/page';
+import ProgressBar from '../../components/progressBar/progressBar';
 import { PlayerContainer } from '../lobby/styled';
 import NominateButton from '../../components/nominateButton/nominatebutton';
 
@@ -12,6 +13,18 @@ export interface NominationPageProps {
 interface NominationPageState {
   selectedPlayers: Set<string>;
 }
+const rounds: [number, number][] = [
+  [3, 1],
+  [4, 1],
+  [4, 1],
+  [5, 2],
+  [5, 1],
+];
+
+const mockRound = {
+  history: [true, false],
+  rounds,
+};
 
 // ! REFACTOR INTO NOMINATION/VOTING ETC. COMPONENTS
 export class NominationPage extends PureComponent<NominationPageProps, NominationPageState> {
@@ -48,6 +61,7 @@ export class NominationPage extends PureComponent<NominationPageProps, Nominatio
   render(): JSX.Element {
     return (
       <Page>
+        <ProgressBar {...mockRound} />
         <Choose>
           <When condition={this.props.game.isLeader}>
             <h2>You are the leader!</h2>
