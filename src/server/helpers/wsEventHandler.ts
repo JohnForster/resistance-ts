@@ -17,17 +17,19 @@ export default class WSEventHandler {
 
   public middleWare: WebsocketRequestHandler = (ws, req): void => {
     const playerID = req.cookies.playerID;
-    const isExistingUser = this.users.has(playerID);
-    console.log('req.cookie:', req.cookies);
-    console.log(`${isExistingUser ? 'Player found' : 'does not exist'} with ID '${playerID}'`);
-    if (isExistingUser) {
-      const user = this.users.get(playerID);
+    const user = this.users.get(playerID);
+    console.log(
+      `Player ${user ? 'found' : 'does not exist'} with ID '${playerID.slice(0, 8)}...'${
+        user ? ` (${user.name})` : ''
+      }`,
+    );
+    if (user) {
       user.ws = ws.on('message', this.handleMessage(user));
       user.sendPlayerData();
       // TODO refactor to user.sendGameUpdate()
-      if (user.game) user.game.sendGameUpdate(user);
+      if (user.game) user.sendGameUpdate();
     } else {
-      console.log(new Date() + ' Recieved a new connection from origin ' + req.ip);
+      console.log(new Date().toISOString() + ' Recieved a new connection from origin ' + req.ip);
       const user = this.createNewUser(ws);
       user.ws = ws.on('message', this.handleMessage(user));
     }

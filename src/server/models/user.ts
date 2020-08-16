@@ -32,4 +32,8 @@ export default class User {
       console.warn(`Sending failed to player ${this.id.slice(0, 6)}... (${this.name}) ${err}`);
     });
   };
+
+  public sendGameUpdate = () => {
+    this.game.sendGameUpdate(this);
+  };
 }

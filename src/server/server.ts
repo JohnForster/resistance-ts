@@ -10,7 +10,7 @@ import User from './models/user';
 import Game from './models/game/game';
 import WSEventHandler from './helpers/wsEventHandler';
 
-console.log(chalk.blue('-'.repeat(100)));
+console.log(chalk.blue('-'.repeat(80)));
 
 const isDev = process.env.NODE_ENV === 'development';
 

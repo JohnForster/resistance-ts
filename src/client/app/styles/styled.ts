@@ -6,7 +6,7 @@ const DARK_BLUE = '#1C2C59';
 export const Global = createGlobalStyle`
   body {
     font-family: 'Turret Road';
-    text-shadow: 2px 2px 8px ${DARK_BLUE}
+    text-shadow: 2px 2px 8px ${DARK_BLUE};
     margin: 0;
     /* height: 100%; */
     align-self:center;

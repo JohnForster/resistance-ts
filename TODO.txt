@@ -18,12 +18,13 @@ Types for RoundData ✅
 Implement NOMINATION and VOTING ✅
 Implement MISSIONS ✅
 Prevent homescreen from flashing up before changing to latest screen? ✅
+Show mission progress ✅
 
 ______________________________________________________________________________________
 FEATURES:
 
-Show mission progress
 Add quit game functionality in lobby/elsewhere
+Add voting results page - show who voted for what.
 Add endgame pages
 Remove hostID
 Character selection
@@ -32,9 +33,12 @@ Characters
 ______________________________________________________________________________________
 BUGS:
 
+Small screens probably cannot handle large games. (Allow scrolling?)
+Small screens cannot fully show the nomination vote page with long names.
 No feedback on submitting mission choice.
 No handling of 'disconnected' event in server
 Opening two tabs allows one user to have two websocket connections open? - Close one websocket on opening another.
+Probably need to close/clear games that haven't been used in a while.
 
 ______________________________________________________________________________________
 TECH DEBT:
