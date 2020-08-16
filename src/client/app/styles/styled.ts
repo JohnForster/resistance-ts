@@ -1,4 +1,5 @@
 import styled, { createGlobalStyle } from 'styled-components';
+import responsive from '../helpers/responsive';
 
 const DARK_BLUE = '#1C2C59';
 
@@ -48,14 +49,28 @@ export const Global = createGlobalStyle`
   }
 `;
 
+const h1Margins = [17, 21.4, 21.4];
+const h2Margins = [14, 19.9, 19.9];
+const h3Margins = [11, 18.7, 18.7];
 export const AppContainer = styled.div`
   display: flex;
   justify-content: center;
   text-align: center;
   height: 80vh;
-  h1 {
-    font-family: 'Turret Road';
-  }
+  ${responsive`
+    h1 {
+      margin-top: ${h1Margins}px;
+      margin-bottom: ${h1Margins}px;
+    }
+    h2 {
+      margin-top: ${h2Margins}px;
+      margin-bottom: ${h2Margins}px;
+    }
+    h3 {
+      margin-top: ${h3Margins}px;
+      margin-bottom: ${h3Margins}px;
+    }
+  `}
   input {
     border: 1px solid black;
   }

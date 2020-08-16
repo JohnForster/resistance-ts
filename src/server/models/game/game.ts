@@ -20,6 +20,16 @@ export interface Player extends User {
   isLeader?: boolean;
 }
 
+export interface Progress {
+  missions: {
+    result: boolean;
+    votes: {
+      success: number;
+      fail: number;
+    };
+  }[];
+}
+
 // TODO separate stages into separate classes?
 export default class Game {
   private _id: string;
@@ -33,6 +43,9 @@ export default class Game {
   // private _stage: RoundName = 'lobby';
   private _leaderIndex = 0;
   private _rules: Rules;
+  private _progress: Progress = {
+    missions: [],
+  };
 
   // ? Could be a set?
   // ? private _characters: Set<Character>;
@@ -96,6 +109,8 @@ export default class Game {
         players: this._players.map(p => ({ name: p.name, id: p.id })),
         roundData,
         secretData,
+        history: this._progress.missions.map(m => m.result),
+        rounds: Object.entries(this._rules?.missions || []).map(([, o]) => [o.players, o.failsRequired]),
       },
     };
   };
@@ -202,9 +217,12 @@ export default class Game {
     this._currentRound.confirmVote(playerID, isSuccessVote);
     this.sendUpdateToAllPlayers();
     if (!this._currentRound.isMissionOver) return;
-    // ! KEEP TRACK OF SCORING HERE. this.progress.rounds[roundNumber] = this._currentRound.allVotes
     const failsRequired = this._rules.missions[this._missionNumber].failsRequired;
     const missionSucceeded = this._currentRound.allVotes.fail < failsRequired;
+    this._progress.missions[this._missionNumber - 1] = {
+      result: missionSucceeded,
+      votes: this._currentRound.allVotes,
+    };
     this._currentRound = new MissionResult(this._players, this._currentRound.allVotes, missionSucceeded);
     this.sendUpdateToAllPlayers();
   };

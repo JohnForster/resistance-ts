@@ -1,24 +1,45 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
+import responsive from '../../helpers/responsive';
 
-const BOX_SIZE_PX = 24;
-const halfSize = BOX_SIZE_PX / 2;
+const scale = (f: number) => (x: number): number => x * f;
+const BOX_SIZE_PX = [24, 30, 56];
+const HALF_SIZE = BOX_SIZE_PX.map(scale(0.5));
+const FONT_SIZES = BOX_SIZE_PX.map(scale(0.8));
+const BORDER_WEIGHT = [2, 2, 4];
 
 const Line = styled.div<{ half?: boolean }>`
-  height: ${halfSize}px;
-  width: ${({ half }): number => (half ? halfSize : BOX_SIZE_PX)}px;
-  border-bottom: 2px white solid;
+  ${({ half }): string => responsive`
+    width: ${half ? HALF_SIZE : BOX_SIZE_PX}px;
+    height: ${HALF_SIZE}px;
+    border-bottom: ${BORDER_WEIGHT}px white solid;
+  `}
 `;
 
 const Nominations = styled.div<{ selected: boolean }>`
-  height: ${BOX_SIZE_PX}px;
-  width: ${BOX_SIZE_PX}px;
-  font-size: 18px;
+  ${responsive`
+    height: ${BOX_SIZE_PX}px;
+    width: ${BOX_SIZE_PX}px;
+    line-height: ${BOX_SIZE_PX}px;
+    font-size: ${FONT_SIZES}px;
+    border-width: ${BORDER_WEIGHT}px;
+  `}
   text-align: center;
-  line-height: ${BOX_SIZE_PX}px;
+  border-style: solid;
   border-radius: 50%;
-  border: 2px solid;
-  border-color: ${({ selected }): string => (selected ? 'white' : 'transparent')};
+  border-color: transparent;
+
+  @keyframes glow {
+    from {
+      border-color: white;
+      box-shadow: 0 0 20px white;
+    }
+    to {
+      border-color: white;
+      box-shadow: 0 0 0px white;
+    }
+  }
+  ${({ selected }): string => selected && 'animation: 1s ease-in infinite alternate glow;'};
 `;
 
 const FailsRequired = styled.sup`
@@ -31,13 +52,16 @@ const FailsRequired = styled.sup`
 const ProgressContainer = styled.div`
   display: flex;
   justify-content: center;
+  margin-top: -0.5rem;
   width: 100%;
 `;
 
 const Container = styled.div`
   width: 100%;
   color: white;
-  padding-bottom: ${BOX_SIZE_PX}px;
+  ${responsive`
+    padding-bottom: ${BOX_SIZE_PX}px;
+  `}
 `;
 
 const RoundNumber = styled.div`
@@ -52,7 +76,7 @@ interface Props {
 const ProgressBar: React.FC<Props> = props => {
   return (
     <Container>
-      Mission Progress
+      <h3>Mission Progress</h3>
       <ProgressContainer>
         <Line half />
         {props.rounds.map(([peopleOnMission, failsRequired], i) => {

@@ -30,18 +30,9 @@ export class MissionRound implements Round {
   }
 
   public get isMissionOver(): boolean {
-    if (this._votes.size > this._players.length) throw new Error('WTF');
-    return this._votes.size === this._players.length;
+    if (this._votes.size > this._nominatedPlayers.length) throw new Error('WTF');
+    return this._votes.size === this._nominatedPlayers.length;
   }
-  // public playerIsReady = (playerID: string): void => {
-  //   const player = this._players.find(p => p.id === playerID);
-  //   if (!player) return console.error(`player with id: ${playerID} is not a part of this game`);
-  //   this._readyPlayers.add(player);
-  // };
-
-  // public get areAllPlayersReady(): boolean {
-  //   return this._readyPlayers.size === this._players.length;
-  // }
 
   constructor(players: Player[], rules: Rules, missionNumber: number, nominatedPlayers: Player[]) {
     this._players = players;

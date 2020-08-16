@@ -5,6 +5,7 @@ import Page from '../../components/page/page';
 import listString from '../../helpers/listString';
 import * as Styled from '../../components/missionButton/styled';
 import { MissionButton } from '../../components/missionButton/missionButton';
+import ProgressBar from '@client/app/components/progressBar/progressBar';
 
 export interface MissionPageProps {
   game: GameData;
@@ -55,7 +56,7 @@ export class MissionPage extends PureComponent<MissionPageProps, MissionPageStat
   render(): JSX.Element {
     return (
       <Page>
-        <h1>Mission No.{this.props.game.missionNumber}</h1>
+        <ProgressBar {...this.props.game} />
         <Choose>
           <When condition={this.playerIsOnMission}>
             <MissionButton
@@ -70,7 +71,9 @@ export class MissionPage extends PureComponent<MissionPageProps, MissionPageStat
               isSelected={this.state.voteToSucceed === false}
               onClick={(): void => this.makeDecision(false)}
             />
-            <button onClick={this.submit}>Submit</button>
+            <button onClick={this.submit} disabled={!this.secretData}>
+              Submit
+            </button>
           </When>
           <Otherwise>
             Waiting for

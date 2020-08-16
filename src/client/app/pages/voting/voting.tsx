@@ -6,6 +6,7 @@ import NominateButton from '../../components/nominateButton/nominatebutton';
 import * as Styled from './styled';
 
 import listString from '../../helpers/listString';
+import ProgressBar from '@client/app/components/progressBar/progressBar';
 
 export interface VotingPageProps {
   game: GameData;
@@ -54,7 +55,7 @@ export class VotingPage extends PureComponent<VotingPageProps, VotingPageState> 
     console.log(this.secretData);
     return (
       <Page>
-        <h1>Mission No.{this.props.game.missionNumber}</h1>
+        <ProgressBar history={this.props.game.history} rounds={this.props.game.rounds} />
         <h3>{this.props.game.leaderName} has nominated</h3>
         {/* {this.roundData.nominatedPlayers.map((p, i) => (
           <p key={`nominatedPlayer-${i}`}>{p.name}</p>

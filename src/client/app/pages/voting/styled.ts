@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import responsive from '@client/app/helpers/responsive';
 /* eslint-disable */
 
 export const VoteButton = styled.button`
@@ -6,9 +7,15 @@ export const VoteButton = styled.button`
   ${({isGreyed}: {isGreyed: boolean}) => isGreyed && `
       filter: grayscale(100%);
   `}
-  margin: 20px;
+  ${responsive`
+    margin: ${[0, 20, 20]}px
+  `}
   width:100px;
   background: none;
+  :focus {
+    outline: none;
+    box-shadow: none;
+  }
 `;
 
 export const ButtonContainer = styled.div`

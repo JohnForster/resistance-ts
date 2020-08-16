@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import responsive from '@client/app/helpers/responsive';
 
 export const PageContainer = styled.div`
   display: flex;
@@ -6,9 +7,15 @@ export const PageContainer = styled.div`
   align-items: center;
   height: 100%;
   width: 80%;
-  max-width: 60vh;
-  padding-top: 5vh;
   animation: fade-in 0.5s;
+
+  ${responsive`
+    padding-top: ${[0, 5, 5]}vh;
+  `}
+
+  @media only screen and (min-width: 992px) {
+    max-width: 60vh;
+  }
 
   @keyframes fade-in {
     0% {

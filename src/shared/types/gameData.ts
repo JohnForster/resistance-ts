@@ -34,8 +34,8 @@ export interface GameData {
   }[];
   roundData: RoundData;
   secretData?: SecretData;
-  // history: boolean[];
-  // rounds: [number, number][];
+  history: boolean[];
+  rounds: [number, number][];
 }
 
 export interface CharacterRoundData {

@@ -61,11 +61,10 @@ export class NominationPage extends PureComponent<NominationPageProps, Nominatio
   render(): JSX.Element {
     return (
       <Page>
-        <ProgressBar {...mockRound} />
+        <ProgressBar history={this.props.game.history} rounds={this.props.game.rounds} />
         <Choose>
           <When condition={this.props.game.isLeader}>
             <h2>You are the leader!</h2>
-            <h3>Mission No.{this.props.game.missionNumber}</h3>
             <h3>Nominate {this.roundData.playersToNominate} players to perform this mission.</h3>
             {this.props.game.players.map((player, i) => (
               <NominateButton

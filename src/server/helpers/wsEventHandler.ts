@@ -37,6 +37,9 @@ export default class WSEventHandler {
     // if ((msg as string) === 'ping') return;
     const [event, data] = JSON.parse(msg as string);
     console.log('Event received:', event);
+    if (event === 'mission') {
+      console.log(data);
+    }
 
     if (event === EventType.createGame) return this.createGame(user /*, data*/);
     if (event === EventType.joinGame) return this.joinGame(user, data);

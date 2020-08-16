@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import responsive from '@client/app/helpers/responsive';
 
 const timings: { [key: number]: number[] } = {
   2: [1.2, 2.6],
@@ -53,7 +54,9 @@ export const Result = styled.div`
 // @ts-ignore
 export const OverallResult = styled.h1`
   // TODO add media query here
-  font-size: 48px;
+  ${responsive`
+    font-size: ${[36, 48, 48]}px;
+  `}
 
   animation: slam 1s;
   animation-timing-function: ease-in;
