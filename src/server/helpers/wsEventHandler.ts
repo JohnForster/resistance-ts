@@ -16,8 +16,10 @@ export default class WSEventHandler {
   }
 
   public middleWare: WebsocketRequestHandler = (ws, req): void => {
-    const playerID = req.cookies.playerID;
+    console.log('Middleware triggered.');
+    const playerID = req.cookies.playerID || '';
     const user = this.users.get(playerID);
+    console.log('req.cookie:', req.cookies);
     console.log(
       `Player ${user ? 'found' : 'does not exist'} with ID '${playerID.slice(0, 8)}...'${
         user ? ` (${user.name})` : ''
@@ -27,7 +29,7 @@ export default class WSEventHandler {
       user.ws = ws.on('message', this.handleMessage(user));
       user.sendPlayerData();
       // TODO refactor to user.sendGameUpdate()
-      if (user.game) user.sendGameUpdate();
+      if (user.game) user.game.sendGameUpdate(user);
     } else {
       console.log(new Date().toISOString() + ' Recieved a new connection from origin ' + req.ip);
       const user = this.createNewUser(ws);
