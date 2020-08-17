@@ -198,8 +198,8 @@ export default class Game {
 
     const nominatedPlayers = this._currentRound.countVotes();
     this.sendUpdateToAllPlayers();
+    this.incrementLeaderIndex();
     if (!this._currentRound.voteSucceded) {
-      this.incrementLeaderIndex();
       const votingRound = this._currentRound.votingRoundNumber + 1;
       this.beginNominationRound(this._missionNumber, votingRound);
     }
