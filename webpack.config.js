@@ -52,10 +52,12 @@ module.exports = {
       template: 'src/client/index.html',
       filename: 'index.html'
     }),
-    new CopyWebpackPlugin([{
-      from: 'src/client/assets',
-      to: 'assets'
-    }], { copyUnmodified: true }),
+    new CopyWebpackPlugin([
+      { from: 'src/client/assets', to: 'assets' },
+      { from: 'src/client/manifest.json', to: 'manifest.json'},
+      { from: 'src/client/pwabuilder-sw.js', to: 'pwabuilder-sw.js'},
+      { from: 'src/client/offline.html', to: 'offline.html'},
+    ], { copyUnmodified: true }),
     new webpack.DefinePlugin({
       'process.env.DEV_API_ADDRESS': isDev && JSON.stringify(DEV_API_ADDRESS),
     }),

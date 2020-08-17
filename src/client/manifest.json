@@ -1,0 +1,10 @@
+{
+    "name": "Play Resistance",
+    "short_name": "Resistance",
+    "description": "An application to help play the board game 'The Resistance'",
+    "start_url": "/",
+    "lang": "English",
+    "orientation": "portrait",
+    "display": "standalone",
+    "background_color": "#434567"
+}
