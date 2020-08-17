@@ -49,7 +49,7 @@
     "concurrently": "^5.0.0",
     "copy-webpack-plugin": "^5.0.5",
     "dotenv": "^8.2.0",
-    "eslint": "^6.6.0",
+    "eslint": "^7.7.0",
     "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-jsx-control-statements": "^2.2.1",
     "eslint-plugin-prettier": "^3.1.1",
@@ -64,7 +64,7 @@
     "ts-node-dev": "^1.0.0-pre.42",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^3.9.7",
-    "webpack": "^4.41.2",
+    "webpack": "^4.44.1",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0"
   },
