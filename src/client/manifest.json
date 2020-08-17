@@ -5,6 +5,20 @@
     "start_url": "/",
     "lang": "English",
     "orientation": "portrait",
-    "display": "standalone",
-    "background_color": "#434567"
+    "display": "fullscreen",
+    "background_color": "#1d2329",
+    "icons": [
+        {
+            "src": "/assets/icon.svg",
+            "type": "image/svg+xml",
+            "purpose": "any maskable",
+            "sizes": "72x72 96x96 128x128 192x192 256x256 512x512"
+        },
+        {
+            "src": "/assets/icon-mono.svg",
+            "type": "image/svg+xml",
+            "purpose": "monochrome",
+            "sizes": "16x16 32x32 72x72 96x96 128x128 192x192 256x256 512x512"
+        }
+    ]
 }
