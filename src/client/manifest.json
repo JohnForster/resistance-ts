@@ -5,7 +5,7 @@
     "start_url": "/",
     "lang": "English",
     "orientation": "portrait",
-    "display": "fullscreen",
+    "display": "standalone",
     "background_color": "#1d2329",
     "theme_color":"#1d2329",
     "icons": [
