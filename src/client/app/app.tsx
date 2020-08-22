@@ -24,7 +24,7 @@ export default class App extends PureComponent<{}, AppState> {
 
   get connectionURL(): string {
     const APIAddress = process.env.DEV_API_ADDRESS || window.location.host;
-    return `ws://${APIAddress}/ws`;
+    return `wss://${APIAddress}/ws`;
   }
 
   componentDidMount(): void {
