@@ -16,28 +16,28 @@ export default class WSEventHandler {
   }
 
   public middleWare: WebsocketRequestHandler = (ws, req): void => {
-    console.log('Middleware triggered.');
     const playerID = req.cookies.playerID || '';
     const user = this.users.get(playerID);
-    console.log('req.cookie:', req.cookies);
     console.log(
       `Player ${user ? 'found' : 'does not exist'} with ID '${playerID.slice(0, 8)}...'${
         user ? ` (${user.name})` : ''
       }`,
     );
     if (user) {
-      user.ws = ws.on('message', this.handleMessage(user));
+      const handleMessage = this.createMessageHandler(user);
+      user.ws = ws.on('message', handleMessage);
       user.sendPlayerData();
       // TODO refactor to user.sendGameUpdate()
       if (user.game) user.game.sendGameUpdate(user);
     } else {
       console.log(new Date().toISOString() + ' Recieved a new connection from origin ' + req.ip);
       const user = this.createNewUser(ws);
-      user.ws = ws.on('message', this.handleMessage(user));
+      const messageHandler = this.createMessageHandler(user);
+      user.ws = ws.on('message', messageHandler);
     }
   };
 
-  private handleMessage = (user: User) => (msg: Data): void => {
+  private createMessageHandler = (user: User) => (msg: Data): void => {
     // if ((msg as string) === 'ping') return;
     const [event, data] = JSON.parse(msg as string);
     console.log('Event received:', event);
