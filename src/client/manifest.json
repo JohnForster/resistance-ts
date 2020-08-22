@@ -1,6 +1,6 @@
 {
     "name": "Play Resistance",
-    "short_name": "The Resistance",
+    "short_name": "Resistance",
     "description": "An application to help play the board game 'The Resistance'",
     "start_url": "/",
     "lang": "English",
