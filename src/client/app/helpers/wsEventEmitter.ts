@@ -6,14 +6,21 @@ type EventType = typeof EventType[keyof typeof EventType];
 export default class WSEventEmitter {
   private websocket: W3CWebSocket;
   private callbacks: Callbacks = {};
+  private url: string;
 
   constructor(url: string) {
-    this.websocket = new W3CWebSocket(url);
+    this.url = url;
+    this.init();
+    this.bind(EventType.close, this.reconnect);
+  }
+
+  private init = (): void => {
+    this.websocket = new W3CWebSocket(this.url);
     this.websocket.onclose = (): void => this.execute(EventType.close, null);
     this.websocket.onopen = (): void => this.execute(EventType.open, 'opening');
+    this.websocket.onerror = this.handleError;
     this.websocket.onmessage = this.onMessage;
-    // this.beginPings();
-  }
+  };
 
   public send = <T extends EventType, W extends WSEvent = EventByName<T>>(
     eventType: W['event'],
@@ -45,6 +52,15 @@ export default class WSEventEmitter {
   ): void => {
     const chain: Callback<W>[] = this.callbacks[eventName] || [];
     chain.forEach(cb => cb(data));
+  };
+
+  private handleError = (error: Error): void => {
+    console.log(`Socket encountered error: ${error.message}`);
+    this.websocket.close();
+  };
+
+  private reconnect = (): void => {
+    setTimeout(this.init, 1000);
   };
 
   // private beginPings = (): void => {
