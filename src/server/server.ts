@@ -38,7 +38,9 @@ app.use(
 
 // Send index.html when visiting '/'
 app.get('/', (req: Request, res: Response) => {
+  console.log(isDev, req.header('x-forwarded-proto'), `https://${req.header('host')}${req.url}`);
   if (!isDev && req.header('x-forwarded-proto') !== 'https') {
+    console.log('redirecting...');
     return res.redirect(`https://${req.header('host')}${req.url}`);
   }
   console.log('req.cookies:', req.cookies);
