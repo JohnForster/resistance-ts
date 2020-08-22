@@ -31,14 +31,8 @@ const middlePath = isDev ? '../../build' : '';
 const publicPath = path.join(__dirname, middlePath, '/dist');
 
 const httpsUpgradeMiddleware: RequestHandler = (req, res, next) => {
-  console.log(
-    "isDev, req.header('x-forwarded-proto'), url:",
-    isDev,
-    req.header('x-forwarded-proto'),
-    `https://${req.header('host')}${req.url}`,
-  );
   if (!isDev && req.header('x-forwarded-proto') !== 'https') {
-    console.log('Redirecting...');
+    console.log('Request received over http... Redirecting...');
     res.redirect(`https://${req.header('host')}${req.url}`);
   } else {
     next();
@@ -52,12 +46,6 @@ app.use(
     enableBrotli: true,
   }),
 );
-
-// Send index.html when visiting '/'
-app.get('/', (req: Request, res: Response) => {
-  console.log('req.cookies:', req.cookies);
-  res.sendFile(path.join(__dirname, middlePath, '/dist/index.html'));
-});
 
 const port = parseInt(process.env.PORT || '8080');
 
