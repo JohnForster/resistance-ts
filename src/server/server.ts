@@ -1,4 +1,4 @@
-import express, { Response, Request } from 'express';
+import express, { Response, Request, RequestHandler } from 'express';
 import path from 'path';
 import createWebSocket from 'express-ws';
 import cookieParser from 'cookie-parser';
@@ -29,8 +29,25 @@ app.ws('/ws', wsEventHandler.middleWare);
 // Publicly expose the '/dist' folder
 const middlePath = isDev ? '../../build' : '';
 const publicPath = path.join(__dirname, middlePath, '/dist');
+
+const httpsUpgradeMiddleware: RequestHandler = (req, res, next) => {
+  console.log(
+    "isDev, req.header('x-forwarded-proto'), url:",
+    isDev,
+    req.header('x-forwarded-proto'),
+    `https://${req.header('host')}${req.url}`,
+  );
+  if (!isDev && req.header('x-forwarded-proto') !== 'https') {
+    console.log('Redirecting...');
+    res.redirect(`https://${req.header('host')}${req.url}`);
+  } else {
+    next();
+  }
+};
+
 app.use(
   '/',
+  httpsUpgradeMiddleware,
   expressStaticGzip(publicPath, {
     enableBrotli: true,
   }),
@@ -38,11 +55,6 @@ app.use(
 
 // Send index.html when visiting '/'
 app.get('/', (req: Request, res: Response) => {
-  console.log(isDev, req.header('x-forwarded-proto'), `https://${req.header('host')}${req.url}`);
-  if (!isDev && req.header('x-forwarded-proto') !== 'https') {
-    console.log('redirecting...');
-    return res.redirect(`https://${req.header('host')}${req.url}`);
-  }
   console.log('req.cookies:', req.cookies);
   res.sendFile(path.join(__dirname, middlePath, '/dist/index.html'));
 });
