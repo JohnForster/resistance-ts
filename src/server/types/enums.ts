@@ -7,7 +7,8 @@ export const RoundName: RoundNameEnum = {
   voting: 'voting',
   mission: 'mission',
   missionResult: 'missionResult',
-};
+  voteResult: 'voteResult',
+} as const;
 
 export const EventType: EventTypeEnum = {
   confirm: 'confirm',

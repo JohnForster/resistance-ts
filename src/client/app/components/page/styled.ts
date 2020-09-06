@@ -8,6 +8,7 @@ export const PageContainer = styled.div`
   height: 100%;
   width: 80%;
   animation: fade-in 0.5s;
+  margin: auto;
 
   ${responsive`
     padding-top: ${[0, 5, 5]}vh;

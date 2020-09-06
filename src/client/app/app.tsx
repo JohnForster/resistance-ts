@@ -1,13 +1,14 @@
 import React, { PureComponent } from 'react';
-import { LandingPage, CharacterPage, NominationPage, VotingPage, MissionPage } from './pages';
-import { EventByName } from '@shared/types/eventTypes';
+
 import { EventType } from '@client/types/event';
-import WSEventEmitter from './helpers/wsEventEmitter';
-import LobbyPage from './pages/lobby/lobby';
+
+import { EventByName } from '@shared/types/eventTypes';
 import { GameData } from '@shared/types/gameData';
 
+import WSEventEmitter from './helpers/wsEventEmitter';
+import * as Pages from './pages';
 import * as Styled from './styles/styled';
-import MissionResultPage from './pages/missionResult/missionResult';
+
 interface AppState {
   game: GameData;
   status: 'idle' | 'pending' | 'inLobby' | 'inGame';
@@ -112,7 +113,7 @@ export default class App extends PureComponent<{}, AppState> {
     });
   };
 
-  missionResultConfirmReady = (): void => {
+  continue = (): void => {
     const { gameID, playerID } = this.state.game;
     console.log(EventType.continue);
     this.state.eventEmitter.send<typeof EventType.continue>(EventType.continue, { gameID, playerID });
@@ -125,7 +126,7 @@ export default class App extends PureComponent<{}, AppState> {
         <Styled.AppContainer>
           <Choose>
             <When condition={!this.state.game}>
-              <LandingPage
+              <Pages.LandingPage
                 hostGame={this.hostGame}
                 joinGame={this.joinGame}
                 player={this.state.player}
@@ -134,22 +135,25 @@ export default class App extends PureComponent<{}, AppState> {
               />
             </When>
             <When condition={this.state.game.missionNumber === 0 && this.state.game.stage === 'lobby'}>
-              <LobbyPage game={this.state.game} player={this.state.player} beginGame={this.beginGame} />
+              <Pages.LobbyPage game={this.state.game} player={this.state.player} beginGame={this.beginGame} />
             </When>
             <When condition={this.state.game.missionNumber === 0 && this.state.game.stage === 'characterAssignment'}>
-              <CharacterPage game={this.state.game} confirmCharacter={this.confirmCharacter} />
+              <Pages.CharacterPage game={this.state.game} confirmCharacter={this.confirmCharacter} />
             </When>
             <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'nomination'}>
-              <NominationPage game={this.state.game} submitNominations={this.submitNominations} />
+              <Pages.NominationPage game={this.state.game} submitNominations={this.submitNominations} />
             </When>
             <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'voting'}>
-              <VotingPage game={this.state.game} submitVote={this.submitVote} />
+              <Pages.VotingPage game={this.state.game} submitVote={this.submitVote} />
+            </When>
+            <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'voteResult'}>
+              <Pages.VoteResultsPage game={this.state.game} confirmReady={this.continue} />
             </When>
             <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'mission'}>
-              <MissionPage game={this.state.game} completeMission={this.submitMissionChoice} />
+              <Pages.MissionPage game={this.state.game} completeMission={this.submitMissionChoice} />
             </When>
             <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'missionResult'}>
-              <MissionResultPage game={this.state.game} confirmReady={this.missionResultConfirmReady} />
+              <Pages.MissionResultPage game={this.state.game} confirmReady={this.continue} />
             </When>
           </Choose>
         </Styled.AppContainer>

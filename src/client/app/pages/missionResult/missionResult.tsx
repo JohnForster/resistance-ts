@@ -12,7 +12,7 @@ export interface MissionResultProps {
   confirmReady: () => void;
 }
 
-const MissionResultPage: React.FC<MissionResultProps> = (props: MissionResultProps) => {
+export const MissionResultPage: React.FC<MissionResultProps> = (props: MissionResultProps) => {
   const [playerWantsToContinue, setPlayerWantsToContinue] = useState<boolean>(false);
   const roundData = props.game.roundData;
   if (!isMissionResultRound(roundData)) throw new Error("This isn't mission result data!");
@@ -52,5 +52,3 @@ const MissionResultPage: React.FC<MissionResultProps> = (props: MissionResultPro
     </Page>
   );
 };
-
-export default MissionResultPage;

@@ -22,7 +22,7 @@ type EventType = typeof EventType[keyof EventTypeEnum];
 
 interface EventTemplate {
   event: EventType;
-  data: any;
+  data: unknown;
 }
 
 interface CloseEvent extends EventTemplate {

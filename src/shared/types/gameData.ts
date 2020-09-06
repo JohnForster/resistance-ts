@@ -7,6 +7,7 @@ const RoundName: RoundNameEnum = {
   voting: 'voting',
   mission: 'mission',
   missionResult: 'missionResult',
+  voteResult: 'voteResult',
 };
 type RoundName = typeof RoundName[keyof RoundNameEnum];
 

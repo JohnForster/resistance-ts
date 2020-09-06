@@ -40,7 +40,7 @@ export const Global = createGlobalStyle`
     margin: 10px 0px;
     text-align: center;
     text-shadow: none;
-    border-color: ${DARK_BLUE};
+    border: 1px solid black;
     color: ${DARK_BLUE};
   }
 
@@ -54,7 +54,7 @@ const h2Margins = [14, 19.9, 19.9];
 const h3Margins = [11, 18.7, 18.7];
 export const AppContainer = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   text-align: center;
   height: 80vh;
   ${responsive`
@@ -71,7 +71,4 @@ export const AppContainer = styled.div`
       margin-bottom: ${h3Margins}px;
     }
   `}
-  input {
-    border: 1px solid black;
-  }
 `;

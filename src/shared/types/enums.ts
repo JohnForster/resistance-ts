@@ -5,6 +5,7 @@ export type RoundNameEnum = {
   voting: 'voting';
   mission: 'mission';
   missionResult: 'missionResult';
+  voteResult: 'voteResult';
 };
 
 export type CharacterEnum = {
