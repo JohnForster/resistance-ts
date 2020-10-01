@@ -39,11 +39,21 @@ export default class WSEventHandler {
 
   private createMessageHandler = (user: User) => (msg: Data): void => {
     // if ((msg as string) === 'ping') return;
+    // TODO try/catch JSON.parse
     const [event, data] = JSON.parse(msg as string);
     console.log('Event received:', event);
     if (event === 'mission') {
       console.log(data);
     }
+
+    // Will all be replaced with...
+    const game = this.games.get(user.id);
+    if (!game) {
+    } // Handle error here
+    // handle createGame
+    // handle joinGame
+    // Where should validation occur?
+    // game.handleMessage(data);
 
     if (event === EventType.createGame) return this.createGame(user /*, data*/);
     if (event === EventType.joinGame) return this.joinGame(user, data);
@@ -117,6 +127,7 @@ export default class WSEventHandler {
   };
 
   private confirmCharacter = (user: User, data: EventByName<typeof EventType.confirm>['data']): void => {
+    // TODO extract this checking logic out and perform for all routes
     if (user.game.id !== data.gameID) return console.error('Recieved gameID does not match stored gameID');
     if (user.id !== data.playerID) return console.error('Recieved playerID does not match stored playerID');
     const game = this.games.get(data.gameID);
@@ -144,6 +155,13 @@ export default class WSEventHandler {
     if (game.currentRound !== RoundName.mission)
       return console.error('Can only complete a mission during the mission stage');
     game.missionResponse(data.playerID, data.playerVotedToSucceed);
+  };
+
+  private handleVoteResultsConfirm = (user: User, data: EventByName<typeof EventType.mission>['voteConfirm']): void => {
+    const game = this.games.get(data.gameID);
+    if (game.currentRound != RoundName.voteResult)
+      return console.error('Can only continue during the vote result stage');
+    game.confirmVoteResult(data.playerID);
   };
 
   private handleReadyForNextRound = (user: User, data: EventByName<typeof EventType.continue>['data']): void => {

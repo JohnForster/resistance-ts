@@ -57,5 +57,4 @@ Extract Mission into separate class.
                             -vote        -vote        -vote
                             -result      -result      -result
                             -mission     -mission     -mission
-
-
+                            -missionRes  -missionRes  -missionRes

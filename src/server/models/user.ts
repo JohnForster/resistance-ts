@@ -5,15 +5,11 @@ import { EventType } from '@server/types/enums';
 import uuidv4 from 'uuid/v4';
 
 export default class User {
-  public id: string;
-  public ws: WebSocket;
+  public id: string = uuidv4();
   public game: Game;
   public name: string;
 
-  constructor(ws: WebSocket) {
-    this.ws = ws;
-    this.id = uuidv4();
-  }
+  constructor(public ws: WebSocket) {}
 
   public sendPlayerData = (): void => {
     const payload: EventByName<typeof EventType.playerData> = {
@@ -33,7 +29,7 @@ export default class User {
     });
   };
 
-  public sendGameUpdate = () => {
+  public sendGameUpdate = (): void => {
     this.game.sendGameUpdate(this);
   };
 }

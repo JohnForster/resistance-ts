@@ -30,7 +30,7 @@ app.ws('/ws', wsEventHandler.middleWare);
 const middlePath = isDev ? '../../build' : '';
 const publicPath = path.join(__dirname, middlePath, '/dist');
 
-const httpsUpgradeMiddleware: RequestHandler = (req, res, next) => {
+const upgradeHttpsMiddleware: RequestHandler = (req, res, next) => {
   if (!isDev && req.header('x-forwarded-proto') !== 'https') {
     console.log('Request received over http... Redirecting...');
     res.redirect(`https://${req.header('host')}${req.url}`);
@@ -41,7 +41,7 @@ const httpsUpgradeMiddleware: RequestHandler = (req, res, next) => {
 
 app.use(
   '/',
-  httpsUpgradeMiddleware,
+  upgradeHttpsMiddleware,
   expressStaticGzip(publicPath, {
     enableBrotli: true,
   }),
