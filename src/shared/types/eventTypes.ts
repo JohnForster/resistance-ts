@@ -18,6 +18,7 @@ const EventType: EventTypeEnum = {
   mission: 'mission',
   continue: 'continue',
 } as const;
+
 type EventType = typeof EventType[keyof EventTypeEnum];
 
 interface EventTemplate {
@@ -136,8 +137,15 @@ export type WSEvent =
   | MissionEvent
   | ContinueEvent;
 
-export type EventByName<E extends EventType, T = WSEvent> = T extends { event: E } ? T : never;
-export type DataByEventName<T extends EventType, E extends WSEvent = EventByName<T>> = E['data'];
+export type EventByName<E extends EventType, T = WSEvent> = T extends {
+  event: E;
+}
+  ? T
+  : never;
+export type DataByEventName<
+  T extends EventType,
+  E extends WSEvent = EventByName<T>
+> = E['data'];
 
 export type Callback<T extends WSEvent> = (data: T['data']) => void;
 

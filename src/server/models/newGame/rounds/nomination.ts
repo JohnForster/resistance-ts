@@ -1,4 +1,4 @@
-import { NominationRoundData } from '@shared/types/gameData';
+import { NominationRoundData } from '../../../../shared/types/gameData';
 
 import { Rules } from '../../../data/gameRules';
 import { Game } from '../newGame';
@@ -8,36 +8,35 @@ interface NominationMessage {
   nominatedPlayerIds: string[];
 }
 
-interface NominationData {
-  nominatedPlayerIds: string[];
-}
-
 export class NominationRound implements Round<NominationMessage> {
   public roundName: 'nomination' = 'nomination';
   private roundRules: Rules['missions'][0];
 
-  private data: NominationData = { nominatedPlayerIds: [] };
+  private nominatedPlayerIds: string[] = [];
 
   constructor(private readonly game: Game) {
-    this.roundRules = this.game.rules.missions[this.game.missionNumber];
+    this.roundRules = this.game.rules.missions[
+      this.game.currentMission.missionNumber
+    ];
   }
 
   handleMessage = (message: NominationMessage): void => {
     const playerIds = this.game.players.map((p) => p.id);
     if (!message.nominatedPlayerIds.every(playerIds.includes)) return;
-    this.data.nominatedPlayerIds = message.nominatedPlayerIds;
+    this.nominatedPlayerIds = message.nominatedPlayerIds;
   };
 
   validateMessage = ({ nominatedPlayerIds }: NominationMessage): boolean =>
-    Array.isArray(nominatedPlayerIds) && nominatedPlayerIds.length === this.roundRules.players;
+    Array.isArray(nominatedPlayerIds) &&
+    nominatedPlayerIds.length === this.roundRules.players;
 
-  roundIsReadyToComplete = (): boolean => {
-    return this.data.nominatedPlayerIds.length === this.roundRules.players;
+  isReadyToComplete = (): boolean => {
+    return this.nominatedPlayerIds.length === this.roundRules.players;
   };
 
   completeRound = (): RoundName => {
-    // return 'voting';
-    return 'nomination';
+    return 'voting';
+    // return 'nomination';
   };
 
   getRoundData = (): NominationRoundData => ({
@@ -51,5 +50,5 @@ export class NominationRound implements Round<NominationMessage> {
 
   isFinal = (): boolean => false;
 
-  getHistory: () => {};
+  getUpdatedHistory: () => {};
 }

@@ -52,7 +52,7 @@ Decide what to do with enum in shared.
   - If happy to use regular enum, need to set up webpack to move it?
 Extract Mission into separate class.
   Instead of:  lobby -> character -> nominate -> vote -> result -> nominate -> vote -> result
-  Use: lobby - character -> Mission 1 -> Mission 2 -> Mission 3 etc.
+  Use: lobby - character -> Mission 1 -> Mission 2 -> Mission 3 etc. -> Game Over
                             -nominate    -nominate    -nominate
                             -vote        -vote        -vote
                             -result      -result      -result

@@ -1,13 +1,9 @@
 {
-  "presets": [
-    [
-      "@babel/env"
-    ],
-    "@babel/typescript"
-  ],
+  "presets": [["@babel/env"], "@babel/typescript"],
   "plugins": [
     [
-      "babel-plugin-module-resolver", {
+      "babel-plugin-module-resolver",
+      {
         "root": ["."],
         "alias": {
           "@shared": "./src/shared",
@@ -18,6 +14,6 @@
     ],
     "@babel/plugin-proposal-class-properties",
     "jsx-control-statements",
-    "babel-plugin-styled-components",
+    "babel-plugin-styled-components"
   ]
 }

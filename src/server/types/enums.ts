@@ -1,4 +1,8 @@
-import { RoundNameEnum, EventTypeEnum, CharacterEnum } from '../../shared/types/enums';
+import {
+  RoundNameEnum,
+  EventTypeEnum,
+  CharacterEnum,
+} from '../../shared/types/enums';
 
 export const RoundName: RoundNameEnum = {
   characterAssignment: 'characterAssignment',
