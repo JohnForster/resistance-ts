@@ -1,13 +1,14 @@
-import { EventByName } from '../../../shared/types/eventTypes';
+import { EventByName } from '@shared/types/eventTypes';
 
 import { EventType } from '../../types/enums';
 import generateID from '../../utils/generateID';
-import { Rules } from '../../data/gameRules';
+import { Rules, RULES } from '../../data/gameRules';
 
 import User from '../user';
 
 import { Round } from './rounds';
 import { rounds } from './config';
+import { RoundName } from '@shared/types/gameData';
 
 export interface Player extends User {
   allegiance?: 'resistance' | 'spies';
@@ -42,9 +43,10 @@ export type PlayerId = string;
 
 export class Game {
   readonly id: string = generateID();
-  readonly players: Player[] = [];
+  // TODO change players to be an id -> player map?
+  public players: Player[] = [];
 
-  private currentRound: Round<unknown>; /* = new Lobby(this); */
+  private currentRound: Round<RoundName>; /* = new Lobby(this); */
   public currentMission: OngoingMission = {
     missionNumber: 0, // TODO should be set in constructor
     nominations: [],
@@ -54,13 +56,22 @@ export class Game {
   public votesRemaining: number;
   // ! HOW TO DEAL WITH HISTORY?
   public history: GameHistory = {};
-  private leaderIndex: number;
-  private host: Player;
-  public leader;
+  private leaderIndex = 0;
+  public host: Player;
 
-  constructor(public rules: Rules) {
+  public get leader(): Player {
+    return this.players[this.leaderIndex];
+  }
+
+  public get rules(): Rules {
+    return RULES[this.players.length];
+  }
+
+  // TODO Set rules in LobbyRound.completeRound()
+  constructor() {
     // this.votesRemaining = rules.numberOfVotesAllowed
     this.votesRemaining = 5;
+    // this.currentRound = new LobbyRound()
   }
 
   addPlayer = (player: Player): void => {
@@ -96,17 +107,17 @@ export class Game {
       data: {
         gameID: this.id,
         missionNumber: this.currentMission.missionNumber,
-        stage: this.currentRound.roundName, // TODO Align round names between frontend && backend
+        stage: this.currentRound.roundName,
         playerID: player.id,
         hostName: this.host.name,
         isHost: this.host === player,
-        leaderName: this.leader.name,
+        leaderName: this.leader?.name,
         isLeader: this.leader === player,
         players: this.players.map((p) => ({ name: p.name, id: p.id })),
         roundData,
         secretData,
         // history: this._progress.missions.map(m => m.result),
-        rounds: Object.entries(this.rules.missions).map(([, o]) => [
+        rounds: Object.entries(this.rules?.missions ?? {}).map(([, o]) => [
           o.players,
           o.failsRequired,
         ]),
@@ -114,7 +125,7 @@ export class Game {
     };
   };
 
-  onMessage = (message: unknown): void => {
+  handleMessage = (message: unknown): void => {
     const isValid = this.currentRound.validateMessage(message);
     if (!isValid) return console.error('Not valid');
 

@@ -2,7 +2,7 @@ import {
   RoundNameEnum,
   EventTypeEnum,
   CharacterEnum,
-} from '../../shared/types/enums';
+} from '@shared/types/enums';
 
 export const RoundName: RoundNameEnum = {
   characterAssignment: 'characterAssignment',
@@ -11,7 +11,7 @@ export const RoundName: RoundNameEnum = {
   voting: 'voting',
   mission: 'mission',
   missionResult: 'missionResult',
-  voteResult: 'voteResult',
+  voteResult: 'votingResult',
 } as const;
 
 export const EventType: EventTypeEnum = {

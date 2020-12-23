@@ -7,7 +7,7 @@ import chalk from 'chalk';
 
 import getLocalIP from './utils/getLocalIP';
 import User from './models/user';
-import Game from './models/game/game';
+import { Game } from './models/newGame/newGame';
 import WSEventHandler from './helpers/wsEventHandler';
 
 console.log(chalk.blue('-'.repeat(80)));
@@ -51,9 +51,11 @@ const port = parseInt(process.env.PORT || '8080');
 
 // Listen on local IP (for connecting over LAN)
 if (isDev) {
-  getLocalIP().then(address => {
+  getLocalIP().then((address) => {
     app.listen(port, '0.0.0.0');
-    console.log(`Server available at ${chalk.green(`http://${address}:${port}`)}`);
+    console.log(
+      `Server available at ${chalk.green(`http://${address}:${port}`)}`,
+    );
   });
 } else {
   // Will need to work out how this works in prod

@@ -1,16 +1,17 @@
-import { Round, RoundName } from '.';
+import { Round } from '.';
 import { GameHistory, Game, PlayerId } from '../newGame';
 import {
-  MissionResultData,
+  MissionResultPublicData,
   MissionResultSecretData,
-} from '../../../../shared/types/gameData';
+  RoundName,
+} from '@shared/types/gameData';
 
 export interface MissionResultMessage {
   playerId: PlayerId;
   confirm: boolean;
 }
 
-export class MissionResult implements Round<MissionResultMessage> {
+export class MissionResult implements Round<'missionResult'> {
   public roundName = 'missionResult' as const;
   public confirmedPlayers: Set<PlayerId> = new Set();
 
@@ -31,7 +32,7 @@ export class MissionResult implements Round<MissionResultMessage> {
     return 'nomination';
   };
 
-  getRoundData = (): MissionResultData => {
+  getRoundData = (): MissionResultPublicData => {
     const votes = this.game.currentMission.nominations[
       this.game.currentMission.nominations.length - 1
     ].votes;
@@ -39,7 +40,6 @@ export class MissionResult implements Round<MissionResultMessage> {
     const fail = Array.from(votes.values()).filter((x) => !x).length;
 
     return {
-      roundName: 'missionResult',
       unconfirmedPlayerNames: this.game.players
         .filter((p) => this.confirmedPlayers.has(p.id))
         .map(({ name }) => name),

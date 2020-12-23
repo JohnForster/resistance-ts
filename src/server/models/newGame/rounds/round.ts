@@ -1,26 +1,20 @@
-import { RoundData, SecretData } from '../../../../shared/types/gameData';
+import {
+  PublicDataByName,
+  SecretDataByName,
+  RoundName,
+} from '@shared/types/gameData';
 import { Game, GameHistory } from '../newGame';
 
-export type RoundName =
-  | 'lobby'
-  | 'character'
-  | 'nomination'
-  | 'voting'
-  | 'voteResult'
-  | 'mission'
-  | 'missionResult'
-  | 'gameOver';
-
-export interface RoundConstructor {
-  new (game: Game): Round<unknown>;
+export interface RoundConstructor<T extends RoundName = RoundName> {
+  new (game: Game): Round<T>;
 }
 
-export interface Round<Message> {
-  roundName: RoundName;
+export interface Round<T extends RoundName> {
+  roundName: T;
 
-  handleMessage: (message: Message) => void;
+  handleMessage: (message: unknown) => void;
 
-  validateMessage: (message: Message) => boolean;
+  validateMessage: (message: unknown) => boolean;
 
   isReadyToComplete: () => boolean;
 
@@ -29,9 +23,9 @@ export interface Round<Message> {
   // completeRound: () => [RoundName, unknown];
   completeRound: () => RoundName;
 
-  getRoundData: () => RoundData;
+  getRoundData: () => PublicDataByName<T>;
 
-  getSecretData: (id: string) => SecretData;
+  getSecretData: (id: string) => SecretDataByName<T>;
 
   isFinal: () => boolean;
 

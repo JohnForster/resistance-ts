@@ -1,14 +1,14 @@
-import { Round, RoundName } from '.';
+import { RoundName } from '@shared/types/gameData';
+import { Round } from '.';
 import { GameHistory, Game, PlayerId, Nomination } from '../newGame';
-import { VotingResultData } from '../../../../shared/types/gameData';
 
 export interface VotingResultMessage {
   playerId: PlayerId;
   confirm: true;
 }
 
-export class VotingResult implements Round<VotingResultMessage> {
-  public roundName = 'voteResult' as const;
+export class VotingResult implements Round<'votingResult'> {
+  public roundName = 'votingResult' as const;
   public confirmedPlayers: Set<PlayerId> = new Set();
 
   constructor(private readonly game: Game) {}
@@ -41,8 +41,8 @@ export class VotingResult implements Round<VotingResultMessage> {
     // TODO Check if this is game over? Or do this during voting round and send to a separate screen?
   };
 
-  getRoundData = (): VotingResultData => ({
-    roundName: 'voteResult',
+  getRoundData = () => ({
+    roundName: 'votingResult' as const,
     unconfirmedPlayerNames: this.unconfirmedPlayerNames,
     votes: Array.from(this.nominationResult.votes).map(([playerId, vote]) => ({
       id: playerId,
@@ -54,7 +54,9 @@ export class VotingResult implements Round<VotingResultMessage> {
   });
 
   // TODO add hasConfirmed to VotingResultData
-  getSecretData = (): {} => ({});
+  getSecretData = (userId: string) => ({
+    hasConfirmed: this.confirmedPlayers.has(userId),
+  });
 
   isFinal = (): boolean => false;
 

@@ -1,16 +1,17 @@
-import { Round, RoundName } from '.';
+import { Round } from '.';
 import { GameHistory, Game, PlayerId, OngoingMission } from '../newGame';
 import {
-  MissionRoundData,
+  RoundName,
+  MissionRoundPublicData,
   MissionRoundSecretData,
-} from '../../../../shared/types/gameData';
+} from '@shared/types/gameData';
 
 export interface MissionRoundMessage {
   playerId: PlayerId;
   succeedMission: true;
 }
 
-export class MissionRound implements Round<MissionRoundMessage> {
+export class MissionRound implements Round<'mission'> {
   public roundName = 'mission' as const;
   private missionVotes: Map<PlayerId, boolean> = new Map();
 
@@ -38,8 +39,7 @@ export class MissionRound implements Round<MissionRoundMessage> {
     return 'missionResult'; // TODO return next round data here in a tuple?
   };
 
-  getRoundData = (): MissionRoundData => ({
-    roundName: 'mission',
+  getRoundData = (): MissionRoundPublicData => ({
     nominatedPlayers: this.mission.nominatedPlayers.map(({ name, id }) => ({
       name,
       id,

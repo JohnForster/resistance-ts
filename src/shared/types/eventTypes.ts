@@ -142,6 +142,7 @@ export type EventByName<E extends EventType, T = WSEvent> = T extends {
 }
   ? T
   : never;
+
 export type DataByEventName<
   T extends EventType,
   E extends WSEvent = EventByName<T>

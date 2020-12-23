@@ -1,14 +1,14 @@
-import { NominationRoundData } from '../../../../shared/types/gameData';
+import { NominationRoundPublicData, RoundName } from '@shared/types/gameData';
 
 import { Rules } from '../../../data/gameRules';
 import { Game } from '../newGame';
-import { Round, RoundName } from './round';
+import { Round } from './round';
 
 interface NominationMessage {
   nominatedPlayerIds: string[];
 }
 
-export class NominationRound implements Round<NominationMessage> {
+export class NominationRound implements Round<'nomination'> {
   public roundName: 'nomination' = 'nomination';
   private roundRules: Rules['missions'][0];
 
@@ -39,9 +39,8 @@ export class NominationRound implements Round<NominationMessage> {
     // return 'nomination';
   };
 
-  getRoundData = (): NominationRoundData => ({
-    roundName: 'nomination',
-    leader: this.game.leader,
+  getRoundData = (): NominationRoundPublicData => ({
+    leader: this.game.leader.name,
     playersToNominate: this.roundRules.players,
     failsRequired: this.roundRules.failsRequired,
   });

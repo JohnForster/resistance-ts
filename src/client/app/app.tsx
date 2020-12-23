@@ -32,8 +32,12 @@ export default class App extends PureComponent<{}, AppState> {
     const eventEmitter = new WSEventEmitter(this.connectionURL);
 
     // Temporary for message/error
-    eventEmitter.bind(EventType.message, msg => console.log('message received: ', msg));
-    eventEmitter.bind(EventType.error, msg => console.error('error received: ', msg));
+    eventEmitter.bind(EventType.message, (msg) =>
+      console.log('message received: ', msg),
+    );
+    eventEmitter.bind(EventType.error, (msg) =>
+      console.error('error received: ', msg),
+    );
 
     // Register listeners
     eventEmitter.bind(EventType.playerData, this.onPlayerUpdate);
@@ -45,17 +49,24 @@ export default class App extends PureComponent<{}, AppState> {
   }
 
   hostGame = (): void => {
-    this.state.eventEmitter.send<typeof EventType.createGame>(EventType.createGame, {
-      hostID: this.state.player.playerID,
-    });
+    this.state.eventEmitter.send<typeof EventType.createGame>(
+      EventType.createGame,
+      {
+        hostID: this.state.player.playerID,
+      },
+    );
     this.setState({ status: 'pending' });
   };
 
-  onGameUpdate = (data: EventByName<typeof EventType.gameUpdate>['data']): void => {
+  onGameUpdate = (
+    data: EventByName<typeof EventType.gameUpdate>['data'],
+  ): void => {
     this.setState({ game: data });
   };
 
-  onPlayerUpdate = (data: EventByName<typeof EventType.playerData>['data']): void => {
+  onPlayerUpdate = (
+    data: EventByName<typeof EventType.playerData>['data'],
+  ): void => {
     // Use a library for dealing with cookies?
     console.log(`Setting player cookie: ${data.playerID.slice(0, 6)}...`);
     document.cookie = `playerID=${data.playerID}`;
@@ -63,36 +74,54 @@ export default class App extends PureComponent<{}, AppState> {
   };
 
   joinGame = (gameID: string): void => {
-    this.state.eventEmitter.send<typeof EventType.joinGame>(EventType.joinGame, { gameID });
+    this.state.eventEmitter.send<typeof EventType.joinGame>(
+      EventType.joinGame,
+      { gameID },
+    );
   };
 
   testMessage = (): void => {
-    this.state.eventEmitter.send<typeof EventType.message>(EventType.message, 'Test message');
+    this.state.eventEmitter.send<typeof EventType.message>(
+      EventType.message,
+      'Test message',
+    );
   };
 
   submitName = (name: string): void => {
     const player = { ...this.state.player, name };
-    this.state.eventEmitter.send<typeof EventType.playerData>(EventType.playerData, player);
+    this.state.eventEmitter.send<typeof EventType.playerData>(
+      EventType.playerData,
+      player,
+    );
     this.setState({ player });
   };
 
   beginGame = (): void => {
     const gameID = this.state.game.gameID;
-    this.state.eventEmitter.send<typeof EventType.beginGame>(EventType.beginGame, { gameID });
+    this.state.eventEmitter.send<typeof EventType.beginGame>(
+      EventType.beginGame,
+      { gameID },
+    );
   };
 
   confirmCharacter = (): void => {
     const { gameID, playerID } = this.state.game;
-    this.state.eventEmitter.send<typeof EventType.confirm>(EventType.confirm, { gameID, playerID });
+    this.state.eventEmitter.send<typeof EventType.confirm>(EventType.confirm, {
+      gameID,
+      playerID,
+    });
   };
 
   submitNominations = (playerIDs: Set<string>): void => {
     const { gameID, playerID } = this.state.game;
-    this.state.eventEmitter.send<typeof EventType.nominate>(EventType.nominate, {
-      gameID,
-      playerID,
-      nominatedPlayerIDs: Array.from(playerIDs),
-    });
+    this.state.eventEmitter.send<typeof EventType.nominate>(
+      EventType.nominate,
+      {
+        gameID,
+        playerID,
+        nominatedPlayerIDs: Array.from(playerIDs),
+      },
+    );
   };
 
   submitVote = (playerApproves: boolean): void => {
@@ -116,7 +145,10 @@ export default class App extends PureComponent<{}, AppState> {
   continue = (): void => {
     const { gameID, playerID } = this.state.game;
     console.log(EventType.continue);
-    this.state.eventEmitter.send<typeof EventType.continue>(EventType.continue, { gameID, playerID });
+    this.state.eventEmitter.send<typeof EventType.continue>(
+      EventType.continue,
+      { gameID, playerID },
+    );
   };
 
   render(): JSX.Element {
@@ -134,26 +166,83 @@ export default class App extends PureComponent<{}, AppState> {
                 submitName={this.submitName}
               />
             </When>
-            <When condition={this.state.game.missionNumber === 0 && this.state.game.stage === 'lobby'}>
-              <Pages.LobbyPage game={this.state.game} player={this.state.player} beginGame={this.beginGame} />
+            <When
+              condition={
+                this.state.game.missionNumber === 0 &&
+                this.state.game.stage === 'lobby'
+              }
+            >
+              <Pages.LobbyPage
+                game={this.state.game}
+                player={this.state.player}
+                beginGame={this.beginGame}
+              />
             </When>
-            <When condition={this.state.game.missionNumber === 0 && this.state.game.stage === 'characterAssignment'}>
-              <Pages.CharacterPage game={this.state.game} confirmCharacter={this.confirmCharacter} />
+            <When
+              condition={
+                this.state.game.missionNumber === 0 &&
+                this.state.game.stage === 'characterAssignment'
+              }
+            >
+              <Pages.CharacterPage
+                game={this.state.game}
+                confirmCharacter={this.confirmCharacter}
+              />
             </When>
-            <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'nomination'}>
-              <Pages.NominationPage game={this.state.game} submitNominations={this.submitNominations} />
+            <When
+              condition={
+                this.state.game.missionNumber > 0 &&
+                this.state.game.stage === 'nomination'
+              }
+            >
+              <Pages.NominationPage
+                game={this.state.game}
+                submitNominations={this.submitNominations}
+              />
             </When>
-            <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'voting'}>
-              <Pages.VotingPage game={this.state.game} submitVote={this.submitVote} />
+            <When
+              condition={
+                this.state.game.missionNumber > 0 &&
+                this.state.game.stage === 'voting'
+              }
+            >
+              <Pages.VotingPage
+                game={this.state.game}
+                submitVote={this.submitVote}
+              />
             </When>
-            <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'voteResult'}>
-              <Pages.VoteResultsPage game={this.state.game} confirmReady={this.continue} />
+            <When
+              condition={
+                this.state.game.missionNumber > 0 &&
+                this.state.game.stage === 'votingResult'
+              }
+            >
+              <Pages.VoteResultsPage
+                game={this.state.game}
+                confirmReady={this.continue}
+              />
             </When>
-            <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'mission'}>
-              <Pages.MissionPage game={this.state.game} completeMission={this.submitMissionChoice} />
+            <When
+              condition={
+                this.state.game.missionNumber > 0 &&
+                this.state.game.stage === 'mission'
+              }
+            >
+              <Pages.MissionPage
+                game={this.state.game}
+                completeMission={this.submitMissionChoice}
+              />
             </When>
-            <When condition={this.state.game.missionNumber > 0 && this.state.game.stage === 'missionResult'}>
-              <Pages.MissionResultPage game={this.state.game} confirmReady={this.continue} />
+            <When
+              condition={
+                this.state.game.missionNumber > 0 &&
+                this.state.game.stage === 'missionResult'
+              }
+            >
+              <Pages.MissionResultPage
+                game={this.state.game}
+                confirmReady={this.continue}
+              />
             </When>
           </Choose>
         </Styled.AppContainer>

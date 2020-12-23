@@ -1,17 +1,18 @@
 import {
-  VotingRoundData,
+  RoundName,
+  VotingRoundPublicData,
   VotingRoundSecretData,
-} from '../../../../shared/types/gameData';
+} from '@shared/types/gameData';
 
 import { Game, GameHistory, Nomination, Player } from '../newGame';
-import { Round, RoundName } from './round';
+import { Round } from './round';
 
 interface VotingMessage {
   playerID: string;
   playerApproves: boolean;
 }
 
-export class VotingRound implements Round<VotingMessage> {
+export class VotingRound implements Round<'voting'> {
   public roundName = 'voting' as const;
 
   public get unconfirmedPlayers(): Player[] {
@@ -60,11 +61,10 @@ export class VotingRound implements Round<VotingMessage> {
 
     this.game.votesRemaining -= 1;
 
-    return this.game.votesRemaining > 0 ? 'voteResult' : 'gameOver';
+    return 'votingResult';
   };
 
-  getRoundData = (): VotingRoundData => ({
-    roundName: 'voting',
+  getRoundData = (): VotingRoundPublicData => ({
     // TODO player order - who is nominating next
     unconfirmedPlayerNames: this.unconfirmedPlayers.map((p) => p.name),
     nominatedPlayers: this.nominatedPlayers.map((p) => ({
