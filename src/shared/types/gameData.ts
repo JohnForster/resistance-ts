@@ -1,5 +1,15 @@
 // TODO 23/12/2020 split this file up
 
+import {
+  CharacterMessage,
+  LobbyMessage,
+  MissionResultMessage,
+  MissionRoundMessage,
+  NominationMessage,
+  VotingMessage,
+  VotingResultMessage,
+} from './messages';
+
 export type RoundName =
   | 'lobby'
   | 'character'
@@ -33,7 +43,7 @@ export type VotingRoundPublicData = {
 };
 
 export type MissionRoundPublicData = {
-  nominatedPlayers: { name: string; id: string }[]; // ? Should we ever be sending playerIds?
+  nominatedPlayers: { name: string; id: string }[]; // ? Should we ever be sending playerIDs?
 };
 
 export type MissionResultPublicData = {
@@ -97,36 +107,43 @@ export type RoundData =
       roundName: 'lobby';
       public: LobbyRoundPublicData;
       secret: LobbyRoundSecretData;
+      message: LobbyMessage;
     }
   | {
       roundName: 'character';
       public: CharacterRoundPublicData;
       secret: CharacterRoundSecretData;
+      message: CharacterMessage;
     }
   | {
       roundName: 'nomination';
       public: NominationRoundPublicData;
       secret: NominationRoundSecretData;
+      message: NominationMessage;
     }
   | {
       roundName: 'voting';
       public: VotingRoundPublicData;
       secret: VotingRoundSecretData;
+      message: VotingMessage;
     }
   | {
       roundName: 'votingResult';
       public: VotingResultPublicData;
       secret: VotingResultSecretData;
+      message: VotingResultMessage;
     }
   | {
       roundName: 'mission';
       public: MissionRoundPublicData;
       secret: MissionRoundSecretData;
+      message: MissionRoundMessage;
     }
   | {
       roundName: 'missionResult';
       public: MissionResultPublicData;
       secret: MissionResultSecretData;
+      message: MissionResultMessage;
     };
 
 export type GameData<R extends RoundName = RoundName> = {
@@ -160,3 +177,5 @@ export type PublicDataByName<R extends RoundName> = RoundDataByName<
 export type SecretDataByName<R extends RoundName> = RoundDataByName<
   R
 >['secret'];
+
+export type MessageByName<R extends RoundName> = RoundDataByName<R>['message'];

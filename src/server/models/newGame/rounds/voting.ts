@@ -4,13 +4,10 @@ import {
   VotingRoundSecretData,
 } from '@shared/types/gameData';
 
+import { VotingMessage } from '@shared/types/messages';
+
 import { Game, GameHistory, Nomination, Player } from '../newGame';
 import { Round } from './round';
-
-interface VotingMessage {
-  playerID: string;
-  playerApproves: boolean;
-}
 
 export class VotingRound implements Round<'voting'> {
   public roundName = 'voting' as const;

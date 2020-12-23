@@ -1,21 +1,7 @@
 import { RoundName } from '@shared/types/gameData';
+import { LobbyMessage } from '@shared/types/messages';
 import { Round } from '.';
 import { Game, GameHistory } from '../newGame';
-
-export type LobbyMessage =
-  | {
-      type: 'joinGame';
-      playerId: string;
-    }
-  | {
-      type: 'startGame';
-      playerId: string;
-    }
-  | {
-      type: 'reorder';
-      playerId: string;
-      newOrder: string[];
-    };
 
 export class LobbyRound implements Round<'lobby'> {
   public roundName = 'lobby' as const;
@@ -23,11 +9,11 @@ export class LobbyRound implements Round<'lobby'> {
 
   constructor(private readonly game: Game) {}
 
-  checkIdsMatch = (playerIds: string[]): boolean => {
-    const gameIds = this.game.players.map((p) => p.id);
+  checkIDsMatch = (playerIDs: string[]): boolean => {
+    const gameIDs = this.game.players.map((p) => p.id);
     return (
-      !gameIds.some((id) => !playerIds.includes(id)) ||
-      !playerIds.some((id) => !gameIds.includes(id))
+      !gameIDs.some((id) => !playerIDs.includes(id)) ||
+      !playerIDs.some((id) => !gameIDs.includes(id))
     );
   };
 
@@ -37,29 +23,29 @@ export class LobbyRound implements Round<'lobby'> {
       return;
     }
 
-    if (message.type === 'reorder') {
-      if (this.checkIdsMatch(message.newOrder)) {
-        const newOrder = message.newOrder.map((id) =>
-          this.game.players.find((p) => p.id === id),
-        );
-        this.game.players = newOrder;
-      }
-    }
+    // if (message.type === 'reorder') {
+    //   if (this.checkIDsMatch(message.newOrder)) {
+    //     const newOrder = message.newOrder.map((id) =>
+    //       this.game.players.find((p) => p.id === id),
+    //     );
+    //     this.game.players = newOrder;
+    //   }
+    // }
 
     // Leave game option?
   };
 
   validateMessage = (message: LobbyMessage): boolean => {
     return (
-      (message.type === 'joinGame' && !!message.playerId) ||
-      (message.type === 'startGame' && this.game.host.id === message.playerId)
+      (message.type === 'joinGame' && !!message.playerID) ||
+      (message.type === 'startGame' && this.game.host.id === message.playerID)
     );
   };
 
   isReadyToComplete = (): boolean => this.gameReadyToBegin;
 
   completeRound = (): RoundName => {
-    return 'nomination';
+    return 'character';
   };
 
   getRoundData = () => ({

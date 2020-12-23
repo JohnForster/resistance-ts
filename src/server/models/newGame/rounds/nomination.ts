@@ -1,18 +1,15 @@
 import { NominationRoundPublicData, RoundName } from '@shared/types/gameData';
+import { NominationMessage } from '@shared/types/messages';
 
 import { Rules } from '../../../data/gameRules';
 import { Game } from '../newGame';
 import { Round } from './round';
 
-interface NominationMessage {
-  nominatedPlayerIds: string[];
-}
-
 export class NominationRound implements Round<'nomination'> {
   public roundName: 'nomination' = 'nomination';
   private roundRules: Rules['missions'][0];
 
-  private nominatedPlayerIds: string[] = [];
+  private nominatedPlayerIDs: string[] = [];
 
   constructor(private readonly game: Game) {
     this.roundRules = this.game.rules.missions[
@@ -21,17 +18,17 @@ export class NominationRound implements Round<'nomination'> {
   }
 
   handleMessage = (message: NominationMessage): void => {
-    const playerIds = this.game.players.map((p) => p.id);
-    if (!message.nominatedPlayerIds.every(playerIds.includes)) return;
-    this.nominatedPlayerIds = message.nominatedPlayerIds;
+    const playerIDs = this.game.players.map((p) => p.id);
+    if (!message.nominatedPlayerIDs.every(playerIDs.includes)) return;
+    this.nominatedPlayerIDs = message.nominatedPlayerIDs;
   };
 
-  validateMessage = ({ nominatedPlayerIds }: NominationMessage): boolean =>
-    Array.isArray(nominatedPlayerIds) &&
-    nominatedPlayerIds.length === this.roundRules.players;
+  validateMessage = ({ nominatedPlayerIDs }: NominationMessage): boolean =>
+    Array.isArray(nominatedPlayerIDs) &&
+    nominatedPlayerIDs.length === this.roundRules.players;
 
   isReadyToComplete = (): boolean => {
-    return this.nominatedPlayerIds.length === this.roundRules.players;
+    return this.nominatedPlayerIDs.length === this.roundRules.players;
   };
 
   completeRound = (): RoundName => {

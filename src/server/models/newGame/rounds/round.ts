@@ -2,7 +2,9 @@ import {
   PublicDataByName,
   SecretDataByName,
   RoundName,
+  MessageByName,
 } from '@shared/types/gameData';
+import { Message } from '@shared/types/messages';
 import { Game, GameHistory } from '../newGame';
 
 export interface RoundConstructor<T extends RoundName = RoundName> {
@@ -12,9 +14,9 @@ export interface RoundConstructor<T extends RoundName = RoundName> {
 export interface Round<T extends RoundName> {
   roundName: T;
 
-  handleMessage: (message: unknown) => void;
+  handleMessage: (message: MessageByName<T>) => void;
 
-  validateMessage: (message: unknown) => boolean;
+  validateMessage: (message: MessageByName<T>) => boolean;
 
   isReadyToComplete: () => boolean;
 

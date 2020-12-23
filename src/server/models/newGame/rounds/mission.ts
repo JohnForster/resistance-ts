@@ -5,12 +5,7 @@ import {
   MissionRoundPublicData,
   MissionRoundSecretData,
 } from '@shared/types/gameData';
-
-export interface MissionRoundMessage {
-  playerId: PlayerId;
-  succeedMission: true;
-}
-
+import { MissionRoundMessage } from '@shared/types/messages';
 export class MissionRound implements Round<'mission'> {
   public roundName = 'mission' as const;
   private missionVotes: Map<PlayerId, boolean> = new Map();
@@ -22,12 +17,12 @@ export class MissionRound implements Round<'mission'> {
   constructor(private readonly game: Game) {}
 
   handleMessage = (message: MissionRoundMessage): void => {
-    this.missionVotes.set(message.playerId, message.succeedMission);
+    this.missionVotes.set(message.playerID, message.succeedMission);
   };
 
   validateMessage = (message: MissionRoundMessage): boolean => {
     return !!this.mission.nominatedPlayers.find(
-      (p) => p.id === message.playerId,
+      (p) => p.id === message.playerID,
     );
   };
 
@@ -47,8 +42,8 @@ export class MissionRound implements Round<'mission'> {
     // playersLeftToVote: this.nominatedPlayers.length - this.missionVotes.size,
   });
 
-  getSecretData = (playerId: string): MissionRoundSecretData => ({
-    hasVoted: !!this.mission.nominatedPlayers.find((p) => p.id === playerId),
+  getSecretData = (playerID: string): MissionRoundSecretData => ({
+    hasVoted: !!this.mission.nominatedPlayers.find((p) => p.id === playerID),
   });
 
   isFinal = (): boolean => false;

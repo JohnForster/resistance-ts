@@ -8,9 +8,9 @@ export const getGame = (id: string): Game | undefined => {
   return games.get(id);
 };
 
-export const addPlayer = (gameId: string, userId: string): void => {
-  const game = games.get(gameId);
-  const player = users.get(userId);
+export const addPlayer = (gameID: string, userID: string): void => {
+  const game = games.get(gameID);
+  const player = users.get(userID);
   game.handleMessage({
     player,
   });

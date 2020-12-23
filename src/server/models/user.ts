@@ -36,7 +36,7 @@ export default class User {
 // TODO: 10/12/20 This could be converted into a struct
 // type User2 = {
 //   id: string;
-//   game: Game; // possibly gameId: string ?
+//   game: Game; // possibly gameID: string ?
 //   name: string;
 //   websocket: WebSocket;
 // };

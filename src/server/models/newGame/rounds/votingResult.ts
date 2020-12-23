@@ -1,11 +1,7 @@
 import { RoundName } from '@shared/types/gameData';
+import { VotingResultMessage } from '@shared/types/messages';
 import { Round } from '.';
 import { GameHistory, Game, PlayerId, Nomination } from '../newGame';
-
-export interface VotingResultMessage {
-  playerId: PlayerId;
-  confirm: true;
-}
 
 export class VotingResult implements Round<'votingResult'> {
   public roundName = 'votingResult' as const;
@@ -27,7 +23,7 @@ export class VotingResult implements Round<'votingResult'> {
   }
 
   handleMessage = (message: VotingResultMessage): void => {
-    this.confirmedPlayers.add(message.playerId);
+    this.confirmedPlayers.add(message.playerID);
   };
 
   validateMessage = (message: VotingResultMessage): boolean =>
@@ -44,18 +40,18 @@ export class VotingResult implements Round<'votingResult'> {
   getRoundData = () => ({
     roundName: 'votingResult' as const,
     unconfirmedPlayerNames: this.unconfirmedPlayerNames,
-    votes: Array.from(this.nominationResult.votes).map(([playerId, vote]) => ({
-      id: playerId,
+    votes: Array.from(this.nominationResult.votes).map(([playerID, vote]) => ({
+      id: playerID,
       playerApproves: vote,
-      name: this.game.getPlayer(playerId)?.name,
+      name: this.game.getPlayer(playerID)?.name,
     })), // ? Do we need to send other player ids... ever?
     voteSucceeded: this.nominationResult.succeeded,
     votesRemaining: this.game.votesRemaining,
   });
 
   // TODO add hasConfirmed to VotingResultData
-  getSecretData = (userId: string) => ({
-    hasConfirmed: this.confirmedPlayers.has(userId),
+  getSecretData = (userID: string) => ({
+    hasConfirmed: this.confirmedPlayers.has(userID),
   });
 
   isFinal = (): boolean => false;

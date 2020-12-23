@@ -5,11 +5,7 @@ import {
   MissionResultSecretData,
   RoundName,
 } from '@shared/types/gameData';
-
-export interface MissionResultMessage {
-  playerId: PlayerId;
-  confirm: boolean;
-}
+import { MissionResultMessage } from '@shared/types/messages';
 
 export class MissionResult implements Round<'missionResult'> {
   public roundName = 'missionResult' as const;
@@ -22,7 +18,7 @@ export class MissionResult implements Round<'missionResult'> {
   };
 
   handleMessage = (message: MissionResultMessage): void => {
-    this.confirmedPlayers.add(message.playerId);
+    this.confirmedPlayers.add(message.playerID);
   };
 
   isReadyToComplete = (): boolean =>

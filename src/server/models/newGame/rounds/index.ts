@@ -5,3 +5,4 @@ export * from './votingResult';
 export * from './missionResult';
 export * from './mission';
 export * from './lobby';
+export * from './character';

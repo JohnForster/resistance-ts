@@ -6,9 +6,10 @@ import { Rules, RULES } from '../../data/gameRules';
 
 import User from '../user';
 
-import { Round } from './rounds';
+import { LobbyRound, Round } from './rounds';
 import { rounds } from './config';
 import { RoundName } from '@shared/types/gameData';
+import { Message } from '@shared/types/messages';
 
 export interface Player extends User {
   allegiance?: 'resistance' | 'spies';
@@ -27,7 +28,7 @@ export interface Mission {
   nominations: Nomination[];
   nominatedPlayers: Player[];
   votes: {
-    playerId: PlayerId;
+    playerID: PlayerId;
     succeed: boolean;
   }[];
   success: boolean;
@@ -47,14 +48,8 @@ export class Game {
   public players: Player[] = [];
 
   private currentRound: Round<RoundName>; /* = new Lobby(this); */
-  public currentMission: OngoingMission = {
-    missionNumber: 0, // TODO should be set in constructor
-    nominations: [],
-    nominatedPlayers: [],
-    votes: [],
-  };
+  public currentMission: OngoingMission;
   public votesRemaining: number;
-  // ! HOW TO DEAL WITH HISTORY?
   public history: GameHistory = {};
   private leaderIndex = 0;
   public host: Player;
@@ -67,11 +62,15 @@ export class Game {
     return RULES[this.players.length];
   }
 
-  // TODO Set rules in LobbyRound.completeRound()
   constructor() {
-    // this.votesRemaining = rules.numberOfVotesAllowed
     this.votesRemaining = 5;
-    // this.currentRound = new LobbyRound()
+    this.currentRound = new LobbyRound(this);
+    this.currentMission = {
+      missionNumber: 0,
+      nominations: [],
+      nominatedPlayers: [],
+      votes: [],
+    };
   }
 
   addPlayer = (player: Player): void => {
@@ -80,9 +79,9 @@ export class Game {
     this.players.push(player);
   };
 
-  setHost = (playerId: string): void => {
-    const player = this.getPlayer(playerId);
-    if (!player) return console.error(`No player found with id ${playerId}`);
+  setHost = (playerID: string): void => {
+    const player = this.getPlayer(playerID);
+    if (!player) return console.error(`No player found with id ${playerID}`);
     this.host = player;
   };
 
@@ -97,13 +96,11 @@ export class Game {
     player.send(payload);
   };
 
-  generatePayload = (
-    player: User,
-  ): EventByName<typeof EventType.gameUpdate> => {
+  generatePayload = (player: User): EventByName<'outgoingMessage'> => {
     const secretData = this.currentRound?.getSecretData(player.id) ?? null;
     const roundData = this.currentRound?.getRoundData() ?? null;
     return {
-      event: EventType.gameUpdate,
+      event: 'outgoingMessage',
       data: {
         gameID: this.id,
         missionNumber: this.currentMission.missionNumber,
@@ -125,7 +122,7 @@ export class Game {
     };
   };
 
-  handleMessage = (message: unknown): void => {
+  handleMessage = (message: Message): void => {
     const isValid = this.currentRound.validateMessage(message);
     if (!isValid) return console.error('Not valid');
 
