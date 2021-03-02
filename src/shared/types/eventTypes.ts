@@ -1,5 +1,5 @@
 import { Message } from './messages';
-import { GameData } from './gameData';
+import { GameData, RoundName } from './gameData';
 import { PlayerData } from './playerData';
 
 export type EventType =
@@ -8,9 +8,9 @@ export type EventType =
   | 'error'
   | 'createGame'
   | 'joinGame'
-  | 'message'
+  | 'clientMessage'
   | 'playerData'
-  | 'outgoingMessage';
+  | 'serverMessage';
 
 // TODO ? 23/12/10 Move createGame and joinGame into message type.
 
@@ -53,21 +53,21 @@ interface JoinEvent extends EventTemplate {
   };
 }
 
-interface IncomingMessageEvent extends EventTemplate {
-  event: 'message';
+interface ClientMessageEvent extends EventTemplate {
+  event: 'clientMessage';
   data: Message;
 }
 
-interface OutgoingMessageEvent extends EventTemplate {
-  event: 'outgoingMessage';
-  data: GameData;
+interface ServerMessageEvent extends EventTemplate {
+  event: 'serverMessage';
+  data: GameData<RoundName>;
 }
 
 export type WSEvent =
   | CreateEvent
   | JoinEvent
-  | IncomingMessageEvent
-  | OutgoingMessageEvent
+  | ClientMessageEvent
+  | ServerMessageEvent
   | CloseEvent
   | OpenEvent
   | ErrorEvent

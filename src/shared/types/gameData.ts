@@ -107,46 +107,50 @@ export type RoundData =
       roundName: 'lobby';
       public: LobbyRoundPublicData;
       secret: LobbyRoundSecretData;
-      message: LobbyMessage;
+      clientMessage: LobbyMessage;
     }
   | {
       roundName: 'character';
       public: CharacterRoundPublicData;
       secret: CharacterRoundSecretData;
-      message: CharacterMessage;
+      clientMessage: CharacterMessage;
     }
   | {
       roundName: 'nomination';
       public: NominationRoundPublicData;
       secret: NominationRoundSecretData;
-      message: NominationMessage;
+      clientMessage: NominationMessage;
     }
   | {
       roundName: 'voting';
       public: VotingRoundPublicData;
       secret: VotingRoundSecretData;
-      message: VotingMessage;
+      clientMessage: VotingMessage;
     }
   | {
       roundName: 'votingResult';
       public: VotingResultPublicData;
       secret: VotingResultSecretData;
-      message: VotingResultMessage;
+      clientMessage: VotingResultMessage;
     }
   | {
       roundName: 'mission';
       public: MissionRoundPublicData;
       secret: MissionRoundSecretData;
-      message: MissionRoundMessage;
+      clientMessage: MissionRoundMessage;
     }
   | {
       roundName: 'missionResult';
       public: MissionResultPublicData;
       secret: MissionResultSecretData;
-      message: MissionResultMessage;
+      clientMessage: MissionResultMessage;
     };
 
-export type GameData<R extends RoundName = RoundName> = {
+export type GameData<
+  R extends RoundName = RoundName,
+  P = PublicDataByName<R>,
+  S = SecretDataByName<R>
+> = {
   gameID: string;
   missionNumber: number;
   stage: R;
@@ -159,12 +163,13 @@ export type GameData<R extends RoundName = RoundName> = {
     name: string;
     id: string;
   }[];
-  roundData: PublicDataByName<R>;
-  secretData?: SecretDataByName<R>;
+  history: boolean[];
+  roundData: P;
+  secretData?: S;
   rounds: [number, number][];
 };
 
-type RoundDataByName<R extends RoundName, T = RoundData> = T extends {
+export type RoundDataByName<R extends RoundName, T = RoundData> = T extends {
   roundName: R;
 }
   ? T
@@ -178,4 +183,6 @@ export type SecretDataByName<R extends RoundName> = RoundDataByName<
   R
 >['secret'];
 
-export type MessageByName<R extends RoundName> = RoundDataByName<R>['message'];
+export type MessageByName<R extends RoundName> = RoundDataByName<
+  R
+>['clientMessage'];

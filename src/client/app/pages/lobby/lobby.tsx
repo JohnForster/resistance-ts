@@ -5,14 +5,14 @@ import * as Styled from './styled';
 import Page from '../../components/page/page';
 
 export interface LobbyPageProps {
-  game: GameData;
+  game: GameData<'lobby'>;
   player: PlayerData;
   beginGame: () => void;
 }
 
 interface LobbyPageState {}
 
-export const LobbyPage: React.FC<LobbyPageProps> = props => (
+export const LobbyPage: React.FC<LobbyPageProps> = (props) => (
   <Page>
     <h1>Lobby</h1>
     <p>Game ID: </p>
@@ -25,7 +25,10 @@ export const LobbyPage: React.FC<LobbyPageProps> = props => (
     </Styled.PlayerContainer>
     <Choose>
       <When condition={props.game.isHost}>
-        <button onClick={props.beginGame} disabled={props.game.players.length < 2}>
+        <button
+          onClick={props.beginGame}
+          disabled={props.game.players.length < 2}
+        >
           Begin Game
         </button>
       </When>

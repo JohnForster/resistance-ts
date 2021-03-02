@@ -3,9 +3,8 @@ import { WebsocketRequestHandler } from 'express-ws';
 
 import { Game } from '../models/newGame/newGame';
 import User from '../models/user';
-import { EventByName } from '@shared/types/eventTypes';
-import { EventType } from '../types/enums';
-import { EventTypeEnum } from '@shared/types/enums';
+import { EventByName, EventType } from '@shared/types/eventTypes';
+import { Message } from '@shared/types/messages';
 
 export default class WSEventHandler {
   constructor(
@@ -28,7 +27,7 @@ export default class WSEventHandler {
     if (user) {
       // If we have a user, but they are trying to make a new connection.
       const handleMessage = this.createMessageHandler(user);
-      user.ws = ws.on('message', handleMessage);
+      user.ws = ws.on('clientMessage', handleMessage);
       user.sendPlayerData();
       const game = this.games.get(user.gameID);
       game.sendGameUpdate(user);
@@ -40,7 +39,7 @@ export default class WSEventHandler {
       );
       const user = this.createNewUser(ws);
       const handleMessage = this.createMessageHandler(user);
-      user.ws = ws.on('message', handleMessage);
+      user.ws = ws.on('clientMessage', handleMessage);
     }
   };
 
@@ -48,18 +47,18 @@ export default class WSEventHandler {
     // TODO try/catch JSON.parse
     const [event, message] = JSON.parse(msg as string);
     console.log('Event received:', event);
-    if (event === 'mission') {
+    if (event === 'clientMessage') {
       console.log(message);
     }
 
     const game = this.games.get(user.gameID);
     if (!game) {
       switch (event) {
-        case EventType.createGame:
+        case 'createGame':
           return this.createGame(user);
-        case EventType.joinGame:
+        case 'joinGame':
           return this.joinGame(user, message);
-        case EventType.playerData:
+        case 'playerData':
           return this.updatePlayerData(user, message);
         default:
           return console.error(
@@ -80,7 +79,7 @@ export default class WSEventHandler {
     user: User /* data: EventByName<typeof EventType.createGame>['data'] */,
   ): void => {
     if (this.games.get(user.id))
-      return user.send({ event: EventType.error, data: 'game already exists' });
+      return user.send({ event: 'error', data: 'game already exists' });
 
     const game = new Game();
     this.games.set(game.id, game);
@@ -96,8 +95,8 @@ export default class WSEventHandler {
     if (!game) {
       console.error(`No game found with ID '${data.gameID}'`);
       console.error(`Current games: ${this.games.keys}`);
-      const payload: EventByName<typeof EventType.error> = {
-        event: EventType.error,
+      const payload: EventByName<'error'> = {
+        event: 'error',
         data: `Game with id ${data.gameID} not found.`,
       };
       return user.send(payload);
@@ -127,8 +126,8 @@ export default class WSEventHandler {
 
     this.users.set(user.id, user);
 
-    const payload: EventByName<typeof EventType.playerData> = {
-      event: EventType.playerData,
+    const payload: EventByName<'playerData'> = {
+      event: 'playerData',
       data: { playerID: user.id, name: null },
     };
     user.send(payload);

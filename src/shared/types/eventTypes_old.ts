@@ -7,7 +7,7 @@ const EventType: EventTypeEnum = {
   beginGame: 'beginGame',
   createGame: 'createGame',
   joinGame: 'joinGame',
-  message: 'message',
+  message: 'clientMessage',
   close: 'close',
   open: 'open',
   error: 'error',

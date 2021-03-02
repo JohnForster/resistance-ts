@@ -1,4 +1,7 @@
                               ##### TODO LIST #####
+CURRENT: REFACTOR
+  Server refactor "done" (not tested/debugged) ✅ish
+  Client Refactor
 
 ______________________________________________________________________________________
 COMPLETED:
@@ -58,3 +61,6 @@ Extract Mission into separate class.
                             -result      -result      -result
                             -mission     -mission     -mission
                             -missionRes  -missionRes  -missionRes
+Make shared into a module.
+Split node_modules between client/server
+Replace websockets with sockets.io

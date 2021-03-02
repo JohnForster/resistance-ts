@@ -1,12 +1,16 @@
 import React, { PureComponent } from 'react';
-import { GameData, RoundData, NominationRoundData } from '@shared/types/gameData';
+import {
+  GameData,
+  NominationRoundPublicData,
+  RoundData,
+} from '@shared/types/gameData';
 import Page from '../../components/page/page';
 import ProgressBar from '../../components/progressBar/progressBar';
 import { PlayerContainer } from '../lobby/styled';
 import NominateButton from '../../components/nominateButton/nominatebutton';
 
 export interface NominationPageProps {
-  game: GameData;
+  game: GameData<'nomination'>;
   submitNominations: (playerIDs: Set<string>) => void;
 }
 
@@ -26,20 +30,23 @@ const mockRound = {
   rounds,
 };
 
-// ! REFACTOR INTO NOMINATION/VOTING ETC. COMPONENTS
-export class NominationPage extends PureComponent<NominationPageProps, NominationPageState> {
+export class NominationPage extends PureComponent<
+  NominationPageProps,
+  NominationPageState
+> {
   state: NominationPageState = {
     selectedPlayers: new Set<string>(),
   };
 
   onSelect = (playerID: string) => (): void => {
     const selectedPlayers = new Set(this.state.selectedPlayers);
-    selectedPlayers.has(playerID) ? selectedPlayers.delete(playerID) : selectedPlayers.add(playerID);
+    selectedPlayers.has(playerID)
+      ? selectedPlayers.delete(playerID)
+      : selectedPlayers.add(playerID);
     this.setState({ selectedPlayers });
   };
 
-  get roundData(): NominationRoundData {
-    if (!this.isNominationRound(this.props.game.roundData)) throw new Error("This isn't nomination round data!");
+  get roundData(): NominationRoundPublicData {
     return this.props.game.roundData;
   }
 
@@ -47,13 +54,12 @@ export class NominationPage extends PureComponent<NominationPageProps, Nominatio
     return this.state.selectedPlayers.size === this.roundData.playersToNominate;
   }
 
-  isNominationRound = (roundData: RoundData): roundData is NominationRoundData => {
-    return !!(roundData as NominationRoundData).playersToNominate;
-  };
-
   submit = (): void => {
     console.log('submitting...');
-    console.log('this.isCorrectNumberOfNominations:', this.isCorrectNumberOfNominations);
+    console.log(
+      'this.isCorrectNumberOfNominations:',
+      this.isCorrectNumberOfNominations,
+    );
     if (!this.isCorrectNumberOfNominations) return;
     this.props.submitNominations(this.state.selectedPlayers);
   };
@@ -61,11 +67,17 @@ export class NominationPage extends PureComponent<NominationPageProps, Nominatio
   render(): JSX.Element {
     return (
       <Page>
-        <ProgressBar history={this.props.game.history} rounds={this.props.game.rounds} />
+        <ProgressBar
+          history={this.props.game.history}
+          rounds={this.props.game.rounds}
+        />
         <Choose>
           <When condition={this.props.game.isLeader}>
             <h2>You are the leader!</h2>
-            <h3>Nominate {this.roundData.playersToNominate} players to perform this mission.</h3>
+            <h3>
+              Nominate {this.roundData.playersToNominate} players to perform
+              this mission.
+            </h3>
             {this.props.game.players.map((player, i) => (
               <NominateButton
                 key={`nominateButton-${i}`}
@@ -74,13 +86,17 @@ export class NominationPage extends PureComponent<NominationPageProps, Nominatio
                 isSelected={this.state.selectedPlayers.has(player.id)}
               />
             ))}
-            <button onClick={this.submit} disabled={!this.isCorrectNumberOfNominations}>
+            <button
+              onClick={this.submit}
+              disabled={!this.isCorrectNumberOfNominations}
+            >
               Submit
             </button>
           </When>
           <When condition={!this.props.game.isLeader}>
             <h2>
-              Waiting for {this.props.game.leaderName} to nominate for Mission {this.props.game.missionNumber}...
+              Waiting for {this.props.game.leaderName} to nominate for Mission{' '}
+              {this.props.game.missionNumber}...
             </h2>
           </When>
         </Choose>

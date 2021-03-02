@@ -1,6 +1,7 @@
 import { EventByName } from '@shared/types/eventTypes';
+import { RoundName } from '@shared/types/gameData';
+import { Message } from '@shared/types/messages';
 
-import { EventType } from '../../types/enums';
 import generateID from '../../utils/generateID';
 import { Rules, RULES } from '../../data/gameRules';
 
@@ -8,8 +9,6 @@ import User from '../user';
 
 import { LobbyRound, Round } from './rounds';
 import { rounds } from './config';
-import { RoundName } from '@shared/types/gameData';
-import { Message } from '@shared/types/messages';
 
 export interface Player extends User {
   allegiance?: 'resistance' | 'spies';
@@ -96,11 +95,11 @@ export class Game {
     player.send(payload);
   };
 
-  generatePayload = (player: User): EventByName<'outgoingMessage'> => {
+  generatePayload = (player: User): EventByName<'serverMessage'> => {
     const secretData = this.currentRound?.getSecretData(player.id) ?? null;
     const roundData = this.currentRound?.getRoundData() ?? null;
     return {
-      event: 'outgoingMessage',
+      event: 'serverMessage',
       data: {
         gameID: this.id,
         missionNumber: this.currentMission.missionNumber,
@@ -113,7 +112,7 @@ export class Game {
         players: this.players.map((p) => ({ name: p.name, id: p.id })),
         roundData,
         secretData,
-        // history: this._progress.missions.map(m => m.result),
+        history: Object.values(this.history).map((m) => m.success),
         rounds: Object.entries(this.rules?.missions ?? {}).map(([, o]) => [
           o.players,
           o.failsRequired,

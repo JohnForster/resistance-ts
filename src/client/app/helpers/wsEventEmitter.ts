@@ -1,7 +1,12 @@
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
-import { EventByName, WSEvent, Callbacks, Callback } from '@shared/types/eventTypes';
-import { EventType } from '@client/types/event';
-type EventType = typeof EventType[keyof typeof EventType];
+import {
+  EventType,
+  EventByName,
+  WSEvent,
+  Callbacks,
+  Callback,
+  DataByEventName,
+} from '@shared/types/eventTypes';
 
 export default class WSEventEmitter {
   private websocket: W3CWebSocket;
@@ -11,29 +16,34 @@ export default class WSEventEmitter {
   constructor(url: string) {
     this.url = url;
     this.init();
-    this.bind(EventType.close, this.reconnect);
+    this.bind('close', this.reconnect);
   }
 
   private init = (): void => {
     this.websocket = new W3CWebSocket(this.url);
-    this.websocket.onclose = (): void => this.execute(EventType.close, null);
-    this.websocket.onopen = (): void => this.execute(EventType.open, 'opening');
+    this.websocket.onclose = (): void => this.execute('close', null);
+    this.websocket.onopen = (): void => this.execute('open', 'opening');
     this.websocket.onerror = this.handleError;
     this.websocket.onmessage = this.onMessage;
   };
 
-  public send = <T extends EventType, W extends WSEvent = EventByName<T>>(
-    eventType: W['event'],
-    data: W['data'],
+  public sendMessage = (payload: DataByEventName<'clientMessage'>) => {
+    this.send('clientMessage', payload);
+  };
+
+  public send = <T extends EventType>(
+    eventType: T,
+    data: DataByEventName<T>,
   ): WSEventEmitter => {
+    // TODO try/catch
     const payload = JSON.stringify([eventType, data]);
     this.websocket.send(payload);
     return this;
   };
 
-  public bind = <T extends EventType, W extends WSEvent = EventByName<T>>(
-    eventType: W['event'],
-    cb: Callback<W>,
+  public bind = <T extends EventType>(
+    eventType: T,
+    cb: Callback<EventByName<T>>,
   ): WSEventEmitter => {
     if (!this.callbacks[eventType]) this.callbacks[eventType] = [];
     this.callbacks[eventType].push(cb);
@@ -51,7 +61,7 @@ export default class WSEventEmitter {
     data: W['data'],
   ): void => {
     const chain: Callback<W>[] = this.callbacks[eventName] || [];
-    chain.forEach(cb => cb(data));
+    chain.forEach((cb) => cb(data));
   };
 
   private handleError = (error: Error): void => {

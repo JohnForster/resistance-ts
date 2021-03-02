@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
 
-import { EventType } from '@client/types/event';
+import { DataByEventName, EventType } from '@shared/types/eventTypes';
 
 import { EventByName } from '@shared/types/eventTypes';
+import * as typeGuards from '../types/typeGuards';
 import { GameData } from '@shared/types/gameData';
 
 import WSEventEmitter from './helpers/wsEventEmitter';
@@ -32,41 +33,27 @@ export default class App extends PureComponent<{}, AppState> {
     const eventEmitter = new WSEventEmitter(this.connectionURL);
 
     // Temporary for message/error
-    eventEmitter.bind(EventType.message, (msg) =>
-      console.log('message received: ', msg),
-    );
-    eventEmitter.bind(EventType.error, (msg) =>
-      console.error('error received: ', msg),
-    );
+    eventEmitter.bind('serverMessage', this.onGameUpdate);
 
     // Register listeners
-    eventEmitter.bind(EventType.playerData, this.onPlayerUpdate);
-    eventEmitter.bind(EventType.gameUpdate, this.onGameUpdate);
-    // ? eventEmitter.open() after bindings?
+    eventEmitter.bind('playerData', this.onPlayerUpdate);
 
     // Either send user data or request user data
     this.setState({ eventEmitter });
   }
 
   hostGame = (): void => {
-    this.state.eventEmitter.send<typeof EventType.createGame>(
-      EventType.createGame,
-      {
-        hostID: this.state.player.playerID,
-      },
-    );
+    this.state.eventEmitter.send('createGame', {
+      hostID: this.state.player.playerID,
+    });
     this.setState({ status: 'pending' });
   };
 
-  onGameUpdate = (
-    data: EventByName<typeof EventType.gameUpdate>['data'],
-  ): void => {
+  onGameUpdate = (data: DataByEventName<'serverMessage'>): void => {
     this.setState({ game: data });
   };
 
-  onPlayerUpdate = (
-    data: EventByName<typeof EventType.playerData>['data'],
-  ): void => {
+  onPlayerUpdate = (data: DataByEventName<'playerData'>): void => {
     // Use a library for dealing with cookies?
     console.log(`Setting player cookie: ${data.playerID.slice(0, 6)}...`);
     document.cookie = `playerID=${data.playerID}`;
@@ -74,81 +61,76 @@ export default class App extends PureComponent<{}, AppState> {
   };
 
   joinGame = (gameID: string): void => {
-    this.state.eventEmitter.send<typeof EventType.joinGame>(
-      EventType.joinGame,
-      { gameID },
-    );
+    this.state.eventEmitter.send('joinGame', { gameID });
   };
 
-  testMessage = (): void => {
-    this.state.eventEmitter.send<typeof EventType.message>(
-      EventType.message,
-      'Test message',
-    );
-  };
-
+  // ! Currently using same type for incoming and outgoing playerData
   submitName = (name: string): void => {
     const player = { ...this.state.player, name };
-    this.state.eventEmitter.send<typeof EventType.playerData>(
-      EventType.playerData,
-      player,
-    );
+    this.state.eventEmitter.send('playerData', player);
     this.setState({ player });
   };
 
   beginGame = (): void => {
     const gameID = this.state.game.gameID;
-    this.state.eventEmitter.send<typeof EventType.beginGame>(
-      EventType.beginGame,
-      { gameID },
-    );
+    this.state.eventEmitter.send('clientMessage', {
+      gameID,
+      type: 'startGame',
+      playerID: this.state.player.playerID,
+    });
   };
 
   confirmCharacter = (): void => {
     const { gameID, playerID } = this.state.game;
-    this.state.eventEmitter.send<typeof EventType.confirm>(EventType.confirm, {
+    this.state.eventEmitter.send('clientMessage', {
+      type: 'confirmCharacter',
       gameID,
       playerID,
+      confirm: true,
     });
   };
 
   submitNominations = (playerIDs: Set<string>): void => {
-    const { gameID, playerID } = this.state.game;
-    this.state.eventEmitter.send<typeof EventType.nominate>(
-      EventType.nominate,
-      {
-        gameID,
-        playerID,
-        nominatedPlayerIDs: Array.from(playerIDs),
-      },
-    );
+    const { gameID } = this.state.game;
+    this.state.eventEmitter.sendMessage({
+      type: 'nominatePlayers',
+      gameID,
+      nominatedPlayerIDs: Array.from(playerIDs),
+    });
   };
 
   submitVote = (playerApproves: boolean): void => {
     const { gameID, playerID } = this.state.game;
-    this.state.eventEmitter.send<typeof EventType.vote>(EventType.vote, {
+    this.state.eventEmitter.sendMessage({
+      type: 'vote',
       gameID,
       playerID,
       playerApproves,
     });
   };
 
-  submitMissionChoice = (playerVotedToSucceed: boolean): void => {
+  submitMissionChoice = (succeedMission: boolean): void => {
     const { gameID, playerID } = this.state.game;
-    this.state.eventEmitter.send<typeof EventType.mission>(EventType.mission, {
+    this.state.eventEmitter.sendMessage({
+      type: 'mission',
       gameID,
       playerID,
-      playerVotedToSucceed,
+      succeedMission,
     });
   };
 
   continue = (): void => {
     const { gameID, playerID } = this.state.game;
-    console.log(EventType.continue);
-    this.state.eventEmitter.send<typeof EventType.continue>(
-      EventType.continue,
-      { gameID, playerID },
-    );
+    this.state.eventEmitter.sendMessage({
+      type: 'confirmVoteResult',
+      gameID,
+      playerID,
+      confirm: true,
+    });
+  };
+
+  typeGuard = (game: GameData): game is GameData<'voting'> => {
+    return true;
   };
 
   render(): JSX.Element {
@@ -162,18 +144,17 @@ export default class App extends PureComponent<{}, AppState> {
                 hostGame={this.hostGame}
                 joinGame={this.joinGame}
                 player={this.state.player}
-                testMessage={this.testMessage}
                 submitName={this.submitName}
               />
             </When>
             <When
               condition={
                 this.state.game.missionNumber === 0 &&
-                this.state.game.stage === 'lobby'
+                typeGuards.isLobbyRound(this.state.game)
               }
             >
               <Pages.LobbyPage
-                game={this.state.game}
+                game={this.state.game as GameData<'lobby'>}
                 player={this.state.player}
                 beginGame={this.beginGame}
               />
@@ -181,66 +162,66 @@ export default class App extends PureComponent<{}, AppState> {
             <When
               condition={
                 this.state.game.missionNumber === 0 &&
-                this.state.game.stage === 'characterAssignment'
+                typeGuards.isCharacterRound(this.state.game)
               }
             >
               <Pages.CharacterPage
-                game={this.state.game}
+                game={this.state.game as GameData<'character'>}
                 confirmCharacter={this.confirmCharacter}
               />
             </When>
             <When
               condition={
                 this.state.game.missionNumber > 0 &&
-                this.state.game.stage === 'nomination'
+                typeGuards.isNominationRound(this.state.game)
               }
             >
               <Pages.NominationPage
-                game={this.state.game}
+                game={this.state.game as GameData<'nomination'>}
                 submitNominations={this.submitNominations}
               />
             </When>
             <When
               condition={
                 this.state.game.missionNumber > 0 &&
-                this.state.game.stage === 'voting'
+                typeGuards.isVotingRound(this.state.game)
               }
             >
               <Pages.VotingPage
-                game={this.state.game}
+                game={this.state.game as GameData<'voting'>}
                 submitVote={this.submitVote}
               />
             </When>
             <When
               condition={
                 this.state.game.missionNumber > 0 &&
-                this.state.game.stage === 'votingResult'
+                typeGuards.isVotingResultRound(this.state.game)
               }
             >
               <Pages.VoteResultsPage
-                game={this.state.game}
+                game={this.state.game as GameData<'votingResult'>}
                 confirmReady={this.continue}
               />
             </When>
             <When
               condition={
                 this.state.game.missionNumber > 0 &&
-                this.state.game.stage === 'mission'
+                typeGuards.isMissionRound(this.state.game)
               }
             >
               <Pages.MissionPage
-                game={this.state.game}
+                game={this.state.game as GameData<'mission'>}
                 completeMission={this.submitMissionChoice}
               />
             </When>
             <When
               condition={
                 this.state.game.missionNumber > 0 &&
-                this.state.game.stage === 'missionResult'
+                typeGuards.isMissionResultRound(this.state.game)
               }
             >
               <Pages.MissionResultPage
-                game={this.state.game}
+                game={this.state.game as GameData<'missionResult'>}
                 confirmReady={this.continue}
               />
             </When>

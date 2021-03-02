@@ -27,7 +27,7 @@
 
 //     if (user) {
 //       const handleMessage = this.createMessageHandler(user);
-//       user.ws = ws.on('message', handleMessage);
+//       user.ws = ws.on('clientMessage', handleMessage);
 //       user.sendPlayerData();
 //       // TODO refactor to user.sendGameUpdate()
 //       if (user.game) user.game.sendGameUpdate(user);
@@ -39,7 +39,7 @@
 //       );
 //       const user = this.createNewUser(ws);
 //       const messageHandler = this.createMessageHandler(user);
-//       user.ws = ws.on('message', messageHandler);
+//       user.ws = ws.on('clientMessage', messageHandler);
 //     }
 //   };
 

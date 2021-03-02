@@ -1,94 +1,162 @@
-import React, { PureComponent } from 'react';
-import { GameData, RoundData, SecretData, VotingRoundData, VotingRoundSecretData } from '@shared/types/gameData';
+import React, { useState } from 'react';
+import { GameData } from '@shared/types/gameData';
 import Page from '../../components/page/page';
-import { PlayerContainer } from '../lobby/styled';
-import NominateButton from '../../components/nominateButton/nominatebutton';
 import * as Styled from './styled';
 
 import listString from '../../helpers/listString';
 import ProgressBar from '@client/app/components/progressBar/progressBar';
 
-export interface VotingPageProps {
-  game: GameData;
+interface Props {
+  game: GameData<'voting'>;
   submitVote: (playerApproves: boolean) => void;
 }
 
-interface VotingPageState {
-  playerApproves: boolean;
-}
+export const VotingPage: React.FC<Props> = (props) => {
+  const [playerApproves, setPlayerApproves] = useState<boolean>(null);
+  const { roundData, secretData } = props.game;
+  return (
+    <Page>
+      <ProgressBar history={props.game.history} rounds={props.game.rounds} />
+      <h3>{props.game.leaderName} has nominated</h3>
+      <h2>{listString(roundData.nominatedPlayers.map((p) => p.name))}</h2>
+      <h3>
+        to undertake this mission. Do you think this mission should go ahead?
+      </h3>
+      <Choose>
+        <When condition={!!secretData}>
+          {/* When the player has already made a decision. */}
+          <Styled.ThumbContainer>
+            {props.game.secretData.playerApproves ? '👍' : '👎'}
+          </Styled.ThumbContainer>
+          <p>Waiting for {listString(roundData.unconfirmedPlayerNames)}</p>
+        </When>
+        <Otherwise>
+          <Styled.ButtonContainer>
+            <Styled.VoteButton
+              onClick={(): void => setPlayerApproves(true)}
+              isGreyed={playerApproves === false}
+            >
+              👍
+            </Styled.VoteButton>
+            <Styled.VoteButton
+              onClick={(): void => setPlayerApproves(false)}
+              isGreyed={playerApproves === true}
+            >
+              👎
+            </Styled.VoteButton>
+          </Styled.ButtonContainer>
+          <button
+            disabled={playerApproves === null}
+            onClick={() => props.submitVote(playerApproves)}
+          >
+            Submit
+          </button>
+        </Otherwise>
+      </Choose>
+    </Page>
+  );
+};
 
-// ! REFACTOR INTO NOMINATION/VOTING ETC. COMPONENTS
-export class VotingPage extends PureComponent<VotingPageProps, VotingPageState> {
-  state: VotingPageState = {
-    playerApproves: null,
-  };
+// export interface VotingPageProps {
+//   game: GameData;
+//   submitVote: (playerApproves: boolean) => void;
+// }
 
-  get roundData(): VotingRoundData {
-    if (!this.isVotingRound(this.props.game.roundData)) throw new Error("This isn't nomination round data!");
-    return this.props.game.roundData;
-  }
+// interface VotingPageState {
+//   playerApproves: boolean;
+// }
 
-  get secretData(): VotingRoundSecretData {
-    if (!this.isVotingRoundSecret(this.props.game.secretData)) return null;
-    return this.props.game.secretData;
-  }
+// // ! REFACTOR INTO NOMINATION/VOTING ETC. COMPONENTS
+// export class old_VotingPage extends PureComponent<
+//   VotingPageProps,
+//   VotingPageState
+// > {
+//   state: VotingPageState = {
+//     playerApproves: null,
+//   };
 
-  isVotingRound = (roundData: RoundData): roundData is VotingRoundData => {
-    return !!((roundData as VotingRoundData).roundName === 'voting');
-  };
+//   get roundData(): VotingRoundPublicData {
+//     const roundData = this.props.game.roundData;
+//     if (!this.isVotingRound(this.props.game))
+//       throw new Error("This isn't voting round data!");
+//     return this.props.game.roundData;
+//   }
 
-  isVotingRoundSecret = (secretData: SecretData): secretData is VotingRoundSecretData => {
-    if (!secretData) return false;
-    const playerApproves = (secretData as VotingRoundSecretData).playerApproves;
-    return !!(playerApproves === true || playerApproves === false);
-  };
+//   get secretData(): VotingRoundSecretData {
+//     if (!this.isVotingRoundSecret(this.props.game.secretData)) return null;
+//     return this.props.game.secretData;
+//   }
 
-  approve = (playerApproves: boolean): void => {
-    this.setState({ playerApproves });
-  };
+//   isVotingRound = (
+//     roundData: PublicDataByName<RoundName>,
+//   ): roundData is PublicDataByName<'voting'> => {
+//     return !!(gameData.roundName === 'voting');
+//   };
 
-  submit = (): void => {
-    this.props.submitVote(this.state.playerApproves);
-  };
+//   isVotingRoundSecret = (
+//     secretData: SecretData,
+//   ): secretData is VotingRoundSecretData => {
+//     if (!secretData) return false;
+//     const playerApproves = (secretData as VotingRoundSecretData).playerApproves;
+//     return !!(playerApproves === true || playerApproves === false);
+//   };
 
-  render(): JSX.Element {
-    console.log(this.secretData);
-    return (
-      <Page>
-        <ProgressBar history={this.props.game.history} rounds={this.props.game.rounds} />
-        <h3>{this.props.game.leaderName} has nominated</h3>
-        {/* {this.roundData.nominatedPlayers.map((p, i) => (
-          <p key={`nominatedPlayer-${i}`}>{p.name}</p>
-        ))} */}
-        <h2>{listString(this.roundData.nominatedPlayers.map(p => p.name))}</h2>
-        <h3>to undertake this mission. Do you think this mission should go ahead?</h3>
-        <Choose>
-          <When condition={!!this.secretData}>
-            {/* When the player has already made a decision. */}
-            <Styled.ThumbContainer>{this.secretData.playerApproves ? '👍' : '👎'}</Styled.ThumbContainer>
-            <p>Waiting for {listString(this.roundData.unconfirmedPlayerNames)}</p>
-          </When>
-          <Otherwise>
-            <Styled.ButtonContainer>
-              <Styled.VoteButton
-                onClick={(): void => this.approve(true)}
-                isGreyed={this.state.playerApproves === false}
-              >
-                👍
-              </Styled.VoteButton>
-              <Styled.VoteButton
-                onClick={(): void => this.approve(false)}
-                isGreyed={this.state.playerApproves === true}
-              >
-                👎
-              </Styled.VoteButton>
-            </Styled.ButtonContainer>
-            <button disabled={this.state.playerApproves === null} onClick={this.submit}>
-              Submit
-            </button>
-          </Otherwise>
-        </Choose>
-      </Page>
-    );
-  }
-}
+//   approve = (playerApproves: boolean): void => {
+//     this.setState({ playerApproves });
+//   };
+
+//   submit = (): void => {
+//     this.props.submitVote(this.state.playerApproves);
+//   };
+
+//   render(): JSX.Element {
+//     return (
+//       <Page>
+//         <ProgressBar
+//           history={this.props.game.history}
+//           rounds={this.props.game.rounds}
+//         />
+//         <h3>{this.props.game.leaderName} has nominated</h3>
+//         <h2>
+//           {listString(this.roundData.nominatedPlayers.map((p) => p.name))}
+//         </h2>
+//         <h3>
+//           to undertake this mission. Do you think this mission should go ahead?
+//         </h3>
+//         <Choose>
+//           <When condition={!!this.secretData}>
+//             {/* When the player has already made a decision. */}
+//             <Styled.ThumbContainer>
+//               {this.secretData.playerApproves ? '👍' : '👎'}
+//             </Styled.ThumbContainer>
+//             <p>
+//               Waiting for {listString(this.roundData.unconfirmedPlayerNames)}
+//             </p>
+//           </When>
+//           <Otherwise>
+//             <Styled.ButtonContainer>
+//               <Styled.VoteButton
+//                 onClick={(): void => this.approve(true)}
+//                 isGreyed={this.state.playerApproves === false}
+//               >
+//                 👍
+//               </Styled.VoteButton>
+//               <Styled.VoteButton
+//                 onClick={(): void => this.approve(false)}
+//                 isGreyed={this.state.playerApproves === true}
+//               >
+//                 👎
+//               </Styled.VoteButton>
+//             </Styled.ButtonContainer>
+//             <button
+//               disabled={this.state.playerApproves === null}
+//               onClick={this.submit}
+//             >
+//               Submit
+//             </button>
+//           </Otherwise>
+//         </Choose>
+//       </Page>
+//     );
+//   }
+// }

@@ -1,4 +1,4 @@
 export interface PlayerData {
-  playerID: string;
+  playerID: string | null;
   name: string;
 }

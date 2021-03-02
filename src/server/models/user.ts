@@ -1,6 +1,5 @@
 import WebSocket from 'ws';
-import { EventByName, WSEvent } from '@shared/types/eventTypes';
-import { EventType } from '@server/types/enums';
+import { EventByName, EventType, WSEvent } from '@shared/types/eventTypes';
 import uuidv4 from 'uuid/v4';
 
 export default class User {
@@ -11,8 +10,8 @@ export default class User {
   constructor(public ws: WebSocket) {}
 
   public sendPlayerData = (): void => {
-    const playerData: EventByName<typeof EventType.playerData> = {
-      event: EventType.playerData,
+    const playerData: WSEvent = {
+      event: 'playerData',
       data: {
         playerID: this.id,
         name: this.name,
