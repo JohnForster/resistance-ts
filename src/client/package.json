@@ -1,0 +1,38 @@
+{
+  "name": "resistance-ts-client",
+  "version": "1.0.0",
+  "main": "index.tsx",
+  "author": "John Forster",
+  "license": "MIT",
+  "description": "Mobile app for playing \"The Resistance\" board game",
+  "repository": "github.com/johnforster/resistance",
+  "scripts": {
+    "start": "PORT=9001 webpack --watch",
+    "build": "PORT=9001 webpack --mode production",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@types/react-dom": "^17.0.1",
+    "@types/webpack-env": "^1.16.0",
+    "core-js": "^3.9.1",
+    "corejs": "^1.0.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "styled-components": "^5.2.1",
+    "tsx-control-statements": "^4.0.0",
+    "websocket": "^1.0.33"
+  },
+  "devDependencies": {
+    "@types/styled-components": "^5.1.7",
+    "@types/websocket": "^1.0.1",
+    "chalk": "^4.1.0",
+    "copy-webpack-plugin": "^7.0.0",
+    "html-webpack-plugin": "^5.2.0",
+    "ts-loader": "^8.0.17",
+    "type-fest": "^0.21.2",
+    "typescript": "^4.2.2",
+    "webpack": "^5.24.2",
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2"
+  }
+}

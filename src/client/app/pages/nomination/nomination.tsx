@@ -1,9 +1,7 @@
 import React, { PureComponent } from 'react';
-import {
-  GameData,
-  NominationRoundPublicData,
-  RoundData,
-} from '@shared/types/gameData';
+import { Choose, When } from 'tsx-control-statements/components';
+
+import { GameData, NominationRoundPublicData } from '@shared/types/gameData';
 import Page from '../../components/page/page';
 import ProgressBar from '../../components/progressBar/progressBar';
 import { PlayerContainer } from '../lobby/styled';

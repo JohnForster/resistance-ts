@@ -1,4 +1,6 @@
 import React from 'react';
+import { Choose, When } from 'tsx-control-statements/components';
+
 import { GameData } from '@shared/types/gameData';
 import { PlayerData } from '@shared/types/playerData';
 import * as Styled from './styled';

@@ -1,5 +1,7 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
+import { If } from 'tsx-control-statements/components';
+
 import responsive from '../../helpers/responsive';
 
 const scale = (f: number) => (x: number): number => x * f;
@@ -39,7 +41,8 @@ const Nominations = styled.div<{ selected: boolean }>`
       box-shadow: 0 0 0px white;
     }
   }
-  ${({ selected }): string => selected && 'animation: 1s ease-in infinite alternate glow;'};
+  ${({ selected }): string =>
+    selected && 'animation: 1s ease-in infinite alternate glow;'};
 `;
 
 const FailsRequired = styled.sup`
@@ -73,14 +76,19 @@ interface Props {
   rounds: [number, number][];
 }
 
-const ProgressBar: React.FC<Props> = props => {
+const ProgressBar: React.FC<Props> = (props) => {
   return (
     <Container>
       <h3>Mission Progress</h3>
       <ProgressContainer>
         <Line half />
         {props.rounds.map(([peopleOnMission, failsRequired], i) => {
-          const result = props.history[i] === true ? ' ✊' : props.history[i] === false ? ' 💀' : undefined;
+          const result =
+            props.history[i] === true
+              ? ' ✊'
+              : props.history[i] === false
+              ? ' 💀'
+              : undefined;
           const currentRoundIndex = props.history.length;
           return (
             <Fragment key={`line-${i}`}>

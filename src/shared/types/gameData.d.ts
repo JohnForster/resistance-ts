@@ -175,14 +175,14 @@ export type RoundDataByName<R extends RoundName, T = RoundData> = T extends {
   ? T
   : never;
 
-export type PublicDataByName<R extends RoundName> = RoundDataByName<
-  R
->['public'];
+export type PublicDataByName<
+  R extends RoundName
+> = RoundDataByName<R>['public'];
 
-export type SecretDataByName<R extends RoundName> = RoundDataByName<
-  R
->['secret'];
+export type SecretDataByName<
+  R extends RoundName
+> = RoundDataByName<R>['secret'];
 
-export type MessageByName<R extends RoundName> = RoundDataByName<
-  R
->['clientMessage'];
+export type MessageByName<
+  R extends RoundName
+> = RoundDataByName<R>['clientMessage'];

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import responsive from '@client/app/helpers/responsive';
+import responsive from '../../helpers/responsive';
 
 export const PageContainer = styled.div`
   display: flex;

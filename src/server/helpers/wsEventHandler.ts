@@ -15,6 +15,7 @@ export default class WSEventHandler {
   }
 
   public middleWare: WebsocketRequestHandler = (ws, req): void => {
+    console.log('connection made');
     const playerID = req.cookies.playerID || '';
     const user = this.users.get(playerID);
 
@@ -27,7 +28,7 @@ export default class WSEventHandler {
     if (user) {
       // If we have a user, but they are trying to make a new connection.
       const handleMessage = this.createMessageHandler(user);
-      user.ws = ws.on('clientMessage', handleMessage);
+      user.ws = ws.on('message', handleMessage);
       user.sendPlayerData();
       const game = this.games.get(user.gameID);
       game.sendGameUpdate(user);
@@ -39,15 +40,16 @@ export default class WSEventHandler {
       );
       const user = this.createNewUser(ws);
       const handleMessage = this.createMessageHandler(user);
-      user.ws = ws.on('clientMessage', handleMessage);
+      user.ws = ws.on('message', handleMessage);
     }
   };
 
   private createMessageHandler = (user: User) => (msg: Data): void => {
+    console.log('Message Recieved!');
     // TODO try/catch JSON.parse
     const [event, message] = JSON.parse(msg as string);
     console.log('Event received:', event);
-    if (event === 'clientMessage') {
+    if (event === 'message') {
       console.log(message);
     }
 
@@ -78,12 +80,13 @@ export default class WSEventHandler {
   private createGame = (
     user: User /* data: EventByName<typeof EventType.createGame>['data'] */,
   ): void => {
-    if (this.games.get(user.id))
+    if (this.games.get(user.id)) {
       return user.send({ event: 'error', data: 'game already exists' });
-
+    }
     const game = new Game();
     this.games.set(game.id, game);
     user.gameID = game.id;
+    console.log('Game created. id:', game.id);
   };
 
   private joinGame = (

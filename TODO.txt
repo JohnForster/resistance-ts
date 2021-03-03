@@ -49,7 +49,6 @@ TECH DEBT:
 Mirror game stage refactor changes in the front-end
 Encapsulate websocket interactions within a service
 Refactor wsEventHandler in server (receives array, sends object?)
-BEST PRACTICE: replace ports with enums
 Decide what to do with enum in shared.
   - Cannot be const enum, because cannot be used as type argument.
   - If happy to use regular enum, need to set up webpack to move it?
@@ -64,3 +63,5 @@ Extract Mission into separate class.
 Make shared into a module.
 Split node_modules between client/server
 Replace websockets with sockets.io
+Remove Babel
+Add Puppetteer tests

@@ -1,4 +1,6 @@
 import React, { PureComponent } from 'react';
+import { Choose, When, If } from 'tsx-control-statements/components';
+
 import {
   GameData,
   CharacterRoundSecretData,

@@ -7,7 +7,7 @@ import {
 import { CharacterMessage } from '../../../../shared/types/messages';
 import { Round } from '.';
 import { Game, GameHistory } from '../newGame';
-import shuffle from 'lodash.shuffle';
+import shuffle from 'lodash/shuffle';
 export class CharacterRound implements Round<'character'> {
   public roundName = 'character' as const;
 

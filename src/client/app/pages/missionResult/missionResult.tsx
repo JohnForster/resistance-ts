@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { If } from 'tsx-control-statements/components';
 
 import Page from '../../components/page/page';
 import { GameData } from '@shared/types/gameData';
 
 import * as Styled from './styled';
-import listString from '@client/app/helpers/listString';
+import listString from '../../helpers/listString';
 
 export interface MissionResultProps {
   game: GameData<'missionResult'>;

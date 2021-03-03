@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 import { EventByName, EventType, WSEvent } from '@shared/types/eventTypes';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 export default class User {
   public id: string = uuidv4();

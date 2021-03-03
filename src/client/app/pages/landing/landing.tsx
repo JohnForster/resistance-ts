@@ -1,4 +1,6 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent } from 'react';
+import { Choose, Otherwise, When } from 'tsx-control-statements/components';
+
 import { PlayerData } from '@shared/types/playerData';
 import Page from '../../components/page/page';
 

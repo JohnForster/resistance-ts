@@ -37,6 +37,7 @@ export default class WSEventEmitter {
   ): WSEventEmitter => {
     // TODO try/catch
     const payload = JSON.stringify([eventType, data]);
+    console.log('sending event', eventType);
     this.websocket.send(payload);
     return this;
   };

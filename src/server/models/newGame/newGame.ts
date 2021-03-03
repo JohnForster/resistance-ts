@@ -96,8 +96,8 @@ export class Game {
   };
 
   generatePayload = (player: User): EventByName<'serverMessage'> => {
-    const secretData = this.currentRound?.getSecretData(player.id) ?? null;
-    const roundData = this.currentRound?.getRoundData() ?? null;
+    const secretData = this.currentRound.getSecretData(player.id) ?? null;
+    const roundData = this.currentRound.getRoundData() ?? null;
     return {
       event: 'serverMessage',
       data: {

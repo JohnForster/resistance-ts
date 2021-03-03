@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { Choose, When } from 'tsx-control-statements/components';
 
 import { DataByEventName, EventType } from '@shared/types/eventTypes';
 
@@ -26,7 +27,7 @@ export default class App extends PureComponent<{}, AppState> {
 
   get connectionURL(): string {
     const APIAddress = process.env.DEV_API_ADDRESS || window.location.host;
-    return `wss://${APIAddress}/ws`;
+    return `ws://${APIAddress}/ws`;
   }
 
   componentDidMount(): void {

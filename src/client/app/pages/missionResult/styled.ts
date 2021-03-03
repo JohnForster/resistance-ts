@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import responsive from '@client/app/helpers/responsive';
+import responsive from '../../helpers/responsive';
 
 const timings: { [key: number]: number[] } = {
   2: [1.2, 2.6],

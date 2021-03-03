@@ -1,4 +1,6 @@
 import React, { PureComponent } from 'react';
+import { Choose, Otherwise, When } from 'tsx-control-statements/components';
+
 import {
   GameData,
   MissionRoundPublicData,
@@ -8,7 +10,7 @@ import Page from '../../components/page/page';
 
 import listString from '../../helpers/listString';
 import { MissionButton } from '../../components/missionButton/missionButton';
-import ProgressBar from '@client/app/components/progressBar/progressBar';
+import ProgressBar from '../../components/progressBar/progressBar';
 
 export interface MissionPageProps {
   game: GameData<'mission'>;

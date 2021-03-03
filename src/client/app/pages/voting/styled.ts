@@ -1,10 +1,12 @@
 import styled from 'styled-components';
-import responsive from '@client/app/helpers/responsive';
+import responsive from '../../helpers/responsive';
 /* eslint-disable */
 
 export const VoteButton = styled.button`
   font-size: 48px;
-  ${({isGreyed}: {isGreyed: boolean}) => isGreyed && `
+  ${({ isGreyed }: { isGreyed: boolean }) =>
+    isGreyed &&
+    `
       filter: grayscale(100%);
   `}
   ${responsive`
@@ -28,4 +30,4 @@ export const ButtonContainer = styled.div`
 export const ThumbContainer = styled.div`
   width: 100%;
   font-size: 72px;
-`
+`;

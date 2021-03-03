@@ -1,4 +1,0 @@
-{
-  // ? Make a note here why this is needed
-  "extends": "./src/server/tsconfig.json"
-}

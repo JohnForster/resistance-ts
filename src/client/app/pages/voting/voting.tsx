@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { GameData } from '@shared/types/gameData';
+import { Choose, Otherwise, When } from 'tsx-control-statements/components';
+
 import Page from '../../components/page/page';
-import * as Styled from './styled';
-
 import listString from '../../helpers/listString';
-import ProgressBar from '@client/app/components/progressBar/progressBar';
+import ProgressBar from '../../components/progressBar/progressBar';
 
+import * as Styled from './styled';
 interface Props {
   game: GameData<'voting'>;
   submitVote: (playerApproves: boolean) => void;
