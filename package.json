@@ -12,11 +12,12 @@
   "private": true,
   "scripts": {
     "start": "NODE_ENV=production node src/server/build/server.js",
-    "start:dev": "yarn workspaces run start",
+    "start:dev": "NODE_ENV=development concurrently \"yarn workspace resistance-ts-client run start\" \"yarn workspace resistance-ts-server run start\"",
     "build": "rm -rf build && yarn workspaces run build",
     "typecheck": "yarn workspaces run typecheck"
   },
   "devDependencies": {
+    "concurrently": "^6.0.0",
     "prettier": "^2.2.1"
   }
 }
