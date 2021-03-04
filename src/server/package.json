@@ -9,6 +9,7 @@
     "start": "PORT=9001 nodemon"
   },
   "dependencies": {
+    "chalk": "^4.1.0",
     "client": "link:../client",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
