@@ -86,6 +86,9 @@ export default class WSEventHandler {
     const game = new Game();
     this.games.set(game.id, game);
     user.gameID = game.id;
+    game.addPlayer(user);
+    game.setHost(user.id);
+    game.sendUpdateToAllPlayers();
     console.log('Game created. id:', game.id);
   };
 
@@ -110,13 +113,14 @@ export default class WSEventHandler {
     game.addPlayer(user);
     user.gameID = game.id;
     console.log(`Added player ${user.id} to game ${game.id}`);
-    game.sendGameUpdate(user);
+    game.sendUpdateToAllPlayers();
   };
 
   private updatePlayerData = (
     user: User,
     data: EventByName<'playerData'>['data'],
   ): void => {
+    console.log('data:', data);
     if (user.id !== data.playerID)
       throw new Error(
         `ID mismatch: '${user.id}' stored, '${data.playerID}' received`,

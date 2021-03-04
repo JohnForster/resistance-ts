@@ -8,7 +8,7 @@
   "repository": "github.com/johnforster/resistance",
   "scripts": {
     "start": "PORT=9001 webpack --watch",
-    "build": "PORT=9001 webpack --mode production",
+    "build": "NODE_ENV=production webpack --mode production",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

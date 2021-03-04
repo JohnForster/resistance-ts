@@ -1,7 +1,9 @@
                               ##### TODO LIST #####
 CURRENT: REFACTOR
   Server refactor "done" (not tested/debugged) ✅ish
-  Client Refactor
+  Client Refactor ish
+  Sockets.io
+  Fix prod build
 
 ______________________________________________________________________________________
 COMPLETED:

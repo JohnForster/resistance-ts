@@ -27,10 +27,9 @@ const wsEventHandler = new WSEventHandler(users, games);
 app.ws('/ws', wsEventHandler.middleWare);
 
 // Publicly expose the '/dist' folder
-const middlePath = isDev ? '../../build' : '';
+const middlePath = isDev ? 'build' : '';
 // const publicPath = path.join(__dirname, middlePath, '/dist');
-const publicPath = path.join(__dirname, 'build/dist');
-console.log(publicPath);
+const publicPath = path.join(__dirname, middlePath, 'dist');
 
 const upgradeHttpsMiddleware: RequestHandler = (req, res, next) => {
   if (!isDev && req.header('x-forwarded-proto') !== 'https') {
@@ -43,7 +42,7 @@ const upgradeHttpsMiddleware: RequestHandler = (req, res, next) => {
 
 app.use(
   '/',
-  // upgradeHttpsMiddleware,
+  upgradeHttpsMiddleware,
   expressStaticGzip(publicPath, {
     enableBrotli: true,
   }),
