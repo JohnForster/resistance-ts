@@ -1,5 +1,4 @@
 import React from 'react';
-import { Choose, When } from 'tsx-control-statements/components';
 
 import { GameData } from '@shared/types/gameData';
 import { PlayerData } from '@shared/types/playerData';
@@ -12,8 +11,6 @@ export interface LobbyPageProps {
   beginGame: () => void;
 }
 
-interface LobbyPageState {}
-
 export const LobbyPage: React.FC<LobbyPageProps> = (props) => (
   <Page>
     <h1>Lobby</h1>
@@ -25,20 +22,17 @@ export const LobbyPage: React.FC<LobbyPageProps> = (props) => (
         <p key={`player-${i}`}>{p.name}</p>
       ))}
     </Styled.PlayerContainer>
-    <Choose>
-      <When condition={props.game.isHost}>
-        <button
-          onClick={props.beginGame}
-          disabled={props.game.players.length < 2}
-        >
-          Begin Game
-        </button>
-      </When>
-      <When condition={!props.game.isHost}>
-        <p>
-          Waiting for <span>{props.game.hostName}</span> to start the game.
-        </p>
-      </When>
-    </Choose>
+    {props.game.isHost ? (
+      <button
+        onClick={props.beginGame}
+        disabled={props.game.players.length < 2}
+      >
+        Begin Game
+      </button>
+    ) : (
+      <p>
+        Waiting for <span>{props.game.hostName}</span> to start the game.
+      </p>
+    )}
   </Page>
 );

@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
-import { If } from 'tsx-control-statements/components';
 
 import responsive from '../../helpers/responsive';
 
@@ -90,16 +89,15 @@ const ProgressBar: React.FC<Props> = (props) => {
               ? ' 💀'
               : undefined;
           const currentRoundIndex = props.history.length;
+          const showFailsRequired = !result && failsRequired > 1;
           return (
             <Fragment key={`line-${i}`}>
-              <If condition={i !== 0}>
-                <Line />
-              </If>
+              {i !== 0 && <Line />}
               <Nominations selected={i === currentRoundIndex}>
                 {result || peopleOnMission}
-                <If condition={!result && failsRequired > 1}>
+                {showFailsRequired && (
                   <FailsRequired>({failsRequired})</FailsRequired>
-                </If>
+                )}
                 <RoundNumber>{i + 1}</RoundNumber>
               </Nominations>
             </Fragment>

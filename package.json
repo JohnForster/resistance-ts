@@ -11,9 +11,9 @@
   ],
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=production node src/server/build/server.js",
-    "start:dev": "NODE_ENV=development concurrently \"yarn workspace resistance-ts-client run start\" \"yarn workspace resistance-ts-server run start\"",
-    "build": "NODE_ENV=production rm -rf build && yarn workspaces run build",
+    "start": "node src/server/build/server.js",
+    "start:dev": "PORT=9001 NODE_ENV=development concurrently \"yarn workspace resistance-ts-client run start\" \"yarn workspace resistance-ts-server run start\"",
+    "build": "rm -rf src/server/build && yarn workspaces run build",
     "typecheck": "yarn workspaces run typecheck"
   },
   "devDependencies": {

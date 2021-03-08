@@ -26,11 +26,6 @@ const wsEventHandler = new WSEventHandler(users, games);
 // Websocket routes
 app.ws('/ws', wsEventHandler.middleWare);
 
-// Publicly expose the '/dist' folder
-const middlePath = isDev ? 'build' : '';
-// const publicPath = path.join(__dirname, middlePath, '/dist');
-const publicPath = path.join(__dirname, middlePath, 'dist');
-
 const upgradeHttpsMiddleware: RequestHandler = (req, res, next) => {
   if (!isDev && req.header('x-forwarded-proto') !== 'https') {
     console.log('Request received over http... Redirecting...');
@@ -40,6 +35,7 @@ const upgradeHttpsMiddleware: RequestHandler = (req, res, next) => {
   }
 };
 
+const publicPath = path.join(__dirname, 'dist');
 app.use(
   '/',
   upgradeHttpsMiddleware,
@@ -59,7 +55,5 @@ if (isDev) {
     );
   });
 } else {
-  // Will need to work out how this works in prod
-  console.log('listening on port:', port);
   app.listen(port);
 }

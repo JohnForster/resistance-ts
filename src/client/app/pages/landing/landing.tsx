@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import { Choose, Otherwise, When } from 'tsx-control-statements/components';
 
 import { PlayerData } from '@shared/types/playerData';
 import Page from '../../components/page/page';
@@ -54,8 +53,8 @@ export class LandingPage extends PureComponent<
     return (
       <Page>
         <h1>The Resistance</h1>
-        <Choose>
-          <When condition={!this.props.player.name}>
+        {!this.props.player.name ? (
+          <>
             <p>Enter your name!</p>
             <input
               id="nameInput"
@@ -69,8 +68,9 @@ export class LandingPage extends PureComponent<
             >
               Enter Name
             </button>
-          </When>
-          <Otherwise>
+          </>
+        ) : (
+          <>
             <p>
               Welcome <span>{this.props.player.name}</span>
             </p>
@@ -87,8 +87,8 @@ export class LandingPage extends PureComponent<
             >
               Join Game
             </button>
-          </Otherwise>
-        </Choose>
+          </>
+        )}
       </Page>
     );
   }

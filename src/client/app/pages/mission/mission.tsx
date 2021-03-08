@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import { Choose, Otherwise, When } from 'tsx-control-statements/components';
 
 import {
   GameData,
@@ -55,8 +54,8 @@ export class MissionPage extends PureComponent<
     return (
       <Page>
         <ProgressBar {...this.props.game} />
-        <Choose>
-          <When condition={this.playerIsOnMission}>
+        {this.playerIsOnMission ? (
+          <>
             <MissionButton
               icon={'✊'}
               text={'Success'}
@@ -72,15 +71,16 @@ export class MissionPage extends PureComponent<
             <button onClick={this.submit} disabled={!this.secretData}>
               Submit
             </button>
-          </When>
-          <Otherwise>
+          </>
+        ) : (
+          <>
             Waiting for
             <h3>
               {listString(this.roundData.nominatedPlayers.map((p) => p.name))}
             </h3>
             to complete the mission...
-          </Otherwise>
-        </Choose>
+          </>
+        )}
       </Page>
     );
   }

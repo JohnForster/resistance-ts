@@ -16,12 +16,19 @@ export default class WSEventHandler {
 
   public middleWare: WebsocketRequestHandler = (ws, req): void => {
     console.log('connection made');
-    const playerID = req.cookies.playerID || '';
+    console.log('req.cookies:', req.cookies);
+    console.log('req.query.playerID:', req.query.playerID);
+    const playerID =
+      req.cookies.playerID ||
+      (process.env.NODE_ENV === 'development' && req.query.playerID) ||
+      '';
     const user = this.users.get(playerID);
 
     user
       ? console.log(
-          `Player found with ID '${playerID.slice(0, 8)} (${user.name})`,
+          `Player found with ID '${playerID.slice(0, 8)} (${
+            user.name || 'no name found'
+          })`,
         )
       : console.log(`No player found with ID '${playerID.slice(0, 8)}...`);
 

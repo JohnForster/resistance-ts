@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "start": "PORT=9001 nodemon"
+    "start": "nodemon"
   },
   "dependencies": {
     "chalk": "^4.1.0",

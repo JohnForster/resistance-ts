@@ -1,15 +1,14 @@
 import React, { PureComponent } from 'react';
-import { Choose, When } from 'tsx-control-statements/components';
 
-import { DataByEventName, EventType } from '@shared/types/eventTypes';
+import { DataByEventName } from '@shared/types/eventTypes';
 
-import { EventByName } from '@shared/types/eventTypes';
 import * as typeGuards from '../types/typeGuards';
 import { GameData } from '@shared/types/gameData';
 
 import WSEventEmitter from './helpers/wsEventEmitter';
 import * as Pages from './pages';
 import * as Styled from './styles/styled';
+import Cookies from 'js-cookie';
 
 interface AppState {
   game: GameData;
@@ -18,6 +17,10 @@ interface AppState {
   player: { name: string; playerID: string };
 }
 
+const APIAddress = process.env.DEV_API_ADDRESS || window.location.host;
+const protocol = process.env.NODE_ENV === 'development' ? 'ws' : 'wss';
+const CONNECTION_URL = `${protocol}://${APIAddress}/ws`;
+
 export default class App extends PureComponent<{}, AppState> {
   state: AppState = {
     game: null,
@@ -25,14 +28,12 @@ export default class App extends PureComponent<{}, AppState> {
     player: { playerID: null, name: null },
   };
 
-  get connectionURL(): string {
-    const APIAddress = process.env.DEV_API_ADDRESS || window.location.host;
-    const protocol = process.env.NODE_ENV === 'development' ? 'ws' : 'wss';
-    return `${protocol}://${APIAddress}/ws`;
-  }
-
   componentDidMount(): void {
-    const eventEmitter = new WSEventEmitter(this.connectionURL);
+    const existingId = Cookies.get('playerID');
+    const eventEmitter = new WSEventEmitter(
+      // Send playerId as a query if on dev, because same-site cookies are enforced.
+      existingId ? `${CONNECTION_URL}?playerID=${existingId}` : CONNECTION_URL,
+    );
 
     // Temporary for message/error
     eventEmitter.bind('serverMessage', this.onGameUpdate);
@@ -58,7 +59,7 @@ export default class App extends PureComponent<{}, AppState> {
   onPlayerUpdate = (data: DataByEventName<'playerData'>): void => {
     // Use a library for dealing with cookies?
     console.log(`Setting player cookie: ${data.playerID.slice(0, 6)}...`);
-    document.cookie = `playerID=${data.playerID}`;
+    Cookies.set('playerID', data.playerID);
     this.setState({ player: data });
   };
 
@@ -140,94 +141,53 @@ export default class App extends PureComponent<{}, AppState> {
       <>
         <Styled.Global />
         <Styled.AppContainer>
-          <Choose>
-            <When condition={!this.state.game}>
-              <Pages.LandingPage
-                hostGame={this.hostGame}
-                joinGame={this.joinGame}
-                player={this.state.player}
-                submitName={this.submitName}
-              />
-            </When>
-            <When
-              condition={
-                this.state.game.missionNumber === 0 &&
-                typeGuards.isLobbyRound(this.state.game)
-              }
-            >
-              <Pages.LobbyPage
-                game={this.state.game as GameData<'lobby'>}
-                player={this.state.player}
-                beginGame={this.beginGame}
-              />
-            </When>
-            <When
-              condition={
-                this.state.game.missionNumber === 0 &&
-                typeGuards.isCharacterRound(this.state.game)
-              }
-            >
-              <Pages.CharacterPage
-                game={this.state.game as GameData<'character'>}
-                confirmCharacter={this.confirmCharacter}
-              />
-            </When>
-            <When
-              condition={
-                this.state.game.missionNumber > 0 &&
-                typeGuards.isNominationRound(this.state.game)
-              }
-            >
-              <Pages.NominationPage
-                game={this.state.game as GameData<'nomination'>}
-                submitNominations={this.submitNominations}
-              />
-            </When>
-            <When
-              condition={
-                this.state.game.missionNumber > 0 &&
-                typeGuards.isVotingRound(this.state.game)
-              }
-            >
-              <Pages.VotingPage
-                game={this.state.game as GameData<'voting'>}
-                submitVote={this.submitVote}
-              />
-            </When>
-            <When
-              condition={
-                this.state.game.missionNumber > 0 &&
-                typeGuards.isVotingResultRound(this.state.game)
-              }
-            >
-              <Pages.VoteResultsPage
-                game={this.state.game as GameData<'votingResult'>}
-                confirmReady={this.continue}
-              />
-            </When>
-            <When
-              condition={
-                this.state.game.missionNumber > 0 &&
-                typeGuards.isMissionRound(this.state.game)
-              }
-            >
-              <Pages.MissionPage
-                game={this.state.game as GameData<'mission'>}
-                completeMission={this.submitMissionChoice}
-              />
-            </When>
-            <When
-              condition={
-                this.state.game.missionNumber > 0 &&
-                typeGuards.isMissionResultRound(this.state.game)
-              }
-            >
-              <Pages.MissionResultPage
-                game={this.state.game as GameData<'missionResult'>}
-                confirmReady={this.continue}
-              />
-            </When>
-          </Choose>
+          <Styled.BackgroundImage src="assets/bg.jpg" alt="" />
+          {!this.state.game ? (
+            <Pages.LandingPage
+              hostGame={this.hostGame}
+              joinGame={this.joinGame}
+              player={this.state.player}
+              submitName={this.submitName}
+            />
+          ) : typeGuards.isLobbyRound(this.state.game) ? (
+            <Pages.LobbyPage
+              game={this.state.game as GameData<'lobby'>}
+              player={this.state.player}
+              beginGame={this.beginGame}
+            />
+          ) : typeGuards.isCharacterRound(this.state.game) ? (
+            <Pages.CharacterPage
+              game={this.state.game as GameData<'character'>}
+              confirmCharacter={this.confirmCharacter}
+            />
+          ) : typeGuards.isNominationRound(this.state.game) ? (
+            <Pages.NominationPage
+              game={this.state.game as GameData<'nomination'>}
+              submitNominations={this.submitNominations}
+            />
+          ) : typeGuards.isVotingRound(this.state.game) ? (
+            <Pages.VotingPage
+              game={this.state.game as GameData<'voting'>}
+              submitVote={this.submitVote}
+            />
+          ) : typeGuards.isVotingResultRound(this.state.game) ? (
+            <Pages.VoteResultsPage
+              game={this.state.game as GameData<'votingResult'>}
+              confirmReady={this.continue}
+            />
+          ) : typeGuards.isMissionRound(this.state.game) ? (
+            <Pages.MissionPage
+              game={this.state.game as GameData<'mission'>}
+              completeMission={this.submitMissionChoice}
+            />
+          ) : typeGuards.isMissionResultRound(this.state.game) ? (
+            <Pages.MissionResultPage
+              game={this.state.game as GameData<'missionResult'>}
+              confirmReady={this.continue}
+            />
+          ) : (
+            <></>
+          )}
         </Styled.AppContainer>
       </>
     );

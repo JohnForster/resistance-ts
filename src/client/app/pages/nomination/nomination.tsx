@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import { Choose, When } from 'tsx-control-statements/components';
 
 import { GameData, NominationRoundPublicData } from '@shared/types/gameData';
 import Page from '../../components/page/page';
@@ -69,8 +68,8 @@ export class NominationPage extends PureComponent<
           history={this.props.game.history}
           rounds={this.props.game.rounds}
         />
-        <Choose>
-          <When condition={this.props.game.isLeader}>
+        {this.props.game.isLeader ? (
+          <>
             <h2>You are the leader!</h2>
             <h3>
               Nominate {this.roundData.playersToNominate} players to perform
@@ -90,14 +89,13 @@ export class NominationPage extends PureComponent<
             >
               Submit
             </button>
-          </When>
-          <When condition={!this.props.game.isLeader}>
-            <h2>
-              Waiting for {this.props.game.leaderName} to nominate for Mission{' '}
-              {this.props.game.missionNumber}...
-            </h2>
-          </When>
-        </Choose>
+          </>
+        ) : (
+          <h2>
+            Waiting for {this.props.game.leaderName} to nominate for Mission{' '}
+            {this.props.game.missionNumber}...
+          </h2>
+        )}
       </Page>
     );
   }

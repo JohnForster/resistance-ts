@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import { Choose, When, If } from 'tsx-control-statements/components';
 
 import {
   GameData,
@@ -41,17 +40,22 @@ export class CharacterPage extends PureComponent<
 
   render(): JSX.Element {
     const roundData = this.props.game.roundData;
+    const playerIsWaiting = !!(
+      this.state.hasConfirmed &&
+      this.props.game &&
+      roundData.unconfirmedPlayerNames
+    );
+    if (
+      this.secretData.allegiance !== 'resistance' &&
+      this.secretData.allegiance !== 'spies'
+    )
+      throw new Error('No allegiance received');
     return (
       <Page>
-        <Choose>
-          <When
-            condition={
-              this.secretData && this.secretData.allegiance === 'resistance'
-            }
-          >
-            <h2>You are part of the RESISTANCE!</h2>
-          </When>
-          <When condition={this.secretData.allegiance === 'spies'}>
+        {this.secretData.allegiance === 'resistance' ? (
+          <h2>You are part of the RESISTANCE!</h2>
+        ) : (
+          <>
             <h2>
               You are a <strong>SPY</strong>
             </h2>
@@ -59,29 +63,21 @@ export class CharacterPage extends PureComponent<
             {this.secretData.spies.map((s, i) => (
               <strong key={`spy-${i}`}>{s}</strong>
             ))}
-          </When>
-        </Choose>
+          </>
+        )}
         <button
           disabled={this.state.hasConfirmed}
           onClick={this.confirmCharacter}
         >
           OK
         </button>
-        <If
-          condition={
-            !!(
-              this.state.hasConfirmed &&
-              this.props.game &&
-              roundData.unconfirmedPlayerNames
-            )
-          }
-        >
+        {playerIsWaiting && (
           <p>
             Waiting for{' '}
             {listString(this.roundData.unconfirmedPlayerNames, 'and')} to
             confirm...
           </p>
-        </If>
+        )}
       </Page>
     );
   }

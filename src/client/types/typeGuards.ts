@@ -1,7 +1,7 @@
 import { GameData } from '@shared/types/gameData';
 
 export const isLobbyRound = (game: GameData): game is GameData<'lobby'> => {
-  return game.stage === 'lobby';
+  return game.missionNumber === 0 && game.stage === 'lobby';
 };
 
 export const isCharacterRound = (

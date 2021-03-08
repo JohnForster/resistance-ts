@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { If } from 'tsx-control-statements/components';
 
 import Page from '../../components/page/page';
 import { GameData } from '@shared/types/gameData';
@@ -49,16 +48,12 @@ export const MissionResultPage: React.FC<MissionResultProps> = (
       <button disabled={playerWantsToContinue} onClick={confirm}>
         Continue
       </button>
-      <If
-        condition={
-          !!(playerWantsToContinue && roundData.unconfirmedPlayerNames)
-        }
-      >
+      {!!(playerWantsToContinue && roundData.unconfirmedPlayerNames) && (
         <p>
           Waiting for {listString(roundData.unconfirmedPlayerNames, 'and')} to
           confirm...
         </p>
-      </If>
+      )}
     </Page>
   );
 };
