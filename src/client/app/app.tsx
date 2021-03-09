@@ -1,25 +1,23 @@
 import React, { PureComponent } from 'react';
+import Cookies from 'js-cookie';
 
 import { DataByEventName } from '@shared/types/eventTypes';
 
 import * as typeGuards from '../types/typeGuards';
 import { GameData } from '@shared/types/gameData';
 
-import WSEventEmitter from './helpers/wsEventEmitter';
+import IOEventEmitter from './helpers/IoEventEmitter';
 import * as Pages from './pages';
 import * as Styled from './styles/styled';
-import Cookies from 'js-cookie';
 
 interface AppState {
   game: GameData;
   status: 'idle' | 'pending' | 'inLobby' | 'inGame';
-  eventEmitter?: WSEventEmitter;
+  eventEmitter?: IOEventEmitter;
   player: { name: string; playerID: string };
 }
 
 const APIAddress = process.env.DEV_API_ADDRESS || window.location.host;
-const protocol = process.env.NODE_ENV === 'development' ? 'ws' : 'wss';
-const CONNECTION_URL = `${protocol}://${APIAddress}/ws`;
 
 export default class App extends PureComponent<{}, AppState> {
   state: AppState = {
@@ -29,11 +27,7 @@ export default class App extends PureComponent<{}, AppState> {
   };
 
   componentDidMount(): void {
-    const existingId = Cookies.get('playerID');
-    const eventEmitter = new WSEventEmitter(
-      // Send playerId as a query if on dev, because same-site cookies are enforced.
-      existingId ? `${CONNECTION_URL}?playerID=${existingId}` : CONNECTION_URL,
-    );
+    const eventEmitter = new IOEventEmitter(APIAddress);
 
     // Temporary for message/error
     eventEmitter.bind('serverMessage', this.onGameUpdate);

@@ -7,12 +7,13 @@
   "description": "Mobile app for playing \"The Resistance\" board game",
   "repository": "github.com/johnforster/resistance",
   "scripts": {
-    "start": "webpack serve",
+    "start": "PORT=9001 webpack serve",
     "build": "NODE_ENV=production webpack",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@types/react-dom": "^17.0.1",
+    "@types/socket.io-client": "^1.4.35",
     "@types/webpack-env": "^1.16.0",
     "core-js": "^3.9.1",
     "corejs": "^1.0.0",
@@ -20,6 +21,7 @@
     "lodash": "^4.17.21",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "socket.io-client": "^3.1.2",
     "styled-components": "^5.2.1",
     "websocket": "^1.0.33"
   },

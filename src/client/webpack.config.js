@@ -87,5 +87,18 @@ module.exports = {
     hot: true,
     useLocalIp: true,
     open: true,
+    proxy: {
+      // Proxy requests to /socket.io so that 9001 thinks it comes from the right place.
+      '/socket.io': {
+        changeOrigin: true,
+        cookieDomainRewrite: 'localhost',
+        target: 'http://localhost:9001',
+        onProxyReq: (proxyReq) => {
+          if (proxyReq.getHeader('origin')) {
+            proxyReq.setHeader('origin', 'http://localhost:9001');
+          }
+        },
+      },
+    },
   },
 };

@@ -9,13 +9,15 @@
     "start": "nodemon"
   },
   "dependencies": {
+    "@types/socket.io": "^2.1.13",
     "chalk": "^4.1.0",
     "client": "link:../client",
-    "cookie-parser": "^1.4.5",
+    "cookie": "^0.4.1",
     "express": "^4.17.1",
     "express-static-gzip": "^2.1.1",
     "express-ws": "^4.0.0",
     "lodash": "^4.17.21",
+    "socket.io": "^3.1.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
