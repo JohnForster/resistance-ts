@@ -17,7 +17,7 @@ interface AppState {
   player: { name: string; playerID: string };
 }
 
-const APIAddress = process.env.DEV_API_ADDRESS || window.location.host;
+const APIAddress = window.location.host;
 
 export default class App extends PureComponent<{}, AppState> {
   state: AppState = {
@@ -39,14 +39,8 @@ export default class App extends PureComponent<{}, AppState> {
     this.setState({ eventEmitter });
   }
 
-  hostGame = (): void => {
-    this.state.eventEmitter.send('createGame', {
-      hostID: this.state.player.playerID,
-    });
-    this.setState({ status: 'pending' });
-  };
-
   onGameUpdate = (data: DataByEventName<'serverMessage'>): void => {
+    console.log('gameUpdateReceived. data:', data);
     this.setState({ game: data });
   };
 
@@ -55,6 +49,13 @@ export default class App extends PureComponent<{}, AppState> {
     console.log(`Setting player cookie: ${data.playerID.slice(0, 6)}...`);
     Cookies.set('playerID', data.playerID);
     this.setState({ player: data });
+  };
+
+  hostGame = (): void => {
+    this.state.eventEmitter.send('createGame', {
+      hostID: this.state.player.playerID,
+    });
+    this.setState({ status: 'pending' });
   };
 
   joinGame = (gameID: string): void => {
@@ -69,11 +70,11 @@ export default class App extends PureComponent<{}, AppState> {
   };
 
   beginGame = (): void => {
-    const gameID = this.state.game.gameID;
-    this.state.eventEmitter.send('clientMessage', {
+    const { gameID, playerID } = this.state.game;
+    this.state.eventEmitter.sendMessage({
       gameID,
+      playerID,
       type: 'startGame',
-      playerID: this.state.player.playerID,
     });
   };
 
@@ -88,10 +89,11 @@ export default class App extends PureComponent<{}, AppState> {
   };
 
   submitNominations = (playerIDs: Set<string>): void => {
-    const { gameID } = this.state.game;
+    const { gameID, playerID } = this.state.game;
     this.state.eventEmitter.sendMessage({
       type: 'nominatePlayers',
       gameID,
+      playerID,
       nominatedPlayerIDs: Array.from(playerIDs),
     });
   };

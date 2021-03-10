@@ -19,7 +19,7 @@ export class LobbyRound implements Round<'lobby'> {
 
   handleMessage = (message: LobbyMessage): void => {
     if (message.type === 'startGame') {
-      this.gameReadyToBegin === true;
+      this.gameReadyToBegin = true;
       return;
     }
 

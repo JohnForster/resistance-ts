@@ -44,9 +44,22 @@ export class CharacterRound implements Round<'character'> {
       .map((p) => p.name),
   });
 
-  getSecretData = (userID: string): CharacterRoundSecretData => ({
-    allegiance: this.game.players.find((p) => p.id === userID).allegiance,
-  });
+  getSecretData = (userID: string): CharacterRoundSecretData => {
+    const allegiance = this.game.players.find((p) => p.id === userID)
+      .allegiance;
+
+    const spies =
+      allegiance === 'spies'
+        ? this.game.players
+            .filter((p) => p.allegiance === 'spies')
+            .map((p) => p.name)
+        : [];
+
+    return {
+      spies,
+      allegiance,
+    };
+  };
 
   isFinal = (): boolean => false;
 

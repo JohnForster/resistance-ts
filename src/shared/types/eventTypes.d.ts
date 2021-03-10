@@ -73,7 +73,7 @@ export type DataByEventName<T extends EventType> = EventByName<T>['data'];
 export type Callback<T extends WSEvent> = (data: T['data']) => void;
 
 export type Callbacks = {
-  [E in WSEvent['event']]?: ((data: DataByEventName<E>) => void)[];
+  [E in EventType]?: ((data: DataByEventName<E>) => void)[];
 };
 
 /* OLD EVENT TYPES - DELETE WHEN EVERYTHING IS WORKING AGAIN */

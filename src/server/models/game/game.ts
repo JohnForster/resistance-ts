@@ -87,11 +87,13 @@ export class Game {
   getPlayer = (id: string): Player => this.players.find((p) => p.id === id);
 
   sendUpdateToAllPlayers = (): void => {
+    console.log('this.players:', this.players);
     this.players.forEach(this.sendGameUpdate);
   };
 
   sendGameUpdate = (player: User): void => {
     const payload = this.generatePayload(player);
+    console.log('payload:', payload);
     send(player, payload);
   };
 
@@ -122,17 +124,24 @@ export class Game {
   };
 
   handleMessage = (message: Message): void => {
+    console.log(this.id, 'handling message', message.type);
     const isValid = this.currentRound.validateMessage(message);
     if (!isValid) return console.error('Not valid');
 
     this.currentRound.handleMessage(message);
 
+    console.log(
+      'this.currentRound.isReadyToComplete():',
+      this.currentRound.isReadyToComplete(),
+    );
     if (this.currentRound.isReadyToComplete()) {
+      console.log('round is ready to complete');
       this.completeCurrentRound();
     }
   };
 
   completeCurrentRound = (): void => {
+    console.log(this.id, 'completing round', this.currentRound.roundName);
     const nextRoundName = this.currentRound.completeRound();
     this.history = this.currentRound.getUpdatedHistory();
     // TODO Is there a cleaner way to work out if the current round is final?
@@ -140,7 +149,9 @@ export class Game {
       return this.nextMission();
     }
     const NextRound = rounds[nextRoundName];
+    console.log('nextRoundName:', nextRoundName);
     this.currentRound = new NextRound(this);
+    this.sendUpdateToAllPlayers();
   };
 
   nextMission = (): void => {

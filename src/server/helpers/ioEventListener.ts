@@ -36,6 +36,7 @@ export const ioConnectionListener = (socket: Socket): void => {
     storage.users.set(user.id, user);
     attachEventListeners(socket, user);
     sendPlayerData(user);
+    // TODO somehow update cookie here?
   }
 };
 
@@ -123,12 +124,10 @@ const joinGame = (user: User, data: EventByName<'joinGame'>['data']): void => {
   game.sendUpdateToAllPlayers();
 };
 
-const updatePlayerData = (
-  user: User,
-  data: EventByName<'playerData'>['data'],
-): void => {
-  if (user.id !== data.playerID)
-    throw new Error(
+const updatePlayerData = (user: User, data: PlayerData): void => {
+  console.log(data);
+  if (data.playerID && user.id !== data.playerID)
+    return console.error(
       `ID mismatch: '${user.id}' stored, '${data.playerID}' received`,
     );
   user.name = data.name;
