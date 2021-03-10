@@ -5,7 +5,7 @@ import { Message } from '@shared/types/messages';
 import generateID from '../../utils/generateID';
 import { Rules, RULES } from '../../data/gameRules';
 
-import User from '../user';
+import { send, User } from '../user';
 
 import { LobbyRound, Round } from './rounds';
 import { rounds } from './config';
@@ -92,7 +92,7 @@ export class Game {
 
   sendGameUpdate = (player: User): void => {
     const payload = this.generatePayload(player);
-    player.send(payload);
+    send(player, payload);
   };
 
   generatePayload = (player: User): EventByName<'serverMessage'> => {

@@ -2,7 +2,7 @@ import { NominationRoundPublicData, RoundName } from '@shared/types/gameData';
 import { NominationMessage } from '@shared/types/messages';
 
 import { Rules } from '../../../data/gameRules';
-import { Game } from '../newGame';
+import { Game } from '../game';
 import { Round } from './round';
 
 export class NominationRound implements Round<'nomination'> {

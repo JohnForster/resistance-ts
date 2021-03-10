@@ -1,62 +1,64 @@
 // TODO add discriminants to all messages
 // TODO PlayerData event?
 
-export type LobbyMessage =
-  | {
-      type: 'joinGame';
-      playerID: string;
-    }
-  | {
-      type: 'startGame';
-      playerID: string;
-    };
-// | {
-//     type: 'reorder';
-//     playerID: string;
-//     newOrder: string[];
-//   };
-
-export type CharacterMessage = {
-  type: 'confirmCharacter';
+type BaseMessage = {
   playerID: string;
+  gameID: string;
+};
+
+export type LobbyMessage = BaseMessage &
+  (
+    | {
+        type: 'joinGame';
+        playerID: string;
+      }
+    | {
+        type: 'startGame';
+        playerID: string;
+      }
+    // | {
+    //     type: 'reorder';
+    //     playerID: string;
+    //     newOrder: string[];
+    //   };
+  );
+
+export type CharacterMessage = BaseMessage & {
+  type: 'confirmCharacter';
   confirm: true;
 };
 
-export type NominationMessage = {
+export type NominationMessage = BaseMessage & {
   type: 'nominatePlayers';
   nominatedPlayerIDs: string[];
 };
 
-export type VotingMessage = {
+export type VotingMessage = BaseMessage & {
   type: 'vote';
-  playerID: string;
   playerApproves: boolean;
 };
 
-export type VotingResultMessage = {
+export type VotingResultMessage = BaseMessage & {
   type: 'confirmVoteResult';
-  playerID: string;
   confirm: true;
 };
 
-export type MissionRoundMessage = {
+export type MissionRoundMessage = BaseMessage & {
   type: 'mission';
-  playerID: string;
   succeedMission: boolean;
 };
 
-export type MissionResultMessage = {
+export type MissionResultMessage = BaseMessage & {
   type: 'confirmMissionResult';
-  playerID: string;
   confirm: true;
 };
 
-export type Message = { gameID: string } & (
+// TODO Rename message?
+export type Message =
   | LobbyMessage
   | CharacterMessage
   | NominationMessage
   | VotingMessage
   | VotingResultMessage
   | MissionRoundMessage
-  | MissionResultMessage
-);
+  | MissionResultMessage;

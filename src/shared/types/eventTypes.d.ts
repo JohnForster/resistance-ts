@@ -19,16 +19,6 @@ interface EventTemplate {
   data: unknown;
 }
 
-interface CloseEvent extends EventTemplate {
-  event: 'close';
-  data: null; // TBD
-}
-
-interface OpenEvent extends EventTemplate {
-  event: 'open';
-  data: null; // TBD
-}
-
 interface ErrorEvent extends EventTemplate {
   event: 'error';
   data: string;
@@ -63,16 +53,14 @@ interface ServerMessageEvent extends EventTemplate {
   data: GameData<RoundName>;
 }
 
+// TODO Rename to IOEvent?
 export type WSEvent =
+  | ErrorEvent
+  | PlayerDataEvent
   | CreateEvent
   | JoinEvent
   | ClientMessageEvent
-  | ServerMessageEvent
-  | CloseEvent
-  | OpenEvent
-  | ErrorEvent
-  | JoinEvent
-  | PlayerDataEvent;
+  | ServerMessageEvent;
 
 export type EventByName<E extends EventType, T = WSEvent> = T extends {
   event: E;

@@ -1,5 +1,5 @@
 import { Round } from '.';
-import { GameHistory, Game, PlayerId, OngoingMission } from '../newGame';
+import { GameHistory, Game, PlayerId, OngoingMission } from '../game';
 import {
   RoundName,
   MissionRoundPublicData,

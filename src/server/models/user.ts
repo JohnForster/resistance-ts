@@ -1,51 +1,38 @@
-import WebSocket from 'ws';
-import { EventByName, EventType, WSEvent } from '@shared/types/eventTypes';
+import { WSEvent } from '@shared/types/eventTypes';
 import { v4 as uuidv4 } from 'uuid';
+import { Socket } from 'socket.io';
 
-export default class User {
-  public id: string = uuidv4();
-  public gameID: string;
-  public name: string;
+export type User = {
+  // TODO Split into public and private IDs
+  id: string;
+  gameID: string | null;
+  name: string | null;
+  socket: Socket; //  ? Store as a socketID and keep a map of Sockets?
+};
 
-  constructor(public ws: WebSocket) {}
+export const createUser = (socket: Socket): User => ({
+  id: uuidv4(),
+  gameID: '',
+  name: '',
+  socket,
+});
 
-  public sendPlayerData = (): void => {
-    const playerData: WSEvent = {
-      event: 'playerData',
-      data: {
-        playerID: this.id,
-        name: this.name,
-      },
-    };
-    this.send(playerData);
-  };
+export const sendPlayerData = (user: User) =>
+  send(user, {
+    event: 'playerData',
+    data: {
+      playerID: user.id,
+      name: user.name,
+    },
+  });
 
-  public send = (payload: WSEvent): void => {
-    this.ws.send(JSON.stringify(payload), (err) => {
-      if (!err) return;
-      console.warn(
-        `Sending failed to player ${this.id.slice(0, 6)}... (${
-          this.name
-        }) ${err}`,
-      );
-    });
-  };
-}
+export const sendError = (user: User, errorMessage: string) =>
+  send(user, {
+    event: 'error',
+    data: errorMessage,
+  });
 
-// TODO: 10/12/20 This could be converted into a struct
-// type User2 = {
-//   id: string;
-//   game: Game; // possibly gameID: string ?
-//   name: string;
-//   websocket: WebSocket;
-// };
-
-// const sendPayload = (user: User2, payload: WSEvent) => {};
-
-// const sendGameUpdate = (user: User2) => {
-
-// }
-
-// const sendPlayerData = (user: User2) => {
-
-// }
+export const send = (user: User, { event, data }: WSEvent) => {
+  // ? Error handling?
+  user.socket.emit(event, data);
+};

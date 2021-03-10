@@ -1,7 +1,7 @@
 import { RoundName } from '@shared/types/gameData';
 import { VotingResultMessage } from '@shared/types/messages';
 import { Round } from '.';
-import { GameHistory, Game, PlayerId, Nomination } from '../newGame';
+import { GameHistory, Game, PlayerId, Nomination } from '../game';
 
 export class VotingResult implements Round<'votingResult'> {
   public roundName = 'votingResult' as const;

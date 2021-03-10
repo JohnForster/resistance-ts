@@ -6,7 +6,7 @@ import {
 
 import { VotingMessage } from '@shared/types/messages';
 
-import { Game, GameHistory, Nomination, Player } from '../newGame';
+import { Game, GameHistory, Nomination, Player } from '../game';
 import { Round } from './round';
 
 export class VotingRound implements Round<'voting'> {

@@ -1,28 +1,21 @@
-import express, { Response, Request, RequestHandler } from 'express';
 import path from 'path';
 import http from 'http';
-import createWebSocket from 'express-ws';
+
+import express, { RequestHandler } from 'express';
 import expressStaticGzip from 'express-static-gzip';
-import chalk from 'chalk';
 import { Server as SocketsIOServer } from 'socket.io';
-import { IOEventHandler } from './helpers/ioEventHandler';
+import chalk from 'chalk';
+
+import { ioConnectionListener } from './helpers/ioEventListener';
 
 import getLocalIP from './utils/getLocalIP';
-import User from './models/user';
-import { Game } from './models/newGame/newGame';
-import { Socket } from 'socket.io';
 
 console.log(chalk.blue('-'.repeat(80)));
 
 const isDev = process.env.NODE_ENV === 'development';
+const port = parseInt(process.env.PORT || '8080');
 
-const { app } = createWebSocket(express());
-
-// Could users and games be stored within WSEventHandler?
-const users = new Map<string, User>();
-const games = new Map<string, Game>();
-
-const ioEventHandler = new IOEventHandler(users, games);
+const app = express();
 
 const upgradeHttpsMiddleware: RequestHandler = (req, res, next) => {
   if (!isDev && req.header('x-forwarded-proto') !== 'https') {
@@ -42,8 +35,6 @@ app.use(
   }),
 );
 
-const port = parseInt(process.env.PORT || '8080');
-
 const server = http.createServer(app);
 const io = new SocketsIOServer(server, {
   cors: {
@@ -52,7 +43,7 @@ const io = new SocketsIOServer(server, {
   },
 });
 
-io.on('connection', ioEventHandler.listener);
+io.on('connection', ioConnectionListener);
 
 // Listen on local IP (for connecting over LAN)
 if (isDev) {

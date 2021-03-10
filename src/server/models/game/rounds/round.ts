@@ -5,7 +5,7 @@ import {
   MessageByName,
 } from '@shared/types/gameData';
 import { Message } from '@shared/types/messages';
-import { Game, GameHistory } from '../newGame';
+import { Game, GameHistory } from '../game';
 
 export interface RoundConstructor<T extends RoundName = RoundName> {
   new (game: Game): Round<T>;
