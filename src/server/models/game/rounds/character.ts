@@ -61,7 +61,7 @@ export class CharacterRound implements Round<'character'> {
     };
   };
 
-  isFinal = (): boolean => false;
+  isFinal = (): boolean => true;
 
   getUpdatedHistory = (): GameHistory => ({ ...this.game.history });
 }

@@ -93,7 +93,10 @@ const ProgressBar: React.FC<Props> = (props) => {
           return (
             <Fragment key={`line-${i}`}>
               {i !== 0 && <Line />}
-              <Nominations selected={i === currentRoundIndex}>
+              <Nominations
+                selected={i === currentRoundIndex}
+                id={i === currentRoundIndex ? 'currentround' : ''}
+              >
                 {result || peopleOnMission}
                 {showFailsRequired && (
                   <FailsRequired>({failsRequired})</FailsRequired>

@@ -15,7 +15,7 @@ export const LobbyPage: React.FC<LobbyPageProps> = (props) => (
   <Page>
     <h1>Lobby</h1>
     <p>Game ID: </p>
-    <Styled.GameID>{props.game.gameID}</Styled.GameID>
+    <Styled.GameID id="gameId">{props.game.gameID}</Styled.GameID>
     <h3>Players</h3>
     <Styled.PlayerContainer>
       {props.game.players.map((p, i) => (
@@ -24,6 +24,7 @@ export const LobbyPage: React.FC<LobbyPageProps> = (props) => (
     </Styled.PlayerContainer>
     {props.game.isHost ? (
       <button
+        name="begingame"
         onClick={props.beginGame}
         disabled={props.game.players.length < 2}
       >

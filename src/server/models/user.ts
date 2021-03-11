@@ -34,7 +34,5 @@ export const sendError = (user: User, errorMessage: string) =>
 
 export const send = (user: User, { event, data }: WSEvent) => {
   // ? Error handling?
-  console.log('aboutToEmit:', event, data);
-  console.log('!!user.socket:', !!user.socket);
   user.socket.emit(event, data);
 };

@@ -68,6 +68,7 @@ export class CharacterPage extends PureComponent<
         <button
           disabled={this.state.hasConfirmed}
           onClick={this.confirmCharacter}
+          name="confirmcharacter"
         >
           OK
         </button>

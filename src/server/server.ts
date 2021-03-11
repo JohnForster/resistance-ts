@@ -6,7 +6,7 @@ import expressStaticGzip from 'express-static-gzip';
 import { Server as SocketsIOServer } from 'socket.io';
 import chalk from 'chalk';
 
-import { ioConnectionListener } from './helpers/ioEventListener';
+import { ioConnectionListener } from './middleware/ioEventListener';
 
 import getLocalIP from './utils/getLocalIP';
 

@@ -21,6 +21,7 @@ export class VotingRound implements Round<'voting'> {
 
   constructor(private readonly game: Game) {
     const nominations = this.game.currentMission.nominations;
+
     this.nominatedPlayers =
       nominations[nominations.length - 1].nominatedPlayers;
   }
@@ -70,9 +71,12 @@ export class VotingRound implements Round<'voting'> {
     })),
   });
 
-  getSecretData = (playerID: string): VotingRoundSecretData => ({
-    playerApproves: this.votes.get(playerID),
-  });
+  getSecretData = (playerID: string): VotingRoundSecretData =>
+    this.votes.has(playerID)
+      ? {
+          playerApproves: this.votes.get(playerID),
+        }
+      : null;
 
   isFinal = (): boolean => false;
 

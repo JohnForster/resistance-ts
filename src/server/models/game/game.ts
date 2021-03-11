@@ -87,13 +87,11 @@ export class Game {
   getPlayer = (id: string): Player => this.players.find((p) => p.id === id);
 
   sendUpdateToAllPlayers = (): void => {
-    console.log('this.players:', this.players);
     this.players.forEach(this.sendGameUpdate);
   };
 
   sendGameUpdate = (player: User): void => {
     const payload = this.generatePayload(player);
-    console.log('payload:', payload);
     send(player, payload);
   };
 
@@ -124,18 +122,13 @@ export class Game {
   };
 
   handleMessage = (message: Message): void => {
-    console.log(this.id, 'handling message', message.type);
     const isValid = this.currentRound.validateMessage(message);
     if (!isValid) return console.error('Not valid');
 
     this.currentRound.handleMessage(message);
 
-    console.log(
-      'this.currentRound.isReadyToComplete():',
-      this.currentRound.isReadyToComplete(),
-    );
     if (this.currentRound.isReadyToComplete()) {
-      console.log('round is ready to complete');
+      console.log(`${this.currentRound.roundName} is ready to complete`);
       this.completeCurrentRound();
     }
   };
@@ -146,7 +139,12 @@ export class Game {
     this.history = this.currentRound.getUpdatedHistory();
     // TODO Is there a cleaner way to work out if the current round is final?
     if (this.currentRound.isFinal()) {
-      return this.nextMission();
+      console.log('this.currentRound.isFinal():', this.currentRound.isFinal());
+      this.nextMission();
+      console.log(
+        'this.currentMission.missionNumber:',
+        this.currentMission.missionNumber,
+      );
     }
     const NextRound = rounds[nextRoundName];
     console.log('nextRoundName:', nextRoundName);
@@ -156,5 +154,13 @@ export class Game {
 
   nextMission = (): void => {
     // Handle the case where the game is over here or in Mission Result?
+    const nextMission: OngoingMission = {
+      missionNumber: this.currentMission.missionNumber + 1,
+      nominations: [],
+      nominatedPlayers: [],
+      votes: [],
+    };
+    console.log('nextMission:', nextMission);
+    this.currentMission = nextMission;
   };
 }

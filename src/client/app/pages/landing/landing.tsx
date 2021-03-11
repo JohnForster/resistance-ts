@@ -79,6 +79,7 @@ export class LandingPage extends PureComponent<
             <p>Game Code:</p>
             <input
               type="text"
+              name="gamecode"
               value={this.state.formValue}
               onChange={this.handleChange('formValue')}
             />

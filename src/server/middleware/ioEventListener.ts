@@ -10,10 +10,7 @@ import { User, sendPlayerData, createUser, sendError } from '../models/user';
 import { storage } from '../storage/storage';
 
 export const ioConnectionListener = (socket: Socket): void => {
-  console.log('Sockets.io connection made, id:', socket.id);
-
-  const cookies = cookie.parse(socket.request.headers.cookie);
-  console.log('cookies:', cookies);
+  const cookies = cookie.parse(socket.request.headers.cookie ?? '');
 
   const userId = cookies.playerID ?? '';
   const isExistingUser = storage.users.has(userId);
@@ -125,7 +122,6 @@ const joinGame = (user: User, data: EventByName<'joinGame'>['data']): void => {
 };
 
 const updatePlayerData = (user: User, data: PlayerData): void => {
-  console.log(data);
   if (data.playerID && user.id !== data.playerID)
     return console.error(
       `ID mismatch: '${user.id}' stored, '${data.playerID}' received`,

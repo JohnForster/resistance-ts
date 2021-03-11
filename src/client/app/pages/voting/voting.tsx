@@ -14,6 +14,7 @@ interface Props {
 export const VotingPage: React.FC<Props> = (props) => {
   const [playerApproves, setPlayerApproves] = useState<boolean>(null);
   const { roundData, secretData } = props.game;
+  console.log('secretData:', secretData);
   return (
     <Page>
       <ProgressBar history={props.game.history} rounds={props.game.rounds} />

@@ -4,7 +4,7 @@
     "noImplicitAny": true,
     "esModuleInterop": true,
     "module": "commonjs",
-    "target": "es6",
+    "target": "ES2017",
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
