@@ -1,5 +1,11 @@
 import { Round } from '.';
-import { GameHistory, Game, PlayerId, OngoingMission } from '../game';
+import {
+  GameHistory,
+  Game,
+  PlayerId,
+  OngoingMission,
+  CompletedMission,
+} from '../game';
 import {
   RoundName,
   MissionRoundPublicData,
@@ -30,8 +36,31 @@ export class MissionRound implements Round<'mission'> {
     this.missionVotes.size === this.mission.nominatedPlayers.length;
 
   completeRound = (): RoundName => {
-    this.game.currentMission;
-    return 'missionResult'; // TODO return next round data here in a tuple?
+    const votes = [...this.missionVotes.entries()].map(
+      ([playerID, succeed]) => ({
+        playerID,
+        succeed,
+      }),
+    );
+
+    const numberOfFailVotes = votes.filter(({ succeed }) => !succeed).length;
+    const votesRequiredToFail = this.game.rules.missions[
+      this.mission.missionNumber
+    ]?.failsRequired;
+
+    if (votesRequiredToFail == null) {
+      console.error(
+        "Couldn't work out how many fails required for this mission",
+      );
+    }
+    const updatedMission: CompletedMission = {
+      ...this.game.currentMission,
+      votes,
+      success: numberOfFailVotes < votesRequiredToFail,
+    };
+
+    this.game.currentMission = updatedMission;
+    return 'missionResult';
   };
 
   getRoundData = (): MissionRoundPublicData => ({
@@ -39,6 +68,7 @@ export class MissionRound implements Round<'mission'> {
       name,
       id,
     })),
+    // TODO add playersLeftToVote
     // playersLeftToVote: this.nominatedPlayers.length - this.missionVotes.size,
   });
 

@@ -9,8 +9,6 @@ interface VoteResultsProps {
 export const VoteResultsPage: React.FC<VoteResultsProps> = (props) => (
   <>
     <div>Vote Results</div>
-    <input type="button" onClick={props.confirmReady}>
-      Ready
-    </input>
+    <button onClick={props.confirmReady}>Ready</button>
   </>
 );

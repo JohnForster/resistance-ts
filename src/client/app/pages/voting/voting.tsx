@@ -14,7 +14,6 @@ interface Props {
 export const VotingPage: React.FC<Props> = (props) => {
   const [playerApproves, setPlayerApproves] = useState<boolean>(null);
   const { roundData, secretData } = props.game;
-  console.log('secretData:', secretData);
   return (
     <Page>
       <ProgressBar history={props.game.history} rounds={props.game.rounds} />
@@ -48,6 +47,7 @@ export const VotingPage: React.FC<Props> = (props) => {
             </Styled.VoteButton>
           </Styled.ButtonContainer>
           <button
+            // TODO Allow changing votes by ungreying if they choose something else?
             disabled={playerApproves === null}
             onClick={() => props.submitVote(playerApproves)}
           >

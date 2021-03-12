@@ -23,10 +23,12 @@ export type LobbyMessage = BaseMessage &
     //   };
   );
 
-export type CharacterMessage = BaseMessage & {
-  type: 'confirmCharacter';
+type ContinueMessage = BaseMessage & {
+  type: 'continue';
   confirm: true;
 };
+
+export type CharacterMessage = ContinueMessage;
 
 export type NominationMessage = BaseMessage & {
   type: 'nominatePlayers';
@@ -38,20 +40,14 @@ export type VotingMessage = BaseMessage & {
   playerApproves: boolean;
 };
 
-export type VotingResultMessage = BaseMessage & {
-  type: 'confirmVoteResult';
-  confirm: true;
-};
+export type VotingResultMessage = ContinueMessage;
 
 export type MissionRoundMessage = BaseMessage & {
   type: 'mission';
   succeedMission: boolean;
 };
 
-export type MissionResultMessage = BaseMessage & {
-  type: 'confirmMissionResult';
-  confirm: true;
-};
+export type MissionResultMessage = ContinueMessage;
 
 // TODO Rename message?
 export type Message =

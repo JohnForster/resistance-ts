@@ -13,8 +13,8 @@ export class MissionResult implements Round<'missionResult'> {
 
   constructor(private readonly game: Game) {}
 
-  validateMessage = ({ confirm }: MissionResultMessage): boolean => {
-    return confirm === true || confirm === false;
+  validateMessage = (message: MissionResultMessage): boolean => {
+    return message.confirm === true || message.confirm === false;
   };
 
   handleMessage = (message: MissionResultMessage): void => {
@@ -29,23 +29,22 @@ export class MissionResult implements Round<'missionResult'> {
   };
 
   getRoundData = (): MissionResultPublicData => {
-    const votes = this.game.currentMission.nominations[
-      this.game.currentMission.nominations.length - 1
-    ].votes;
-    const success = Array.from(votes.values()).filter((x) => x).length;
-    const fail = Array.from(votes.values()).filter((x) => !x).length;
+    const votes = this.game.currentMission.votes;
+    const success = votes.filter(({ succeed }) => succeed).length;
+    const fail = votes.filter(({ succeed }) => !succeed).length;
 
-    return {
+    const data = {
       unconfirmedPlayerNames: this.game.players
         .filter((p) => this.confirmedPlayers.has(p.id))
         .map(({ name }) => name),
-      missionSucceeded: !!this.game.currentMission.success,
-      // TODO Change just to an array of true/false values?
+      missionSucceeded: this.game.currentMission.success,
       missionResults: {
         success,
         fail,
       },
     };
+
+    return data;
   };
 
   getSecretData = (id: PlayerId): MissionResultSecretData => ({

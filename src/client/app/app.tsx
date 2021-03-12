@@ -78,16 +78,6 @@ export default class App extends PureComponent<{}, AppState> {
     });
   };
 
-  confirmCharacter = (): void => {
-    const { gameID, playerID } = this.state.game;
-    this.state.eventEmitter.send('clientMessage', {
-      type: 'confirmCharacter',
-      gameID,
-      playerID,
-      confirm: true,
-    });
-  };
-
   submitNominations = (playerIDs: Set<string>): void => {
     const { gameID, playerID } = this.state.game;
     this.state.eventEmitter.sendMessage({
@@ -121,7 +111,7 @@ export default class App extends PureComponent<{}, AppState> {
   continue = (): void => {
     const { gameID, playerID } = this.state.game;
     this.state.eventEmitter.sendMessage({
-      type: 'confirmVoteResult',
+      type: 'continue',
       gameID,
       playerID,
       confirm: true,
@@ -138,6 +128,9 @@ export default class App extends PureComponent<{}, AppState> {
         <Styled.Global />
         <Styled.AppContainer>
           <Styled.BackgroundImage src="assets/bg.jpg" alt="" />
+          {process.env.NODE_ENV === 'development' && (
+            <p style={{ fontSize: '8px' }}>{this.state.player?.name}</p>
+          )}
           {!this.state.game ? (
             <Pages.LandingPage
               hostGame={this.hostGame}
@@ -154,7 +147,7 @@ export default class App extends PureComponent<{}, AppState> {
           ) : typeGuards.isCharacterRound(this.state.game) ? (
             <Pages.CharacterPage
               game={this.state.game as GameData<'character'>}
-              confirmCharacter={this.confirmCharacter}
+              confirmCharacter={this.continue}
             />
           ) : typeGuards.isNominationRound(this.state.game) ? (
             <Pages.NominationPage

@@ -3,12 +3,14 @@ import { RoundName } from '@shared/types/gameData';
 import { Message } from '@shared/types/messages';
 
 import generateID from '../../utils/generateID';
+import { getHsl } from '../../utils/getHsl';
 import { Rules, RULES } from '../../data/gameRules';
 
 import { send, User } from '../user';
 
 import { LobbyRound, Round } from './rounds';
 import { rounds } from './config';
+import chalk from 'chalk';
 
 export interface Player extends User {
   allegiance?: 'resistance' | 'spies';
@@ -22,7 +24,7 @@ export interface Nomination {
   succeeded?: boolean;
 }
 
-export interface Mission {
+export interface CompletedMission {
   missionNumber: number;
   nominations: Nomination[];
   nominatedPlayers: Player[];
@@ -33,16 +35,19 @@ export interface Mission {
   success: boolean;
 }
 
-export type OngoingMission = Omit<Mission, 'success'> & {
+export type OngoingMission = Omit<CompletedMission, 'success'> & {
   success?: boolean;
 };
 
-export type GameHistory = Record<number, Mission>;
+export type GameHistory = Record<number, CompletedMission>;
 
 export type PlayerId = string;
 
+console.log("getHsl('f36', 16):", getHsl('f36', 16));
+
 export class Game {
   readonly id: string = generateID();
+  readonly colouredId: string;
   // TODO change players to be an id -> player map?
   public players: Player[] = [];
 
@@ -61,7 +66,12 @@ export class Game {
     return RULES[this.players.length];
   }
 
+  public get isOpen() {
+    return this.currentRound.roundName === 'lobby';
+  }
+
   constructor() {
+    this.colouredId = chalk.hsl(...getHsl(this.id))(this.id);
     this.votesRemaining = 5;
     this.currentRound = new LobbyRound(this);
     this.currentMission = {
@@ -75,6 +85,7 @@ export class Game {
   addPlayer = (player: Player): void => {
     if (this.players.includes(player))
       return console.error('That player is already in this game.');
+    this.log(`Player ${player.shortId} joined`);
     this.players.push(player);
   };
 
@@ -92,6 +103,7 @@ export class Game {
 
   sendGameUpdate = (player: User): void => {
     const payload = this.generatePayload(player);
+    this.log(`Sending ${payload.data.stage} msg to ${player.shortId}`);
     send(player, payload);
   };
 
@@ -121,33 +133,37 @@ export class Game {
     };
   };
 
+  log = (...messages: string[]) => {
+    console.log(
+      chalk.blue(new Date().toLocaleTimeString()),
+      this.colouredId,
+      ...messages,
+    );
+  };
+
   handleMessage = (message: Message): void => {
     const isValid = this.currentRound.validateMessage(message);
-    if (!isValid) return console.error('Not valid');
+    if (!isValid) return console.error('Message not valid');
 
+    this.log('Received message', message.type);
     this.currentRound.handleMessage(message);
 
     if (this.currentRound.isReadyToComplete()) {
-      console.log(`${this.currentRound.roundName} is ready to complete`);
       this.completeCurrentRound();
     }
   };
 
   completeCurrentRound = (): void => {
-    console.log(this.id, 'completing round', this.currentRound.roundName);
+    this.log('Completing round', this.currentRound.roundName);
     const nextRoundName = this.currentRound.completeRound();
     this.history = this.currentRound.getUpdatedHistory();
     // TODO Is there a cleaner way to work out if the current round is final?
     if (this.currentRound.isFinal()) {
-      console.log('this.currentRound.isFinal():', this.currentRound.isFinal());
+      this.log('Mission complete, moving onto next mission');
       this.nextMission();
-      console.log(
-        'this.currentMission.missionNumber:',
-        this.currentMission.missionNumber,
-      );
     }
+    this.log('Starting round', nextRoundName);
     const NextRound = rounds[nextRoundName];
-    console.log('nextRoundName:', nextRoundName);
     this.currentRound = new NextRound(this);
     this.sendUpdateToAllPlayers();
   };
@@ -160,7 +176,6 @@ export class Game {
       nominatedPlayers: [],
       votes: [],
     };
-    console.log('nextMission:', nextMission);
     this.currentMission = nextMission;
   };
 }

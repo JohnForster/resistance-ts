@@ -33,8 +33,17 @@ export class VotingResult implements Round<'votingResult'> {
     this.confirmedPlayers.size === this.game.players.length;
 
   completeRound = (): RoundName => {
-    return this.game.currentMission.success === true ? 'mission' : 'nomination';
+    if (this.nominationResult.succeeded) {
+      this.game.currentMission = {
+        ...this.game.currentMission,
+        nominatedPlayers: [...this.nominationResult.nominatedPlayers],
+      };
+
+      return 'mission';
+    }
+
     // TODO Check if this is game over? Or do this during voting round and send to a separate screen?
+    return 'nomination';
   };
 
   getRoundData = () => ({

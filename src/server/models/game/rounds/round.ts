@@ -33,32 +33,3 @@ export interface Round<T extends RoundName> {
 
   getUpdatedHistory: () => GameHistory;
 }
-
-// import { Round, RoundName } from ".";
-// import Game from "../../game/game";
-
-// export interface NominationMessage {}
-
-// export class NominationRound implements Round<NominationMessage> {
-//   public roundName = '' as const;
-
-//   constructor(private readonly game: Game) {}
-
-//   handleMessage = (message: NominationMessage): void => {};
-
-//   validateMessage = (message: NominationMessage): boolean => {
-//     return true;
-//   };
-
-//   roundIsReadyToComplete = (): boolean;
-
-//   completeRound = (): RoundName => '';
-
-//   getRoundData = (): any => ({});
-
-//   getSecretData = (id: string): any => ({});
-
-//   isFinal = (): boolean => false;
-
-//   getUpdatedHistory = (): any => {};
-// }

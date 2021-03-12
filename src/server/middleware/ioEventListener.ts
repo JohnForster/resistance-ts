@@ -8,6 +8,7 @@ import { PlayerData } from '@shared/types/playerData';
 import { Game } from '../models/game/game';
 import { User, sendPlayerData, createUser, sendError } from '../models/user';
 import { storage } from '../storage/storage';
+import chalk from 'chalk';
 
 export const ioConnectionListener = (socket: Socket): void => {
   const cookies = cookie.parse(socket.request.headers.cookie ?? '');
@@ -24,8 +25,8 @@ export const ioConnectionListener = (socket: Socket): void => {
     game?.sendGameUpdate(user);
   } else {
     console.log(
-      new Date().toISOString() +
-        ' Recieved a new connection from origin ' +
+      chalk.blue(new Date().toLocaleTimeString()) +
+        ' Recieved a new connection from ' +
         socket.handshake.address,
     );
 
@@ -115,9 +116,15 @@ const joinGame = (user: User, data: EventByName<'joinGame'>['data']): void => {
     return sendError(user, `Game with id ${data.gameID} not found.`);
   }
 
+  if (!game.isOpen) {
+    console.error(
+      `Error joining game, game with id ${data.gameID} has already begun`,
+    );
+    return sendError(user, `Game with id ${data.gameID} has already begun`);
+  }
+
   game.addPlayer(user);
   user.gameID = game.id;
-  console.log(`Added player ${user.id} to game ${game.id}`);
   game.sendUpdateToAllPlayers();
 };
 

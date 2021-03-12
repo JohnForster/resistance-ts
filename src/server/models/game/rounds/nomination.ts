@@ -12,9 +12,6 @@ export class NominationRound implements Round<'nomination'> {
   private nominatedPlayerIDs: string[] = [];
 
   constructor(private readonly game: Game) {
-    console.log('this.game.currentMission:', this.game.currentMission);
-    console.log('missionNumber:', this.game.currentMission.missionNumber);
-
     this.roundRules = this.game.rules.missions[
       this.game.currentMission.missionNumber
     ];
@@ -22,8 +19,6 @@ export class NominationRound implements Round<'nomination'> {
 
   handleMessage = (message: NominationMessage): void => {
     const playerIDs = this.game.players.map((p) => p.id);
-    console.log('playerIDs:', playerIDs);
-    console.log('nomination message:', message);
     if (!message.nominatedPlayerIDs.every((name) => playerIDs.includes(name)))
       return console.error(
         'Not all nominated players are part of this game.\n  nominatedPlayerIds:',

@@ -29,7 +29,7 @@ const upgradeHttpsMiddleware: RequestHandler = (req, res, next) => {
 const publicPath = path.join(__dirname, 'dist');
 app.use(
   '/',
-  // upgradeHttpsMiddleware,
+  upgradeHttpsMiddleware,
   expressStaticGzip(publicPath, {
     enableBrotli: true,
   }),
