@@ -16,8 +16,6 @@ interface AppState {
   eventEmitter?: IOEventEmitter;
   player: { name: string; playerID: string };
   screen: Screen;
-  error?: any;
-  reconnected?: string;
 }
 
 const APIAddress = window.location.host;
@@ -38,11 +36,6 @@ export default class App extends PureComponent<{}, AppState> {
 
     // Register listeners
     eventEmitter.bind('playerData', this.onPlayerUpdate);
-
-    eventEmitter.bind('error', (error) => this.setState({ error }));
-    eventEmitter.bind('reconnect' as any, () =>
-      this.setState({ reconnected: 'true' }),
-    );
 
     window.addEventListener('resize', () => {
       this.setState({ screen: window.screen });
@@ -146,16 +139,6 @@ export default class App extends PureComponent<{}, AppState> {
           {process.env.NODE_ENV === 'development' && (
             <p style={{ fontSize: '8px', position: 'absolute' }}>
               {this.state.player?.name}
-            </p>
-          )}
-          {process.env.NODE_ENV === 'development' && this.state.error && (
-            <p style={{ fontSize: '8px', position: 'absolute' }}>
-              {this.state.error}
-            </p>
-          )}
-          {process.env.NODE_ENV === 'development' && this.state.reconnected && (
-            <p style={{ fontSize: '8px', position: 'absolute' }}>
-              {this.state.reconnected}
             </p>
           )}
           {!this.state.game ? (
