@@ -1,4 +1,12 @@
 {
-  // ? Make a note here why this is needed
-  "extends": "./src/server/tsconfig.json"
+  "compilerOptions": {
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "target": "ES2017",
+    "jsx": "react",
+    "baseUrl": "."
+  },
+  "skipLibCheck": true
 }

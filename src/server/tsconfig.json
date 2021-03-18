@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
-    "outDir": "../../build",
+    "outDir": "build",
     "sourceMap": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
+    "target": "ES6",
     "module": "commonjs",
-    "target": "es5",
-    "types": [],
+    "types": ["node"],
     "baseUrl": ".",
     "paths": {
       "@shared/*": ["../shared/*"],
-      "@server/*": ["./*"],
+      "@server/*": ["./*"]
     }
   },
   "files": ["server.ts"]

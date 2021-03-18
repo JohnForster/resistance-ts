@@ -1,39 +1,47 @@
-import WebSocket from 'ws';
-import Game from './game/game';
-import { EventByName, WSEvent } from '@shared/types/eventTypes';
-import { EventType } from '@server/types/enums';
-import uuidv4 from 'uuid/v4';
+import { WSEvent } from '@shared/types/eventTypes';
+import { v4 as uuidv4 } from 'uuid';
+import { Socket } from 'socket.io';
+import { getHsl } from '../utils/getHsl';
+import chalk from 'chalk';
 
-export default class User {
-  public id: string;
-  public ws: WebSocket;
-  public game: Game;
-  public name: string;
+export type User = {
+  // TODO Split into public and private IDs
+  id: string;
+  gameID: string | null;
+  name: string | null;
+  socket: Socket; //  ? Store as a socketID and keep a map of Sockets?
+  shortId: string;
+};
 
-  constructor(ws: WebSocket) {
-    this.ws = ws;
-    this.id = uuidv4();
-  }
-
-  public sendPlayerData = (): void => {
-    const payload: EventByName<typeof EventType.playerData> = {
-      event: EventType.playerData,
-      data: {
-        playerID: this.id,
-        name: this.name,
-      },
-    };
-    this.send(payload);
+export const createUser = (socket: Socket): User => {
+  const id = uuidv4();
+  const hsl = getHsl(id, 16);
+  const shortId = `${id.slice(0, 5)}...`;
+  return {
+    id: uuidv4(),
+    gameID: '',
+    name: '',
+    socket,
+    shortId: chalk.hsl(...hsl)(shortId),
   };
+};
 
-  public send = (payload: WSEvent): void => {
-    this.ws.send(JSON.stringify(payload), err => {
-      if (!err) return;
-      console.warn(`Sending failed to player ${this.id.slice(0, 6)}... (${this.name}) ${err}`);
-    });
-  };
+export const sendPlayerData = (user: User) =>
+  send(user, {
+    event: 'playerData',
+    data: {
+      playerID: user.id,
+      name: user.name,
+    },
+  });
 
-  public sendGameUpdate = () => {
-    this.game.sendGameUpdate(this);
-  };
-}
+export const sendError = (user: User, errorMessage: string) =>
+  send(user, {
+    event: 'error',
+    data: errorMessage,
+  });
+
+export const send = (user: User, { event, data }: WSEvent) => {
+  // ? Error handling?
+  user.socket.emit(event, data);
+};

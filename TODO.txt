@@ -1,4 +1,9 @@
                               ##### TODO LIST #####
+CURRENT: REFACTOR
+  Server refactor "done" (not tested/debugged) ✅ish
+  Client Refactor ish
+  Sockets.io
+  Fix prod build
 
 ______________________________________________________________________________________
 COMPLETED:
@@ -46,16 +51,19 @@ TECH DEBT:
 Mirror game stage refactor changes in the front-end
 Encapsulate websocket interactions within a service
 Refactor wsEventHandler in server (receives array, sends object?)
-BEST PRACTICE: replace ports with enums
 Decide what to do with enum in shared.
   - Cannot be const enum, because cannot be used as type argument.
   - If happy to use regular enum, need to set up webpack to move it?
 Extract Mission into separate class.
   Instead of:  lobby -> character -> nominate -> vote -> result -> nominate -> vote -> result
-  Use: lobby - character -> Mission 1 -> Mission 2 -> Mission 3 etc.
+  Use: lobby - character -> Mission 1 -> Mission 2 -> Mission 3 etc. -> Game Over
                             -nominate    -nominate    -nominate
                             -vote        -vote        -vote
                             -result      -result      -result
                             -mission     -mission     -mission
-
-
+                            -missionRes  -missionRes  -missionRes
+Make shared into a module.
+Split node_modules between client/server
+Replace websockets with sockets.io
+Remove Babel
+Add Puppetteer tests

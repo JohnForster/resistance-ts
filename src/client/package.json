@@ -1,0 +1,46 @@
+{
+  "name": "resistance-ts-client",
+  "version": "1.0.0",
+  "main": "index.tsx",
+  "author": "John Forster",
+  "license": "MIT",
+  "description": "Mobile app for playing \"The Resistance\" board game",
+  "repository": "github.com/johnforster/resistance",
+  "scripts": {
+    "start": "PORT=9001 webpack serve",
+    "build": "NODE_ENV=production webpack",
+    "test": "jest tests/e2e.test.ts --unhandled-rejections=strict",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "core-js": "^3.9.1",
+    "corejs": "^1.0.0",
+    "js-cookie": "^2.2.1",
+    "lodash": "^4.17.21",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "socket.io-client": "^3.1.2",
+    "styled-components": "^5.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.8",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
+    "@types/js-cookie": "^2.2.6",
+    "@types/react-dom": "^17.0.2",
+    "@types/styled-components": "^5.1.7",
+    "@types/webpack-env": "^1.16.0",
+    "babel-loader": "^8.2.2",
+    "chalk": "^4.1.0",
+    "copy-webpack-plugin": "^7.0.0",
+    "fork-ts-checker-webpack-plugin": "^6.1.0",
+    "html-webpack-plugin": "^5.2.0",
+    "merge": "^2.1.1",
+    "puppeteer": "^8.0.0",
+    "react-refresh": "^0.9.0",
+    "ts-loader": "^8.0.17",
+    "typescript": "^4.2.2",
+    "webpack": "^5.24.2",
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^4.0.0-beta.0"
+  }
+}

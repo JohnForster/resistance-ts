@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import responsive from '@client/app/helpers/responsive';
 
 export const MissionButtonContainer = styled.div`
   display: flex;

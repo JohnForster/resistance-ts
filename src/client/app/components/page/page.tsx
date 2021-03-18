@@ -1,19 +1,32 @@
-import React, { PureComponent } from 'react';
-import * as Styled from './styled';
+import React from 'react';
+import styled from 'styled-components';
+import responsive from '../../helpers/responsive';
 
-export interface PageProps {}
-
-interface PageState {}
-
-export default class Page extends PureComponent<PageProps, PageState> {
-  render(): JSX.Element {
-    return (
-      <Styled.PageContainer>
-        {/* <If condition={process.env.NODE_ENV === 'development'}>
-          <h1>Stop Being A Perfectionist!</h1>
-        </If> */}
-        {this.props.children}
-      </Styled.PageContainer>
-    );
+const Page = styled.div`
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  height: 100%;
+  width: 80%;
+  animation: fade-in 0.5s;
+  margin: auto;
+  padding-bottom: 2rem;
+  box-sizing: border-box;
+  ${responsive`
+    padding-top: ${[0, 2, 2]}rem;
+  `} @media only screen and (min-width: 992px) {
+    max-width: 60vh;
   }
-}
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0%;
+    }
+    100% {
+      opacity: 100%;
+    }
+  }
+`;
+
+export default Page;

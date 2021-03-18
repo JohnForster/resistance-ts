@@ -1,239 +1,184 @@
-import shuffle from 'lodash.shuffle';
-
-import User from '../user';
-import generateID from '@server/utils/generateID';
 import { EventByName } from '@shared/types/eventTypes';
-// import { GameData, RoundData, RoundDataByName } from '@shared/types/gameData.d';
-import RULES, { Rules } from '@server/data/gameRules';
-// import CharacterRound from './rounds/characterRound/characterRound';
-// import Round from './rounds/round';
-import { Round, Lobby, CharacterRound, NominationRound, VotingRound, MissionRound, MissionResult } from './rounds';
-import typeGuard from '@server/utils/typeGuard';
-import { EventType, Character, RoundName } from '@server/types/enums';
-type Character = typeof Character[keyof typeof Character];
-type RoundName = typeof RoundName[keyof typeof RoundName];
+import { RoundName } from '@shared/types/gameData';
+import { Message } from '@shared/types/messages';
+
+import generateID from '../../utils/generateID';
+import { getHsl } from '../../utils/getHsl';
+import { Rules, RULES } from '../../data/gameRules';
+
+import { send, User } from '../user';
+
+import { LobbyRound, Round } from './rounds';
+import { rounds } from './config';
+import chalk from 'chalk';
 
 export interface Player extends User {
   allegiance?: 'resistance' | 'spies';
-  character?: Character;
-  hasConfirmedCharacter?: boolean;
-  isLeader?: boolean;
+  // character?: Character;
 }
 
-export interface Progress {
-  missions: {
-    result: boolean;
-    votes: {
-      success: number;
-      fail: number;
-    };
+export interface Nomination {
+  leader: Player;
+  nominatedPlayers: Player[];
+  votes: Map<Player['id'], boolean>;
+  succeeded?: boolean;
+}
+
+export interface CompletedMission {
+  missionNumber: number;
+  nominations: Nomination[];
+  nominatedPlayers: Player[];
+  votes: {
+    playerID: PlayerId;
+    succeed: boolean;
   }[];
+  success: boolean;
 }
 
-// TODO separate stages into separate classes?
-export default class Game {
-  private _id: string;
-  private _players: Player[] = [];
-  private _hasBegun = false;
-  private _host: User;
-  // private _spies: Player[] = [];
-  // private _resistance: Player[] = [];
-  private _missionNumber = 0;
-  // private _roundData: RoundData = {};
-  // private _stage: RoundName = 'lobby';
-  private _leaderIndex = 0;
-  private _rules: Rules;
-  private _progress: Progress = {
-    missions: [],
+export type OngoingMission = Omit<CompletedMission, 'success'> & {
+  success?: boolean;
+};
+
+export type GameHistory = Record<number, CompletedMission>;
+
+export type PlayerId = string;
+
+export class Game {
+  readonly id: string = generateID();
+  readonly colouredId: string;
+  // TODO change players to be an id -> player map?
+  public players: Player[] = [];
+
+  private currentRound: Round<RoundName>; /* = new Lobby(this); */
+  public currentMission: OngoingMission;
+  public votesRemaining: number;
+  public history: GameHistory = {};
+  private leaderIndex = 0;
+  public host: Player;
+
+  public get leader(): Player {
+    return this.players[this.leaderIndex];
+  }
+
+  public get rules(): Rules {
+    return RULES[this.players.length];
+  }
+
+  public get isOpen() {
+    return this.currentRound.roundName === 'lobby';
+  }
+
+  constructor() {
+    this.colouredId = chalk.hsl(...getHsl(this.id))(this.id);
+    this.votesRemaining = 5;
+    this.currentRound = new LobbyRound(this);
+    this.currentMission = {
+      missionNumber: 0,
+      nominations: [],
+      nominatedPlayers: [],
+      votes: [],
+    };
+  }
+
+  addPlayer = (player: Player): void => {
+    if (this.players.find((p) => p.id === player.id))
+      return console.error('That player is already in this game.');
+    this.log(`Player ${player.shortId} joined`);
+    this.players.push(player);
   };
 
-  // ? Could be a set?
-  // ? private _characters: Set<Character>;
-  private _characters: { [C in Character]?: boolean };
+  setHost = (playerID: string): void => {
+    const player = this.getPlayer(playerID);
+    if (!player) return console.error(`No player found with id ${playerID}`);
+    this.host = player;
+  };
 
-  private _currentRound: Round;
-
-  public get id(): string {
-    return this._id;
-  }
-
-  public get players(): Player[] {
-    return this._players;
-  }
-
-  public get hasBegun(): boolean {
-    return this._hasBegun;
-  }
-
-  public get host(): User {
-    return this._host;
-  }
-
-  public get currentRound(): RoundName {
-    return this._currentRound.roundName;
-  }
-
-  private get leader(): Player {
-    return this._players[this._leaderIndex];
-  }
-
-  constructor(host: User) {
-    this._id = generateID();
-    this._host = host;
-    this._currentRound = new Lobby(this._players);
-  }
+  getPlayer = (id: string): Player => this.players.find((p) => p.id === id);
 
   sendUpdateToAllPlayers = (): void => {
-    this._players.forEach(this.sendGameUpdate);
+    this.players.forEach(this.sendGameUpdate);
   };
 
   sendGameUpdate = (player: User): void => {
     const payload = this.generatePayload(player);
-    player.send(payload);
+    this.log(`Sending ${payload.data.stage} msg to ${player.shortId}`);
+    send(player, payload);
   };
 
-  generatePayload = (player: User): EventByName<typeof EventType.gameUpdate> => {
-    const secretData = (this._currentRound && this._currentRound.getSecretData(player.id)) || null;
-    const roundData = (this._currentRound && this._currentRound.getRoundData()) || null;
+  generatePayload = (player: User): EventByName<'serverMessage'> => {
+    const secretData = this.currentRound.getSecretData(player.id) ?? null;
+    const roundData = this.currentRound.getRoundData() ?? null;
     return {
-      event: EventType.gameUpdate,
+      event: 'serverMessage',
       data: {
-        gameID: this._id,
-        missionNumber: this._missionNumber,
-        stage: this._currentRound.roundName,
+        gameID: this.id,
+        missionNumber: this.currentMission.missionNumber,
+        stage: this.currentRound.roundName,
         playerID: player.id,
-        hostName: this._host.name,
-        isHost: this._host === player,
-        leaderName: this.leader.name,
-        isLeader: this.leader === player,
-        players: this._players.map(p => ({ name: p.name, id: p.id })),
+        hostName: this.host.name,
+        isHost: this.host.id === player.id,
+        leaderName: this.leader?.name,
+        isLeader: this.leader.id === player.id,
+        players: this.players.map((p) => ({ name: p.name, id: p.id })),
         roundData,
         secretData,
-        history: this._progress.missions.map(m => m.result),
-        rounds: Object.entries(this._rules?.missions || []).map(([, o]) => [o.players, o.failsRequired]),
+        history: Object.values(this.history).map((m) => m.success),
+        rounds: Object.entries(this.rules?.missions ?? {}).map(([, o]) => [
+          o.players,
+          o.failsRequired,
+        ]),
       },
     };
   };
 
-  isRound = <T extends Round>(round: Round): round is T => {
-    return round.roundName === name;
-  };
-
-  addPlayer = (player: User, isHost = false): void => {
-    if (!typeGuard(this._currentRound, Lobby)) throw new Error('Lobby is closed');
-    if (!this._players.find(p => p.id === player.id)) this._currentRound.addPlayer(player, isHost);
-    if (isHost && !this._host) this._host = player;
-    this.sendUpdateToAllPlayers();
-  };
-
-  beginGame = (characters: { [C in Character]?: boolean } = {}): void => {
-    this._rules = RULES[this._players.length];
-    const characterRound = new CharacterRound(this._players, this._rules);
-    characterRound.allocateTeams();
-
-    this._currentRound = characterRound;
-
-    // this._stage = characterRound.roundName;
-    this._players = shuffle(this._players);
-    this.sendUpdateToAllPlayers();
-
-    this._hasBegun = true;
-    this._characters = characters;
-  };
-
-  incrementLeaderIndex = (): void => {
-    this._leaderIndex = (this._leaderIndex + 1) % this._players.length;
-  };
-
-  confirmCharacter = (playerID: string): void => {
-    if (!typeGuard(this._currentRound, CharacterRound)) {
-      throw new Error('Cannot confirm player outside of character round');
-    }
-    // if (this.currentRound.roundName !== RoundName.characterAssignment)
-    //   return console.error('CharacterRound not in Progress');
-    // if (!this._currentRound.isActive) return console.error('Character round already complete');
-    this._currentRound.confirmCharacter(playerID);
-    this.sendUpdateToAllPlayers();
-    if (this._currentRound.isReadyToStart) this.startRound(1);
-  };
-
-  startRound = (missionNumber: number): void => {
-    console.log('Starting round', missionNumber);
-    this.beginNominationRound(missionNumber);
-    this.sendUpdateToAllPlayers();
-  };
-
-  beginNominationRound = (missionNumber: number, nominationRoundNumber = 1): void => {
-    const nominationRound = new NominationRound(
-      this._players,
-      this._rules,
-      missionNumber,
-      this._leaderIndex,
-      nominationRoundNumber,
+  log = (...messages: string[]) => {
+    console.log(
+      chalk.blue(new Date().toLocaleTimeString()),
+      this.colouredId,
+      ...messages,
     );
-    this._currentRound = nominationRound;
-    this._missionNumber = missionNumber;
   };
 
-  nominatePlayers = (nominatedPlayerIDs: string[]): void => {
-    if (!typeGuard(this._currentRound, NominationRound)) {
-      throw new Error('Cannot nominate players outside of nomination round');
+  handleMessage = (message: Message): void => {
+    const isValid = this.currentRound.validateMessage(message);
+    if (!isValid) {
+      const player = this.players.find((p) => p.id === message.playerID);
+      this.sendGameUpdate(player);
+      return this.log('Invalid message received from', player.shortId);
     }
-    console.log('Nominated player ids:', ...nominatedPlayerIDs);
-    // TODO Check players are in this game?
-    // TODO Check the right number of players are nominated etc.
-    const votingRoundNumber = this._currentRound.nominationRoundNumber;
-    this._currentRound = new VotingRound(this._players, this._rules, votingRoundNumber, nominatedPlayerIDs);
+
+    this.log('Received message', message.type);
+    this.currentRound.handleMessage(message);
     this.sendUpdateToAllPlayers();
+
+    if (this.currentRound.isReadyToComplete()) {
+      this.completeCurrentRound();
+    }
   };
 
-  vote = (playerID: string, approves: boolean): void => {
-    if (!typeGuard(this._currentRound, VotingRound)) {
-      throw new Error('Cannot vote outside of voting round');
+  completeCurrentRound = (): void => {
+    this.log('Completing round', this.currentRound.roundName);
+    const nextRoundName = this.currentRound.completeRound();
+    this.history = this.currentRound.getUpdatedHistory();
+    // TODO Is there a cleaner way to work out if the current round is final?
+    if (this.currentRound.isFinal()) {
+      this.log('Mission complete, moving onto next mission');
+      this.nextMission();
     }
-    this._currentRound.vote(playerID, approves);
-    this.sendUpdateToAllPlayers();
-
-    if (!this._currentRound.hasVoteCompleted) return;
-
-    const nominatedPlayers = this._currentRound.countVotes();
-    this.sendUpdateToAllPlayers();
-    this.incrementLeaderIndex();
-    if (!this._currentRound.voteSucceded) {
-      const votingRound = this._currentRound.votingRoundNumber + 1;
-      this.beginNominationRound(this._missionNumber, votingRound);
-    }
-    if (this._currentRound.voteSucceded) {
-      this._currentRound = new MissionRound(this._players, this._rules, this._missionNumber, nominatedPlayers);
-    }
-
+    this.log('Starting round', nextRoundName);
+    const NextRound = rounds[nextRoundName];
+    this.currentRound = new NextRound(this);
     this.sendUpdateToAllPlayers();
   };
 
-  missionResponse = (playerID: string, isSuccessVote: boolean): void => {
-    if (!typeGuard(this._currentRound, MissionRound)) {
-      throw new Error('Cannot vote outside of voting round');
-    }
-    this._currentRound.confirmVote(playerID, isSuccessVote);
-    this.sendUpdateToAllPlayers();
-    if (!this._currentRound.isMissionOver) return;
-    const failsRequired = this._rules.missions[this._missionNumber].failsRequired;
-    const missionSucceeded = this._currentRound.allVotes.fail < failsRequired;
-    this._progress.missions[this._missionNumber - 1] = {
-      result: missionSucceeded,
-      votes: this._currentRound.allVotes,
+  nextMission = (): void => {
+    // Handle the case where the game is over here or in Mission Result?
+    const nextMission: OngoingMission = {
+      missionNumber: this.currentMission.missionNumber + 1,
+      nominations: [],
+      nominatedPlayers: [],
+      votes: [],
     };
-    this._currentRound = new MissionResult(this._players, this._currentRound.allVotes, missionSucceeded);
-    this.sendUpdateToAllPlayers();
-  };
-
-  readyForNextMission = (playerID: string): void => {
-    if (!typeGuard(this._currentRound, MissionResult)) {
-      throw new Error('Cannot confirm readiness outside of mission result round');
-    }
-    this._currentRound.playerIsReady(playerID);
-    this.sendUpdateToAllPlayers();
-    if (!this._currentRound.everyoneHasConfirmed) return;
-    this.startRound(this._missionNumber + 1);
+    this.currentMission = nextMission;
   };
 }

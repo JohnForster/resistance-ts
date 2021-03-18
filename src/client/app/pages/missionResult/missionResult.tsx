@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 
 import Page from '../../components/page/page';
-import { isMissionResultRound } from '../../helpers/typeGuards';
 import { GameData } from '@shared/types/gameData';
 
 import * as Styled from './styled';
-import listString from '@client/app/helpers/listString';
+import listString from '../../helpers/listString';
 
 export interface MissionResultProps {
-  game: GameData;
+  game: GameData<'missionResult'>;
   confirmReady: () => void;
 }
 
-const MissionResultPage: React.FC<MissionResultProps> = (props: MissionResultProps) => {
-  const [playerWantsToContinue, setPlayerWantsToContinue] = useState<boolean>(false);
+export const MissionResultPage: React.FC<MissionResultProps> = (
+  props: MissionResultProps,
+) => {
+  const [playerWantsToContinue, setPlayerWantsToContinue] = useState<boolean>(
+    false,
+  );
   const roundData = props.game.roundData;
-  if (!isMissionResultRound(roundData)) throw new Error("This isn't mission result data!");
 
   const confirm = (): void => {
     setPlayerWantsToContinue(true);
@@ -46,11 +48,12 @@ const MissionResultPage: React.FC<MissionResultProps> = (props: MissionResultPro
       <button disabled={playerWantsToContinue} onClick={confirm}>
         Continue
       </button>
-      <If condition={!!(playerWantsToContinue && roundData.unconfirmedPlayerNames)}>
-        <p>Waiting for {listString(roundData.unconfirmedPlayerNames, 'and')} to confirm...</p>
-      </If>
+      {!!(playerWantsToContinue && roundData.unconfirmedPlayerNames) && (
+        <p>
+          Waiting for {listString(roundData.unconfirmedPlayerNames, 'and')} to
+          confirm...
+        </p>
+      )}
     </Page>
   );
 };
-
-export default MissionResultPage;

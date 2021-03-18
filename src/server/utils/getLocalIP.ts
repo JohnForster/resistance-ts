@@ -4,7 +4,7 @@ import os from 'os';
 export default (): Promise<string> =>
   new Promise((resolve): void => {
     const hostName = os.hostname();
-    dns.lookup(hostName, (err, add) => {
-      resolve(add);
+    dns.lookup(hostName, (_, address) => {
+      resolve(address);
     });
   });

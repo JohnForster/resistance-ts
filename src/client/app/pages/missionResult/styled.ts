@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import responsive from '@client/app/helpers/responsive';
+import responsive from '../../helpers/responsive';
 
 const timings: { [key: number]: number[] } = {
   2: [1.2, 2.6],
@@ -44,6 +44,7 @@ export const Results = styled.div`
 `;
 
 export const Result = styled.div`
+  pointer-events: none;
   animation: slam 1s;
   animation-timing-function: ease-in;
   animation-fill-mode: both;
@@ -53,11 +54,11 @@ export const Result = styled.div`
 // eslint-disable-next-line
 // @ts-ignore
 export const OverallResult = styled.h1`
+  pointer-events: none;
   // TODO add media query here
   ${responsive`
     font-size: ${[36, 48, 48]}px;
   `}
-
   animation: slam 1s;
   animation-timing-function: ease-in;
   animation-fill-mode: both;

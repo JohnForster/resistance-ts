@@ -1,0 +1,116 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"
+    />
+  </head>
+  <body>
+    <style>
+      div {
+        padding: 1px;
+      }
+
+      .appContainer {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        height: 568px;
+
+        box-sizing: border-box;
+        border: 1px solid red;
+      }
+
+      .pageContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+        width: 80%;
+        margin: auto;
+
+        /*
+        ${responsive`
+          padding-top: ${[0, 2, 2]}rem;
+        `}
+        */
+
+        /*
+        @media only screen and (min-width: 992px) {
+          max-width: 60vh;
+        }
+        */
+
+        /* box-sizing: border-box; */
+        border: 1px solid blue;
+      }
+
+      .content {
+        height: 80px;
+        width: 100%;
+        flex-shrink: 0;
+
+        /* box-sizing: border-box; */
+        border: 1px solid green;
+      }
+
+      .nominationContainer {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .nameContainer {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        width: 100%;
+
+        /* box-sizing: border-box; */
+        border: 1px solid purple;
+      }
+
+      .button {
+        width: 100%;
+        height: 22px;
+        background: #1c2c59;
+        font-weight: bold;
+        color: white;
+        margin: 10px 0;
+
+        border: 1px solid orange;
+      }
+
+      .name {
+        width: auto;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding: 5px 0;
+
+        border: 1px solid pink;
+      }
+    </style>
+    <div class="appContainer">
+      <div class="pageContainer">
+        <div class="content"></div>
+        <div class="content"></div>
+        <div class="content"></div>
+        <div class="nameContainer">
+          <div class="name button">Name</div>
+          <div class="name button">Name</div>
+          <div class="name button">Name</div>
+          <div class="name button">Name</div>
+          <div class="name button">Name</div>
+          <div class="name button">Name</div>
+          <div class="name button">Name</div>
+          <div class="name button">Name</div>
+          <div class="name button">Name</div>
+          <div class="name button">Name</div>
+        </div>
+        <div class="button"></div>
+      </div>
+    </div>
+  </body>
+</html>

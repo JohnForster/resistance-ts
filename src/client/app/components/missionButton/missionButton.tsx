@@ -12,8 +12,10 @@ export const MissionButton = ({
   isSelected: boolean;
   onClick: () => void;
 }): JSX.Element => (
-  <Styled.MissionButton onClick={onClick}>
+  <Styled.MissionButton onClick={onClick} id="missionbutton">
     <Styled.MissionButtonIcon>{icon}</Styled.MissionButtonIcon>
-    <Styled.MissionButtonText isSelected={isSelected}>{text}</Styled.MissionButtonText>
+    <Styled.MissionButtonText isSelected={isSelected}>
+      {text}
+    </Styled.MissionButtonText>
   </Styled.MissionButton>
 );
