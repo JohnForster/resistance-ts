@@ -6,7 +6,7 @@ import { DataByEventName } from '@shared/types/eventTypes';
 import * as typeGuards from '../types/typeGuards';
 import { GameData } from '@shared/types/gameData';
 
-import IOEventEmitter from './helpers/IoEventEmitter';
+import IOEventEmitter from './helpers/IOEventEmitter';
 import * as Pages from './pages';
 import * as Styled from './styles/styled';
 
