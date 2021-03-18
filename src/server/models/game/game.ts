@@ -43,8 +43,6 @@ export type GameHistory = Record<number, CompletedMission>;
 
 export type PlayerId = string;
 
-console.log("getHsl('f36', 16):", getHsl('f36', 16));
-
 export class Game {
   readonly id: string = generateID();
   readonly colouredId: string;

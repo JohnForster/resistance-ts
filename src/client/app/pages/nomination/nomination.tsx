@@ -57,11 +57,6 @@ export class NominationPage extends PureComponent<
   }
 
   submit = (): void => {
-    console.log('submitting...');
-    console.log(
-      'this.isCorrectNumberOfNominations:',
-      this.isCorrectNumberOfNominations,
-    );
     if (!this.isCorrectNumberOfNominations) return;
     this.props.submitNominations(this.state.selectedPlayers);
   };
