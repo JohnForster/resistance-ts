@@ -86,8 +86,7 @@ export type VotingResultSecretData = {
   hasConfirmed: boolean;
 };
 export type MissionRoundSecretData = {
-  hasVoted: boolean;
-  // 23/12/20 Include vote in secret data?
+  votedToSucceed: boolean | undefined;
 };
 export type MissionResultSecretData = {
   hasConfirmed: boolean;

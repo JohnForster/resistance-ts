@@ -17,7 +17,7 @@ export interface MissionPageProps {
 }
 
 interface MissionPageState {
-  voteToSucceed: boolean;
+  voteToSucceed: boolean | null;
 }
 
 export class MissionPage extends PureComponent<
@@ -51,6 +51,7 @@ export class MissionPage extends PureComponent<
   };
 
   render(): JSX.Element {
+    const hasVoted = this.secretData.votedToSucceed !== undefined;
     return (
       <Page>
         <ProgressBar {...this.props.game} />
@@ -68,8 +69,19 @@ export class MissionPage extends PureComponent<
               isSelected={this.state.voteToSucceed === false}
               onClick={(): void => this.makeDecision(false)}
             />
-            <button onClick={this.submit} disabled={!this.secretData}>
-              Submit
+            <button
+              onClick={this.submit}
+              disabled={
+                this.state.voteToSucceed === null ||
+                (hasVoted &&
+                  this.secretData.votedToSucceed === this.state.voteToSucceed)
+              }
+            >
+              {!hasVoted
+                ? 'Submit'
+                : this.secretData.votedToSucceed === this.state.voteToSucceed
+                ? 'Submitted'
+                : 'Resubmit'}
             </button>
           </>
         ) : (

@@ -28,6 +28,7 @@ export const ioConnectionListener = (socket: Socket): void => {
       chalk.blue(new Date().toLocaleTimeString()) +
         ' Recieved a new connection from ' +
         socket.handshake.address,
+      userId ? `with existing userId:${userId}` : 'with no existing userId.',
     );
 
     const user = createUser(socket);

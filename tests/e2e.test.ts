@@ -10,12 +10,12 @@ import { characterStep } from './steps/characterStep';
 import { voteStep } from './steps/voteStep';
 import { nominationStep } from './steps/nominationStep';
 import { missionResultStep } from './steps/missionResultStep';
-import { failedMissionStep, successfulMissionStep } from './steps/missionStep';
+import { successfulMissionStep } from './steps/missionStep';
 
 const url = 'http://192.168.1.154:8080/';
 
 const showoffMode = false;
-const players = 5;
+const players = showoffMode ? 10 : 10;
 const screenSize = {
   height: 667,
   width: 500,
@@ -42,24 +42,33 @@ const options: puppeteer.PuppeteerNodeLaunchOptions = {
     ...screenSize,
   },
 };
-
 describe("Let's play resistance!", () => {
   let all: ForAllFn;
   let eventFns: EventFns;
+  let count = 0;
+
+  const takeSingleScreenshot = () =>
+    all(async ({ i, page }) =>
+      i === 0
+        ? await page.screenshot({
+            path: `tests/screens/screen-${count++}.png`,
+          })
+        : await page.waitForTimeout(500),
+    );
 
   beforeAll(async () => {
     eventFns = getEventFns(players);
     all = await getForAll(players, names, options);
 
     await all(async ({ page }) => {
-      await page.emulate(puppeteer.devices['iPhone 6']);
+      await page.emulate(puppeteer.devices['iPhone SE']);
       await page.goto(url);
       await page.waitForTimeout(500);
     });
   });
 
   beforeEach(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await await new Promise((resolve) => setTimeout(resolve, 500));
   });
 
   afterAll(() =>
@@ -72,14 +81,20 @@ describe("Let's play resistance!", () => {
   );
 
   it('should play a game of resistance', async () => {
-    // TODO FP-TS ReaderTaskEither?
     await all(landingStep(eventFns));
+    await takeSingleScreenshot();
     await all(lobbyStep(eventFns));
+    await takeSingleScreenshot();
     await all(characterStep(eventFns));
+    await takeSingleScreenshot();
     await all(nominationStep(eventFns));
+    await takeSingleScreenshot();
     await all(voteStep(eventFns));
+    await takeSingleScreenshot();
     await all(voteResultStep(eventFns));
+    await takeSingleScreenshot();
     await all(successfulMissionStep(eventFns));
+    await takeSingleScreenshot();
     await all(missionResultStep(eventFns, showoffMode));
   });
 });

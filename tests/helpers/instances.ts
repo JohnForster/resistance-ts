@@ -8,9 +8,7 @@ export type Instance = {
   page: puppeteer.Page;
 };
 
-export type ForAllFn = <A = any>(
-  fn: (i: Instance) => Promise<A>,
-) => Promise<A[]>;
+export type ForAllFn = <A = any>(fn: (i: Instance) => A) => Promise<A[]>;
 
 export const getForAll = async (
   players: number,
@@ -23,8 +21,8 @@ export const getForAll = async (
     ),
   );
 
-  const all = async <A>(fn: (i: Instance) => Promise<A>) =>
-    await Promise.all(instances.map((i) => fn(i)));
+  const all = <A>(fn: (i: Instance) => A) =>
+    Promise.all(instances.map(async (i) => await fn(i)));
 
   return all;
 };

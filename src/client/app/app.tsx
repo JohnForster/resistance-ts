@@ -15,6 +15,9 @@ interface AppState {
   status: 'idle' | 'pending' | 'inLobby' | 'inGame';
   eventEmitter?: IOEventEmitter;
   player: { name: string; playerID: string };
+  screen: Screen;
+  error?: any;
+  reconnected?: string;
 }
 
 const APIAddress = window.location.host;
@@ -24,6 +27,7 @@ export default class App extends PureComponent<{}, AppState> {
     game: null,
     status: 'idle',
     player: { playerID: null, name: null },
+    screen: window.screen,
   };
 
   componentDidMount(): void {
@@ -35,9 +39,20 @@ export default class App extends PureComponent<{}, AppState> {
     // Register listeners
     eventEmitter.bind('playerData', this.onPlayerUpdate);
 
+    eventEmitter.bind('error', (error) => this.setState({ error }));
+    eventEmitter.bind('reconnect' as any, () =>
+      this.setState({ reconnected: 'true' }),
+    );
+
+    window.addEventListener('resize', () => {
+      this.setState({ screen: window.screen });
+    });
+
     // Either send user data or request user data
     this.setState({ eventEmitter });
   }
+
+  windowResize() {}
 
   onGameUpdate = (data: DataByEventName<'serverMessage'>): void => {
     console.log('gameUpdateReceived. data:', data);
@@ -118,18 +133,30 @@ export default class App extends PureComponent<{}, AppState> {
     });
   };
 
-  typeGuard = (game: GameData): game is GameData<'voting'> => {
-    return true;
-  };
-
   render(): JSX.Element {
     return (
       <>
         <Styled.Global />
-        <Styled.AppContainer>
-          <Styled.BackgroundImage src="assets/bg.jpg" alt="" />
+        <Styled.AppContainer screen={this.state.screen}>
+          <Styled.BackgroundImage
+            screen={this.state.screen}
+            src="assets/bg.jpg"
+            alt=""
+          />
           {process.env.NODE_ENV === 'development' && (
-            <p style={{ fontSize: '8px' }}>{this.state.player?.name}</p>
+            <p style={{ fontSize: '8px', position: 'absolute' }}>
+              {this.state.player?.name}
+            </p>
+          )}
+          {process.env.NODE_ENV === 'development' && this.state.error && (
+            <p style={{ fontSize: '8px', position: 'absolute' }}>
+              {this.state.error}
+            </p>
+          )}
+          {process.env.NODE_ENV === 'development' && this.state.reconnected && (
+            <p style={{ fontSize: '8px', position: 'absolute' }}>
+              {this.state.reconnected}
+            </p>
           )}
           {!this.state.game ? (
             <Pages.LandingPage

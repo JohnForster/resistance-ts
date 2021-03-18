@@ -81,12 +81,16 @@ module.exports = {
     },
   },
   plugins: [...prodPlugins, ...(isDev ? devPlugins : [])],
+  watchOptions: {
+    ignored: '**/tests/**',
+  },
   devServer: {
     port: 8080,
     host: '0.0.0.0',
     hot: true,
     useLocalIp: true,
     open: true,
+
     proxy: {
       // Proxy requests to /socket.io so that 9001 thinks it comes from the right place.
       '/socket.io': {

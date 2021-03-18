@@ -5,6 +5,7 @@ import Page from '../../components/page/page';
 import ProgressBar from '../../components/progressBar/progressBar';
 import { PlayerContainer } from '../lobby/styled';
 import NominateButton from '../../components/nominateButton/nominatebutton';
+import styled from 'styled-components';
 
 export interface NominationPageProps {
   game: GameData<'nomination'>;
@@ -22,10 +23,14 @@ const rounds: [number, number][] = [
   [5, 1],
 ];
 
-const mockRound = {
-  history: [true, false],
-  rounds,
-};
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  overflow: hidden;
+  column-gap: 1rem;
+`;
 
 export class NominationPage extends PureComponent<
   NominationPageProps,
@@ -75,14 +80,16 @@ export class NominationPage extends PureComponent<
               Nominate {this.roundData.playersToNominate} players to perform
               this mission.
             </h3>
-            {this.props.game.players.map((player, i) => (
-              <NominateButton
-                key={`nominateButton-${i}`}
-                name={player.name}
-                select={this.onSelect(player.id)}
-                isSelected={this.state.selectedPlayers.has(player.id)}
-              />
-            ))}
+            <Container>
+              {this.props.game.players.map((player, i) => (
+                <NominateButton
+                  key={`nominateButton-${i}`}
+                  name={player.name}
+                  select={this.onSelect(player.id)}
+                  isSelected={this.state.selectedPlayers.has(player.id)}
+                />
+              ))}
+            </Container>
             <button
               onClick={this.submit}
               disabled={!this.isCorrectNumberOfNominations}

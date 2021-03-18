@@ -1,12 +1,13 @@
 {
   "verbose": true,
   "watch": ["."],
-  "ext": "js,json,ts",
+  "ignore": ["**/test", ".git", "node_modules/**/node_modules"],
   "env": {
     "NODE_ENV": "development",
     "PORT": "9001"
   },
   "execMap": {
     "ts": "node --require ts-node/register"
-  }
+  },
+  "ext": "js,json,ts"
 }

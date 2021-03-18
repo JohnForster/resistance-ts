@@ -18,11 +18,13 @@ export class LobbyRound implements Round<'lobby'> {
   };
 
   handleMessage = (message: LobbyMessage): void => {
+    // TODO validate that startGame message came from host?
     if (message.type === 'startGame') {
       this.gameReadyToBegin = true;
       return;
     }
 
+    // TODO Reorder?
     // if (message.type === 'reorder') {
     //   if (this.checkIDsMatch(message.newOrder)) {
     //     const newOrder = message.newOrder.map((id) =>

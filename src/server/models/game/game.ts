@@ -83,7 +83,7 @@ export class Game {
   }
 
   addPlayer = (player: Player): void => {
-    if (this.players.includes(player))
+    if (this.players.find((p) => p.id === player.id))
       return console.error('That player is already in this game.');
     this.log(`Player ${player.shortId} joined`);
     this.players.push(player);
@@ -118,9 +118,9 @@ export class Game {
         stage: this.currentRound.roundName,
         playerID: player.id,
         hostName: this.host.name,
-        isHost: this.host === player,
+        isHost: this.host.id === player.id,
         leaderName: this.leader?.name,
-        isLeader: this.leader === player,
+        isLeader: this.leader.id === player.id,
         players: this.players.map((p) => ({ name: p.name, id: p.id })),
         roundData,
         secretData,
@@ -143,10 +143,15 @@ export class Game {
 
   handleMessage = (message: Message): void => {
     const isValid = this.currentRound.validateMessage(message);
-    if (!isValid) return console.error('Message not valid');
+    if (!isValid) {
+      const player = this.players.find((p) => p.id === message.playerID);
+      this.sendGameUpdate(player);
+      return this.log('Invalid message received from', player.shortId);
+    }
 
     this.log('Received message', message.type);
     this.currentRound.handleMessage(message);
+    this.sendUpdateToAllPlayers();
 
     if (this.currentRound.isReadyToComplete()) {
       this.completeCurrentRound();

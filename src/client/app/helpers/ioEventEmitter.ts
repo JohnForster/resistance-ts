@@ -24,6 +24,7 @@ export default class IOEventEmitter {
     this.socket.onAny((event, payload) => {
       this.execute(event, payload);
     });
+
     this.bind('error', this.handleError);
   };
 

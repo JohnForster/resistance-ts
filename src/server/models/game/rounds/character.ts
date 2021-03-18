@@ -40,7 +40,7 @@ export class CharacterRound implements Round<'character'> {
 
   getRoundData = (): CharacterRoundPublicData => ({
     unconfirmedPlayerNames: this.game.players
-      .filter((p) => this.confirmedPlayerIDs.has(p.id))
+      .filter((p) => !this.confirmedPlayerIDs.has(p.id))
       .map((p) => p.name),
   });
 

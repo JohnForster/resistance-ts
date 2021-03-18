@@ -73,7 +73,7 @@ export class MissionRound implements Round<'mission'> {
   });
 
   getSecretData = (playerID: string): MissionRoundSecretData => ({
-    hasVoted: !!this.mission.nominatedPlayers.find((p) => p.id === playerID),
+    votedToSucceed: this.missionVotes.get(playerID),
   });
 
   isFinal = (): boolean => false;
