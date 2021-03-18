@@ -1,4 +1,4 @@
-import { WSEvent } from '@shared/types/eventTypes';
+import { IOEvent } from '../../shared/types/eventTypes';
 import { v4 as uuidv4 } from 'uuid';
 import { Socket } from 'socket.io';
 import { getHsl } from '../utils/getHsl';
@@ -41,7 +41,7 @@ export const sendError = (user: User, errorMessage: string) =>
     data: errorMessage,
   });
 
-export const send = (user: User, { event, data }: WSEvent) => {
+export const send = (user: User, { event, data }: IOEvent) => {
   // ? Error handling?
   user.socket.emit(event, data);
 };
