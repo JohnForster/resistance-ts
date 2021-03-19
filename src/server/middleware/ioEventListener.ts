@@ -39,7 +39,6 @@ export const ioConnectionListener = (socket: Socket): void => {
     );
 
     const user = createUser(socket);
-    console.log('user:', user);
     attachEventListeners(socket, user.id);
     sendPlayerData(user.id);
     // TODO somehow update cookie here?
