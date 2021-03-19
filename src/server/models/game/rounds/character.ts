@@ -1,4 +1,3 @@
-// TODO Character round
 import {
   CharacterRoundPublicData,
   CharacterRoundSecretData,
@@ -8,7 +7,7 @@ import { CharacterMessage } from '../../../../shared/types/messages';
 import { Round } from '.';
 import { Game, GameHistory } from '../game';
 import shuffle from 'lodash/shuffle';
-import { storage } from '../../../storage/storage';
+import { getUser } from '../../user';
 export class CharacterRound implements Round<'character'> {
   public roundName = 'character' as const;
 
@@ -42,7 +41,7 @@ export class CharacterRound implements Round<'character'> {
   getRoundData = (): CharacterRoundPublicData => ({
     unconfirmedPlayerNames: this.game.players
       .filter((p) => !this.confirmedPlayerIDs.has(p.userId))
-      .map((p) => storage.users.get(p.userId)?.name),
+      .map((p) => getUser(p.userId)?.name),
   });
 
   getSecretData = (userId: string): CharacterRoundSecretData => {
@@ -53,7 +52,7 @@ export class CharacterRound implements Round<'character'> {
       allegiance === 'spies'
         ? this.game.players
             .filter((p) => p.allegiance === 'spies')
-            .map((p) => storage.users.get(p.userId)?.name)
+            .map((p) => getUser(p.userId)?.name)
         : [];
 
     return {

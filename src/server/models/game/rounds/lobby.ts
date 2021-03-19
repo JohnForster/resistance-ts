@@ -1,4 +1,4 @@
-import { storage } from '../../../storage/storage';
+import { getUser } from '../../user';
 import { RoundName } from '@shared/types/gameData';
 import { LobbyMessage } from '@shared/types/messages';
 import { Round } from '.';
@@ -10,22 +10,22 @@ export class LobbyRound implements Round<'lobby'> {
 
   constructor(private readonly game: Game) {}
 
-  checkIDsMatch = (playerIDs: string[]): boolean => {
-    const gameIDs = this.game.players.map((p) => p.userId);
-    return (
-      !gameIDs.some((id) => !playerIDs.includes(id)) ||
-      !playerIDs.some((id) => !gameIDs.includes(id))
-    );
-  };
+  // For Reorder
+  // checkIDsMatch = (playerIDs: string[]): boolean => {
+  //   const gameIDs = this.game.players.map((p) => p.userId);
+  //   return (
+  //     !gameIDs.some((id) => !playerIDs.includes(id)) ||
+  //     !playerIDs.some((id) => !gameIDs.includes(id))
+  //   );
+  // };
 
   handleMessage = (message: LobbyMessage): void => {
-    // TODO validate that startGame message came from host?
-    if (message.type === 'startGame') {
+    if (message.type === 'startGame' && message.playerID === this.game.hostId) {
       this.gameReadyToBegin = true;
       return;
     }
 
-    // TODO Reorder?
+    // TODO Reorder
     // if (message.type === 'reorder') {
     //   if (this.checkIDsMatch(message.newOrder)) {
     //     const newOrder = message.newOrder.map((id) =>
@@ -53,9 +53,7 @@ export class LobbyRound implements Round<'lobby'> {
 
   getRoundData = () => ({
     hostName: this.game.host.name,
-    players: this.game.players.map(
-      ({ userId }) => storage.users.get(userId)?.name,
-    ),
+    players: this.game.players.map(({ userId }) => getUser(userId)?.name),
   });
 
   getSecretData = () => ({});

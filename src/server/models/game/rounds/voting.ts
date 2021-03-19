@@ -1,4 +1,3 @@
-import { storage } from '../../../storage/storage';
 import {
   RoundName,
   VotingRoundPublicData,
@@ -9,6 +8,7 @@ import { VotingMessage } from '@shared/types/messages';
 
 import { Game, GameHistory, Nomination, Player, PlayerId } from '../game';
 import { Round } from './round';
+import { getUser } from '../../../models/user';
 
 export class VotingRound implements Round<'voting'> {
   public roundName = 'voting' as const;
@@ -63,10 +63,10 @@ export class VotingRound implements Round<'voting'> {
   getRoundData = (): VotingRoundPublicData => ({
     // TODO player order - who is nominating next
     unconfirmedPlayerNames: this.unconfirmedPlayers.map(
-      ({ userId }) => storage.users.get(userId)?.name,
+      ({ userId }) => getUser(userId)?.name,
     ),
     nominatedPlayers: this.nominatedPlayers
-      .map((id) => storage.users.get(id))
+      .map((id) => getUser(id))
       .map(({ id, name }) => ({
         name,
         id,

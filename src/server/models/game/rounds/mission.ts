@@ -12,7 +12,7 @@ import {
   MissionRoundSecretData,
 } from '@shared/types/gameData';
 import { MissionRoundMessage } from '@shared/types/messages';
-import { storage } from '../../../storage/storage';
+import { getUser } from '../../user';
 export class MissionRound implements Round<'mission'> {
   public roundName = 'mission' as const;
   private missionVotes: Map<PlayerId, boolean> = new Map();
@@ -66,7 +66,7 @@ export class MissionRound implements Round<'mission'> {
 
   getRoundData = (): MissionRoundPublicData => ({
     nominatedPlayers: this.mission.nominatedPlayerIds.map((id) => ({
-      name: storage.users.get(id)?.name,
+      name: getUser(id)?.name,
       id,
     })),
     // TODO add playersLeftToVote

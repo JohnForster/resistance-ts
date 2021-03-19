@@ -6,7 +6,7 @@ import generateID from '../../utils/generateID';
 import { getHsl } from '../../utils/getHsl';
 import { Rules, RULES } from '../../data/gameRules';
 
-import { send, User } from '../user';
+import { getUser, send, User } from '../user';
 
 import { LobbyRound, Round } from './rounds';
 import { rounds } from './config';
@@ -50,20 +50,21 @@ export class Game {
   readonly colouredId: string;
   public players: Player[] = [];
 
-  private currentRound: Round<RoundName>; /* = new Lobby(this); */
+  private currentRound: Round<RoundName>;
   public currentMission: OngoingMission;
   public votesRemaining: number;
   public history: GameHistory = {};
+  public hostId: string;
+
   private leaderIndex = 0;
-  private hostId: string;
 
   public get host(): User {
-    return storage.users.get(this.hostId);
+    return getUser(this.hostId);
   }
 
   public get leader(): User {
     const leaderId = this.players[this.leaderIndex]?.userId;
-    return storage.users.get(leaderId);
+    return getUser(leaderId);
   }
 
   public get rules(): Rules {
@@ -89,7 +90,7 @@ export class Game {
   addPlayer = (userId: string): void => {
     if (this.players.find((p) => p.userId === userId))
       return console.error('That player is already in this game.');
-    // this.log(`Player ${player.shortId} joined`);
+    this.log(`Player ${getUser(userId)?.shortId} joined`);
     this.players.push({ userId });
   };
 
@@ -108,15 +109,15 @@ export class Game {
   sendGameUpdate = (userId: string): void => {
     const payload = this.generatePayload(userId);
 
-    const user = storage.users.get(userId);
+    const user = getUser(userId);
     this.log(`Sending ${payload.data.stage} msg to ${user.shortId}`);
-    send(user, payload);
+
+    send(userId, payload);
   };
 
   generatePayload = (playerId: string): EventByName<'serverMessage'> => {
     const secretData = this.currentRound.getSecretData(playerId) ?? null;
     const roundData = this.currentRound.getRoundData() ?? null;
-    const host = storage.users.get(playerId);
 
     return {
       event: 'serverMessage',
@@ -125,12 +126,12 @@ export class Game {
         missionNumber: this.currentMission.missionNumber,
         stage: this.currentRound.roundName,
         playerID: playerId,
-        hostName: host.name,
-        isHost: host.id === playerId,
+        hostName: getUser(this.hostId)?.name,
+        isHost: this.hostId === playerId,
         leaderName: this.leader?.name,
         isLeader: this.leader.id === playerId,
         players: this.players
-          .map(({ userId }) => storage.users.get(userId))
+          .map(({ userId }) => getUser(userId))
           .map(({ name, id }) => ({ name, id })),
         roundData,
         secretData,
@@ -155,8 +156,10 @@ export class Game {
     const isValid = this.currentRound.validateMessage(message);
     if (!isValid) {
       this.sendGameUpdate(message.playerID);
-      // return this.log('Invalid message received from', player.shortId);
-      return;
+      return this.log(
+        'Invalid message received from',
+        getUser(message.playerID)?.shortId,
+      );
     }
 
     this.log('Received message', message.type);
@@ -184,7 +187,7 @@ export class Game {
   };
 
   nextMission = (): void => {
-    // Handle the case where the game is over here or in Mission Result?
+    // ? Handle the case where the game is over here or in Mission Result?
     const nextMission: OngoingMission = {
       missionNumber: this.currentMission.missionNumber + 1,
       nominations: [],

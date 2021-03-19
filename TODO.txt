@@ -33,6 +33,7 @@ FEATURES:
 
 ⭐️ Add endgame pages
 ⭐️ Add quit game functionality in lobby/elsewhere
+⭐️ Add loading display
 ⭐️ Remove hostID
 ⭐️ Character selection
 ⭐️ Characters

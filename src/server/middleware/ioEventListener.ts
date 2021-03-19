@@ -6,7 +6,14 @@ import { Message } from '@shared/types/messages';
 import { PlayerData } from '@shared/types/playerData';
 
 import { Game } from '../models/game/game';
-import { User, sendPlayerData, createUser, sendError } from '../models/user';
+import {
+  sendPlayerData,
+  createUser,
+  sendError,
+  updateUser,
+  User,
+  getUser,
+} from '../models/user';
 import { storage } from '../storage/storage';
 import chalk from 'chalk';
 
@@ -14,35 +21,43 @@ export const ioConnectionListener = (socket: Socket): void => {
   const cookies = cookie.parse(socket.request.headers.cookie ?? '');
 
   const userId = cookies.playerID ?? '';
-  const isExistingUser = storage.users.has(userId);
+  const existingUser = getUser(userId);
 
   // If we have a user, but this is a new connection
-  if (isExistingUser) {
-    const user = { ...storage.users.get(userId) };
-    const oldSocket = user.socket.id.slice(0, 5);
-    const newSocket = socket.id.slice(0, 5);
-    console.log(
-      `Switching user ${user.shortId} socket from ${oldSocket}... to ${newSocket}...`,
-    );
-    attachEventListeners(socket, user);
-    storage.users.set(userId, user);
-    sendPlayerData(user);
-    const game = storage.games.get(user.gameID);
-    game?.sendGameUpdate(user.id);
+  if (existingUser) {
+    replaceUserSocket(existingUser, socket);
+    sendPlayerData(userId);
+    const gameId = getUser(userId).gameID;
+    const game = storage.games.get(gameId);
+    game?.sendGameUpdate(userId);
   } else {
     console.log(
       chalk.blue(new Date().toLocaleTimeString()) +
-        ' Recieved a new connection from ' +
+        ' Received a new connection from ' +
         socket.handshake.address,
       userId ? `with existing userId:${userId}` : 'with no existing userId.',
     );
 
     const user = createUser(socket);
-    storage.users.set(user.id, user);
-    attachEventListeners(socket, user);
-    sendPlayerData(user);
+    console.log('user:', user);
+    attachEventListeners(socket, user.id);
+    sendPlayerData(user.id);
     // TODO somehow update cookie here?
   }
+};
+
+const replaceUserSocket = (user: User, socket: Socket) => {
+  attachEventListeners(socket, user.id);
+  logSocketChange(user, socket);
+  updateUser(user.id, { socket });
+};
+
+const logSocketChange = (user: User, socket: Socket) => {
+  const oldSocket = user.socket.id.slice(0, 5);
+  const newSocket = socket.id.slice(0, 5);
+  console.log(
+    `Switching user ${user.shortId} socket from ${oldSocket}... to ${newSocket}...`,
+  );
 };
 
 const validationError = (eventName: EventType, data: unknown) =>
@@ -70,19 +85,21 @@ const clientMessageValidator = (x: any): x is Message => {
   return isClientMessage;
 };
 
-const attachEventListeners = (socket: Socket, user: User) => {
-  console.log('Attaching event listeners to socket', socket.id);
-  socket.on('createGame', () => createGame(user));
+const attachEventListeners = (socket: Socket, userId: string) => {
+  socket.on('createGame', () => {
+    createGame(userId);
+  });
 
   socket.on('joinGame', (data: unknown) => {
-    joinValidator(data) && joinGame(user, data);
+    joinValidator(data) && joinGame(userId, data);
   });
 
   socket.on('playerData', (data: unknown) => {
-    playerDataValidator(data) && updatePlayerData(user, data);
+    playerDataValidator(data) && updatePlayerData(userId, data);
   });
 
   socket.on('clientMessage', (message: unknown) => {
+    const user = getUser(userId);
     if (!clientMessageValidator(message)) return;
     const game = storage.games.get(message.gameID);
 
@@ -91,56 +108,54 @@ const attachEventListeners = (socket: Socket, user: User) => {
         `Event: ${message.type} cannot be received when no game is present`,
       );
     if (user.gameID !== message.gameID)
-      return console.error('Recieved gameID does not match stored gameID');
+      return console.error(
+        `Received gameID ${message.gameID} does not match stored gameID ${user.gameID}`,
+      );
     if (user.id !== message.playerID)
-      return console.error('Recieved playerID does not match stored playerID');
+      return console.error('Received playerID does not match stored playerID');
 
-    console.log(`Message - type:`, message.type, 'id:', socket.id);
     game.handleMessage(message);
   });
-
-  user.socket = socket;
 };
 
-const createGame = (user: User): Game | void => {
-  if (user.gameID) {
-    console.error(`User ${user.id.slice(0, 5)} already has a game in progress`);
-    return sendError(user, 'game already exists');
-  }
+const createGame = (userId: string): Game | void => {
   const game = new Game();
   storage.games.set(game.id, game);
-  user.gameID = game.id;
-  game.addPlayer(user.id);
-  game.setHost(user.id);
+  updateUser(userId, { gameID: game.id });
+  game.addPlayer(userId);
+  game.setHost(userId);
   game.sendUpdateToAllPlayers();
   return game;
 };
 
-const joinGame = (user: User, data: EventByName<'joinGame'>['data']): void => {
+const joinGame = (
+  userId: string,
+  data: EventByName<'joinGame'>['data'],
+): void => {
   const game = storage.games.get(data.gameID);
 
   if (!game) {
     console.error(`No game found with ID '${data.gameID}'`);
     console.error('Current games:', ...storage.games.keys());
-    return sendError(user, `Game with id ${data.gameID} not found.`);
+    return sendError(userId, `Game with id ${data.gameID} not found.`);
   }
 
   if (!game.isOpen) {
     console.error(
       `Error joining game, game with id ${data.gameID} has already begun`,
     );
-    return sendError(user, `Game with id ${data.gameID} has already begun`);
+    return sendError(userId, `Game with id ${data.gameID} has already begun`);
   }
 
-  game.addPlayer(user.id);
-  user.gameID = game.id;
+  game.addPlayer(userId);
+  updateUser(userId, { gameID: data.gameID });
   game.sendUpdateToAllPlayers();
 };
 
-const updatePlayerData = (user: User, data: PlayerData): void => {
-  if (data.playerID && user.id !== data.playerID)
+const updatePlayerData = (userId: string, data: PlayerData): void => {
+  if (data.playerID && userId !== data.playerID)
     return console.error(
-      `ID mismatch: '${user.id}' stored, '${data.playerID}' received`,
+      `ID mismatch: '${userId}' stored, '${data.playerID}' received`,
     );
-  user.name = data.name;
+  updateUser(userId, { name: data.name });
 };

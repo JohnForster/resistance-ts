@@ -145,7 +145,7 @@ export default class App extends PureComponent<{}, AppState> {
               {this.state.player?.name}
             </p>
           )}
-          <DebugSocket socket={this.state.eventEmitter.socket} />
+          {/* TODO: Add connecting indicator */}
           {!this.state.game ? (
             <Pages.LandingPage
               hostGame={this.hostGame}
