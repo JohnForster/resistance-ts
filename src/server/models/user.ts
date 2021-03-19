@@ -43,5 +43,6 @@ export const sendError = (user: User, errorMessage: string) =>
 
 export const send = (user: User, { event, data }: IOEvent) => {
   // ? Error handling?
-  user.socket.emit(event, data);
+  console.log(`id: ${user.socket.id}, connected: ${user.socket.connected}`);
+  const a = user.socket.emit(event, data);
 };
