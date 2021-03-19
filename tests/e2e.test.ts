@@ -15,7 +15,7 @@ import { successfulMissionStep } from './steps/missionStep';
 const url = 'http://192.168.1.154:8080/';
 
 const showoffMode = false;
-const players = showoffMode ? 10 : 10;
+const players = showoffMode ? 10 : 2;
 const screenSize = {
   height: 667,
   width: 500,
@@ -37,7 +37,7 @@ const names = shuffle([
 jest.setTimeout(20_000);
 
 const options: puppeteer.PuppeteerNodeLaunchOptions = {
-  headless: false,
+  headless: true,
   defaultViewport: {
     ...screenSize,
   },

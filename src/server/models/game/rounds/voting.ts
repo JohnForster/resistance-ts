@@ -6,35 +6,33 @@ import {
 
 import { VotingMessage } from '@shared/types/messages';
 
-import { Game, GameHistory, Nomination, Player } from '../game';
+import { Game, GameHistory, Nomination, Player, PlayerId } from '../game';
 import { Round } from './round';
+import { getUser } from '../../../models/user';
 
 export class VotingRound implements Round<'voting'> {
   public roundName = 'voting' as const;
 
   public get unconfirmedPlayers(): Player[] {
-    return this.game.players.filter((p) => !this.votes.has(p.id));
+    return this.game.players.filter((p) => !this.votes.has(p.userId));
   }
 
-  private readonly nominatedPlayers: Player[];
-  private votes: Map<Player['id'], boolean> = new Map();
+  private readonly nominatedPlayers: PlayerId[];
+  private votes: Map<Player['userId'], boolean> = new Map();
 
   constructor(private readonly game: Game) {
     const nominations = this.game.currentMission.nominations;
 
     this.nominatedPlayers =
-      nominations[nominations.length - 1].nominatedPlayers;
+      nominations[nominations.length - 1].nominatedPlayerIds;
   }
 
   handleMessage = ({ playerID, playerApproves }: VotingMessage): void => {
     this.votes.set(playerID, playerApproves);
   };
 
-  validateMessage = ({ playerID, playerApproves }: VotingMessage): boolean => {
-    return (
-      !!this.game.players.find((p) => p.id === playerID) &&
-      playerApproves != null
-    );
+  validateMessage = ({ playerApproves }: VotingMessage): boolean => {
+    return playerApproves != null;
   };
 
   isReadyToComplete = (): boolean =>
@@ -64,11 +62,15 @@ export class VotingRound implements Round<'voting'> {
 
   getRoundData = (): VotingRoundPublicData => ({
     // TODO player order - who is nominating next
-    unconfirmedPlayerNames: this.unconfirmedPlayers.map((p) => p.name),
-    nominatedPlayers: this.nominatedPlayers.map((p) => ({
-      name: p.name,
-      id: p.id,
-    })),
+    unconfirmedPlayerNames: this.unconfirmedPlayers.map(
+      ({ userId }) => getUser(userId)?.name,
+    ),
+    nominatedPlayers: this.nominatedPlayers
+      .map((id) => getUser(id))
+      .map(({ id, name }) => ({
+        name,
+        id,
+      })),
   });
 
   getSecretData = (playerID: string): VotingRoundSecretData =>

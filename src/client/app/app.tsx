@@ -7,6 +7,7 @@ import * as typeGuards from '../types/typeGuards';
 import { GameData } from '@shared/types/gameData';
 
 import IOEventEmitter from './helpers/IOEventEmitter';
+import { DebugSocket } from './helpers/DebugSocket';
 import * as Pages from './pages';
 import * as Styled from './styles/styled';
 
@@ -26,23 +27,19 @@ export default class App extends PureComponent<{}, AppState> {
     status: 'idle',
     player: { playerID: null, name: null },
     screen: window.screen,
+    eventEmitter: new IOEventEmitter(APIAddress),
   };
 
   componentDidMount(): void {
-    const eventEmitter = new IOEventEmitter(APIAddress);
-
     // Temporary for message/error
-    eventEmitter.bind('serverMessage', this.onGameUpdate);
+    this.state.eventEmitter.bind('serverMessage', this.onGameUpdate);
 
     // Register listeners
-    eventEmitter.bind('playerData', this.onPlayerUpdate);
+    this.state.eventEmitter.bind('playerData', this.onPlayerUpdate);
 
     window.addEventListener('resize', () => {
       this.setState({ screen: window.screen });
     });
-
-    // Either send user data or request user data
-    this.setState({ eventEmitter });
   }
 
   windowResize() {}
@@ -141,6 +138,7 @@ export default class App extends PureComponent<{}, AppState> {
               {this.state.player?.name}
             </p>
           )}
+          {/* TODO: Add connecting indicator */}
           {!this.state.game ? (
             <Pages.LandingPage
               hostGame={this.hostGame}

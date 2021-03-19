@@ -10,7 +10,7 @@ import {
 } from '../../../shared/types/eventTypes';
 
 export default class IOEventEmitter {
-  private socket: Socket;
+  public socket: Socket;
   private callbacks: Callbacks = {};
   private url: string;
 

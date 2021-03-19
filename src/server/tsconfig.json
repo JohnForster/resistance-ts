@@ -9,8 +9,7 @@
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "@shared/*": ["../shared/*"],
-      "@server/*": ["./*"]
+      "@shared/*": ["../shared/*"]
     }
   },
   "files": ["server.ts"]

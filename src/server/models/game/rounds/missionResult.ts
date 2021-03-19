@@ -6,6 +6,7 @@ import {
   RoundName,
 } from '@shared/types/gameData';
 import { MissionResultMessage } from '@shared/types/messages';
+import { getUser } from '../../user';
 
 export class MissionResult implements Round<'missionResult'> {
   public roundName = 'missionResult' as const;
@@ -35,8 +36,8 @@ export class MissionResult implements Round<'missionResult'> {
 
     const data = {
       unconfirmedPlayerNames: this.game.players
-        .filter((p) => this.confirmedPlayers.has(p.id))
-        .map(({ name }) => name),
+        .filter(({ userId }) => this.confirmedPlayers.has(userId))
+        .map(({ userId }) => getUser(userId)?.name),
       missionSucceeded: this.game.currentMission.success,
       missionResults: {
         success,
