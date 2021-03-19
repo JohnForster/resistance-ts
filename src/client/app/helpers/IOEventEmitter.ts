@@ -6,7 +6,7 @@ import {
   DataByEventName,
   EventByName,
   EventType,
-  WSEvent,
+  IOEvent,
 } from '../../../shared/types/eventTypes';
 
 export default class IOEventEmitter {
@@ -48,7 +48,7 @@ export default class IOEventEmitter {
     this.callbacks[eventType].push(cb);
   };
 
-  private execute = <T extends EventType, W extends WSEvent = EventByName<T>>(
+  private execute = <T extends EventType, W extends IOEvent = EventByName<T>>(
     eventName: W['event'],
     data: W['data'],
   ): void => {
