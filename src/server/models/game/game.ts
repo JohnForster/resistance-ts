@@ -11,8 +11,10 @@ import { send, User } from '../user';
 import { LobbyRound, Round } from './rounds';
 import { rounds } from './config';
 import chalk from 'chalk';
+import { storage } from '@server/storage/storage';
 
-export interface Player extends User {
+export interface Player {
+  userId: string;
   allegiance?: 'resistance' | 'spies';
   // character?: Character;
 }
@@ -20,7 +22,7 @@ export interface Player extends User {
 export interface Nomination {
   leader: Player;
   nominatedPlayers: Player[];
-  votes: Map<Player['id'], boolean>;
+  votes: Map<Player['userId'], boolean>;
   succeeded?: boolean;
 }
 
@@ -46,7 +48,6 @@ export type PlayerId = string;
 export class Game {
   readonly id: string = generateID();
   readonly colouredId: string;
-  // TODO change players to be an id -> player map?
   public players: Player[] = [];
 
   private currentRound: Round<RoundName>; /* = new Lobby(this); */
@@ -54,10 +55,15 @@ export class Game {
   public votesRemaining: number;
   public history: GameHistory = {};
   private leaderIndex = 0;
-  public host: Player;
+  private hostId: string;
 
-  public get leader(): Player {
-    return this.players[this.leaderIndex];
+  public get host(): User {
+    return storage.users.get(this.hostId);
+  }
+
+  public get leader(): User {
+    const leaderId = this.players[this.leaderIndex]?.userId;
+    return storage.users.get(leaderId);
   }
 
   public get rules(): Rules {
@@ -80,46 +86,52 @@ export class Game {
     };
   }
 
-  addPlayer = (player: Player): void => {
-    if (this.players.find((p) => p.id === player.id))
+  addPlayer = (userId: string): void => {
+    if (this.players.find((p) => p.userId === userId))
       return console.error('That player is already in this game.');
-    this.log(`Player ${player.shortId} joined`);
-    this.players.push(player);
+    // this.log(`Player ${player.shortId} joined`);
+    this.players.push({ userId });
   };
 
   setHost = (playerID: string): void => {
     const player = this.getPlayer(playerID);
     if (!player) return console.error(`No player found with id ${playerID}`);
-    this.host = player;
+    this.hostId = playerID;
   };
 
-  getPlayer = (id: string): Player => this.players.find((p) => p.id === id);
+  getPlayer = (id: string): Player => this.players.find((p) => p.userId === id);
 
   sendUpdateToAllPlayers = (): void => {
-    this.players.forEach(this.sendGameUpdate);
+    this.players.forEach((p) => this.sendGameUpdate(p.userId));
   };
 
-  sendGameUpdate = (player: User): void => {
-    const payload = this.generatePayload(player);
-    this.log(`Sending ${payload.data.stage} msg to ${player.shortId}`);
-    send(player, payload);
+  sendGameUpdate = (userId: string): void => {
+    const payload = this.generatePayload(userId);
+
+    const user = storage.users.get(userId);
+    this.log(`Sending ${payload.data.stage} msg to ${user.shortId}`);
+    send(user, payload);
   };
 
-  generatePayload = (player: User): EventByName<'serverMessage'> => {
-    const secretData = this.currentRound.getSecretData(player.id) ?? null;
+  generatePayload = (playerId: string): EventByName<'serverMessage'> => {
+    const secretData = this.currentRound.getSecretData(playerId) ?? null;
     const roundData = this.currentRound.getRoundData() ?? null;
+    const host = storage.users.get(playerId);
+
     return {
       event: 'serverMessage',
       data: {
         gameID: this.id,
         missionNumber: this.currentMission.missionNumber,
         stage: this.currentRound.roundName,
-        playerID: player.id,
-        hostName: this.host.name,
-        isHost: this.host.id === player.id,
+        playerID: playerId,
+        hostName: host.name,
+        isHost: host.id === playerId,
         leaderName: this.leader?.name,
-        isLeader: this.leader.id === player.id,
-        players: this.players.map((p) => ({ name: p.name, id: p.id })),
+        isLeader: this.leader.id === playerId,
+        players: this.players
+          .map(({ userId }) => storage.users.get(userId))
+          .map(({ name, id }) => ({ name, id })),
         roundData,
         secretData,
         history: Object.values(this.history).map((m) => m.success),
@@ -142,9 +154,9 @@ export class Game {
   handleMessage = (message: Message): void => {
     const isValid = this.currentRound.validateMessage(message);
     if (!isValid) {
-      const player = this.players.find((p) => p.id === message.playerID);
-      this.sendGameUpdate(player);
-      return this.log('Invalid message received from', player.shortId);
+      this.sendGameUpdate(message.playerID);
+      // return this.log('Invalid message received from', player.shortId);
+      return;
     }
 
     this.log('Received message', message.type);
