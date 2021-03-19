@@ -1,3 +1,4 @@
+import { storage } from '../../../storage/storage';
 import { RoundName } from '@shared/types/gameData';
 import { VotingResultMessage } from '@shared/types/messages';
 import { Round } from '.';
@@ -11,8 +12,8 @@ export class VotingResult implements Round<'votingResult'> {
 
   get unconfirmedPlayerNames(): string[] {
     return this.game.players
-      .filter((p) => !this.confirmedPlayers.has(p.id))
-      .map((p) => p.name);
+      .filter(({ userId }) => !this.confirmedPlayers.has(userId))
+      .map(({ userId }) => storage.users.get(userId).name);
   }
 
   get nominationResult(): Nomination {
@@ -36,7 +37,7 @@ export class VotingResult implements Round<'votingResult'> {
     if (this.nominationResult.succeeded) {
       this.game.currentMission = {
         ...this.game.currentMission,
-        nominatedPlayers: [...this.nominationResult.nominatedPlayers],
+        nominatedPlayerIds: [...this.nominationResult.nominatedPlayerIds],
       };
 
       return 'mission';
@@ -52,7 +53,7 @@ export class VotingResult implements Round<'votingResult'> {
     votes: Array.from(this.nominationResult.votes).map(([playerID, vote]) => ({
       id: playerID,
       playerApproves: vote,
-      name: this.game.getPlayer(playerID)?.name,
+      name: storage.users.get(playerID)?.name,
     })), // ? Do we need to send other player ids... ever?
     voteSucceeded: this.nominationResult.succeeded,
     votesRemaining: this.game.votesRemaining,

@@ -12,6 +12,7 @@ import {
   MissionRoundSecretData,
 } from '@shared/types/gameData';
 import { MissionRoundMessage } from '@shared/types/messages';
+import { storage } from '../../../storage/storage';
 export class MissionRound implements Round<'mission'> {
   public roundName = 'mission' as const;
   private missionVotes: Map<PlayerId, boolean> = new Map();
@@ -27,13 +28,13 @@ export class MissionRound implements Round<'mission'> {
   };
 
   validateMessage = (message: MissionRoundMessage): boolean => {
-    return !!this.mission.nominatedPlayers.find(
-      (p) => p.id === message.playerID,
+    return !!this.mission.nominatedPlayerIds.find(
+      (id) => id === message.playerID,
     );
   };
 
   isReadyToComplete = (): boolean =>
-    this.missionVotes.size === this.mission.nominatedPlayers.length;
+    this.missionVotes.size === this.mission.nominatedPlayerIds.length;
 
   completeRound = (): RoundName => {
     const votes = [...this.missionVotes.entries()].map(
@@ -64,8 +65,8 @@ export class MissionRound implements Round<'mission'> {
   };
 
   getRoundData = (): MissionRoundPublicData => ({
-    nominatedPlayers: this.mission.nominatedPlayers.map(({ name, id }) => ({
-      name,
+    nominatedPlayers: this.mission.nominatedPlayerIds.map((id) => ({
+      name: storage.users.get(id)?.name,
       id,
     })),
     // TODO add playersLeftToVote

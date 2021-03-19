@@ -11,25 +11,25 @@ import { send, User } from '../user';
 import { LobbyRound, Round } from './rounds';
 import { rounds } from './config';
 import chalk from 'chalk';
-import { storage } from '@server/storage/storage';
+import { storage } from '../../storage/storage';
 
 export interface Player {
-  userId: string;
+  userId: PlayerId;
   allegiance?: 'resistance' | 'spies';
   // character?: Character;
 }
 
 export interface Nomination {
-  leader: Player;
-  nominatedPlayers: Player[];
-  votes: Map<Player['userId'], boolean>;
+  leaderId: PlayerId;
+  nominatedPlayerIds: PlayerId[];
+  votes: Map<PlayerId, boolean>;
   succeeded?: boolean;
 }
 
 export interface CompletedMission {
   missionNumber: number;
   nominations: Nomination[];
-  nominatedPlayers: Player[];
+  nominatedPlayerIds: PlayerId[];
   votes: {
     playerID: PlayerId;
     succeed: boolean;
@@ -81,7 +81,7 @@ export class Game {
     this.currentMission = {
       missionNumber: 0,
       nominations: [],
-      nominatedPlayers: [],
+      nominatedPlayerIds: [],
       votes: [],
     };
   }
@@ -188,7 +188,7 @@ export class Game {
     const nextMission: OngoingMission = {
       missionNumber: this.currentMission.missionNumber + 1,
       nominations: [],
-      nominatedPlayers: [],
+      nominatedPlayerIds: [],
       votes: [],
     };
     this.currentMission = nextMission;

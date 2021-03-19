@@ -18,11 +18,17 @@ export const ioConnectionListener = (socket: Socket): void => {
 
   // If we have a user, but this is a new connection
   if (isExistingUser) {
-    const user = storage.users.get(userId);
+    const user = { ...storage.users.get(userId) };
+    const oldSocket = user.socket.id.slice(0, 5);
+    const newSocket = socket.id.slice(0, 5);
+    console.log(
+      `Switching user ${user.shortId} socket from ${oldSocket}... to ${newSocket}...`,
+    );
     attachEventListeners(socket, user);
+    storage.users.set(userId, user);
     sendPlayerData(user);
     const game = storage.games.get(user.gameID);
-    game?.sendGameUpdate(user);
+    game?.sendGameUpdate(user.id);
   } else {
     console.log(
       chalk.blue(new Date().toLocaleTimeString()) +
@@ -104,7 +110,7 @@ const createGame = (user: User): Game | void => {
   const game = new Game();
   storage.games.set(game.id, game);
   user.gameID = game.id;
-  game.addPlayer(user);
+  game.addPlayer(user.id);
   game.setHost(user.id);
   game.sendUpdateToAllPlayers();
   return game;
@@ -126,7 +132,7 @@ const joinGame = (user: User, data: EventByName<'joinGame'>['data']): void => {
     return sendError(user, `Game with id ${data.gameID} has already begun`);
   }
 
-  game.addPlayer(user);
+  game.addPlayer(user.id);
   user.gameID = game.id;
   game.sendUpdateToAllPlayers();
 };

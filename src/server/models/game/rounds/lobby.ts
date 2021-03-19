@@ -1,3 +1,4 @@
+import { storage } from '../../../storage/storage';
 import { RoundName } from '@shared/types/gameData';
 import { LobbyMessage } from '@shared/types/messages';
 import { Round } from '.';
@@ -10,7 +11,7 @@ export class LobbyRound implements Round<'lobby'> {
   constructor(private readonly game: Game) {}
 
   checkIDsMatch = (playerIDs: string[]): boolean => {
-    const gameIDs = this.game.players.map((p) => p.id);
+    const gameIDs = this.game.players.map((p) => p.userId);
     return (
       !gameIDs.some((id) => !playerIDs.includes(id)) ||
       !playerIDs.some((id) => !gameIDs.includes(id))
@@ -52,7 +53,9 @@ export class LobbyRound implements Round<'lobby'> {
 
   getRoundData = () => ({
     hostName: this.game.host.name,
-    players: this.game.players.map((p) => p.name),
+    players: this.game.players.map(
+      ({ userId }) => storage.users.get(userId)?.name,
+    ),
   });
 
   getSecretData = () => ({});
