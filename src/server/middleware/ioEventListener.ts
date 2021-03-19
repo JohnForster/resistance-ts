@@ -65,6 +65,7 @@ const clientMessageValidator = (x: any): x is Message => {
 };
 
 const attachEventListeners = (socket: Socket, user: User) => {
+  console.log('Attaching event listeners to socket', socket.id);
   socket.on('createGame', () => createGame(user));
 
   socket.on('joinGame', (data: unknown) => {
@@ -88,6 +89,7 @@ const attachEventListeners = (socket: Socket, user: User) => {
     if (user.id !== message.playerID)
       return console.error('Recieved playerID does not match stored playerID');
 
+    console.log(`Message - type:`, message.type, 'id:', socket.id);
     game.handleMessage(message);
   });
 
