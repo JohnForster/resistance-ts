@@ -1,8 +1,10 @@
 import { Round } from '.';
-import { GameHistory, Game, PlayerId } from '../game';
+import { Game } from '../game';
 import {
+  GameHistory,
   MissionResultPublicData,
   MissionResultSecretData,
+  PlayerId,
   RoundName,
 } from '@shared/types/gameData';
 import { MissionResultMessage } from '@shared/types/messages';
@@ -26,6 +28,21 @@ export class MissionResult implements Round<'missionResult'> {
     this.confirmedPlayers.size === this.game.players.length;
 
   completeRound = (): RoundName => {
+    const previousMissions = Object.values(this.game.history);
+    const resistanceWins =
+      previousMissions.filter((m) => m.success).length +
+      (this.game.currentMission.success ? 1 : 0);
+    const spyWins = this.game.currentMission.missionNumber - resistanceWins;
+
+    if (resistanceWins > 2 || spyWins > 2) {
+      this.game.result = {
+        type: 'completed',
+        winners: resistanceWins > spyWins ? 'resistance' : 'spies',
+        gameOverReason: 'missions',
+      };
+      return 'gameOver';
+    }
+
     return 'nomination';
   };
 
@@ -54,6 +71,7 @@ export class MissionResult implements Round<'missionResult'> {
 
   isFinal = (): boolean => true;
 
+  // TODO Does the Game History change in any other round?
   getUpdatedHistory = (): GameHistory => ({
     ...this.game.history,
     [this.game.currentMission.missionNumber]: {

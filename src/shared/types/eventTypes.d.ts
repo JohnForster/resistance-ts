@@ -10,7 +10,9 @@ export type EventType =
   | 'joinGame'
   | 'clientMessage'
   | 'playerData'
-  | 'serverMessage';
+  | 'gameUpdateMessage'
+  | 'endGame'
+  | 'returnToMainScreen';
 
 // TODO ? 23/12/10 Move createGame and joinGame into message type.
 
@@ -43,14 +45,23 @@ interface JoinEvent extends EventTemplate {
   };
 }
 
+interface EndGameEvent extends EventTemplate {
+  event: 'endGame';
+  data: {};
+}
 interface ClientMessageEvent extends EventTemplate {
   event: 'clientMessage';
   data: Message;
 }
 
-interface ServerMessageEvent extends EventTemplate {
-  event: 'serverMessage';
+interface GameUpdateMessageEvent extends EventTemplate {
+  event: 'gameUpdateMessage';
   data: GameData<RoundName>;
+}
+
+interface ReturnToMainScreenEvent extends EventTemplate {
+  event: 'returnToMainScreen';
+  data: undefined;
 }
 
 export type IOEvent =
@@ -59,7 +70,9 @@ export type IOEvent =
   | CreateEvent
   | JoinEvent
   | ClientMessageEvent
-  | ServerMessageEvent;
+  | GameUpdateMessageEvent
+  | EndGameEvent
+  | ReturnToMainScreenEvent;
 
 export type EventByName<E extends EventType, T = IOEvent> = T extends {
   event: E;

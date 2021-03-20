@@ -8,7 +8,7 @@ Events:
 - CreateGame
 - JoinGame
 - ClientMessage
-- ServerMessage
+- GameUpdateMessage
 
 MessageTypes:
 

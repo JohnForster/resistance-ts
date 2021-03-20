@@ -1,6 +1,8 @@
 // TODO add discriminants to all messages
 // TODO PlayerData event?
 
+import { GameOverSecretData } from './gameData';
+
 type BaseMessage = {
   playerID: string;
   gameID: string;
@@ -49,6 +51,8 @@ export type MissionRoundMessage = BaseMessage & {
 
 export type MissionResultMessage = ContinueMessage;
 
+export type GameOverMessage = ContinueMessage;
+
 // TODO Rename message?
 export type Message =
   | LobbyMessage
@@ -57,4 +61,5 @@ export type Message =
   | VotingMessage
   | VotingResultMessage
   | MissionRoundMessage
-  | MissionResultMessage;
+  | MissionResultMessage
+  | GameOverMessage;

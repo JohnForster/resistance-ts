@@ -7,13 +7,11 @@ import * as typeGuards from '../types/typeGuards';
 import { GameData } from '@shared/types/gameData';
 
 import IOEventEmitter from './helpers/IOEventEmitter';
-import { DebugSocket } from './helpers/DebugSocket';
 import * as Pages from './pages';
 import * as Styled from './styles/styled';
 
 interface AppState {
   game: GameData;
-  status: 'idle' | 'pending' | 'inLobby' | 'inGame';
   eventEmitter?: IOEventEmitter;
   player: { name: string; playerID: string };
   screen: Screen;
@@ -24,7 +22,6 @@ const APIAddress = window.location.host;
 export default class App extends PureComponent<{}, AppState> {
   state: AppState = {
     game: null,
-    status: 'idle',
     player: { playerID: null, name: null },
     screen: window.screen,
     eventEmitter: new IOEventEmitter(APIAddress),
@@ -32,7 +29,9 @@ export default class App extends PureComponent<{}, AppState> {
 
   componentDidMount(): void {
     // Temporary for message/error
-    this.state.eventEmitter.bind('serverMessage', this.onGameUpdate);
+    this.state.eventEmitter.bind('gameUpdateMessage', this.onGameUpdate);
+
+    this.state.eventEmitter.bind('returnToMainScreen', this.returnToMain);
 
     // Register listeners
     this.state.eventEmitter.bind('playerData', this.onPlayerUpdate);
@@ -44,7 +43,7 @@ export default class App extends PureComponent<{}, AppState> {
 
   windowResize() {}
 
-  onGameUpdate = (data: DataByEventName<'serverMessage'>): void => {
+  onGameUpdate = (data: DataByEventName<'gameUpdateMessage'>): void => {
     console.log('gameUpdateReceived. data:', data);
     this.setState({ game: data });
   };
@@ -60,11 +59,14 @@ export default class App extends PureComponent<{}, AppState> {
     this.state.eventEmitter.send('createGame', {
       hostID: this.state.player.playerID,
     });
-    this.setState({ status: 'pending' });
   };
 
   joinGame = (gameID: string): void => {
     this.state.eventEmitter.send('joinGame', { gameID });
+  };
+
+  returnToMain = () => {
+    this.setState({ game: null });
   };
 
   // ! Currently using same type for incoming and outgoing playerData
@@ -148,40 +150,45 @@ export default class App extends PureComponent<{}, AppState> {
             />
           ) : typeGuards.isLobbyRound(this.state.game) ? (
             <Pages.LobbyPage
-              game={this.state.game as GameData<'lobby'>}
+              game={this.state.game}
               player={this.state.player}
               beginGame={this.beginGame}
             />
           ) : typeGuards.isCharacterRound(this.state.game) ? (
             <Pages.CharacterPage
-              game={this.state.game as GameData<'character'>}
+              game={this.state.game}
               confirmCharacter={this.continue}
             />
           ) : typeGuards.isNominationRound(this.state.game) ? (
             <Pages.NominationPage
-              game={this.state.game as GameData<'nomination'>}
+              game={this.state.game}
               submitNominations={this.submitNominations}
             />
           ) : typeGuards.isVotingRound(this.state.game) ? (
             <Pages.VotingPage
-              game={this.state.game as GameData<'voting'>}
+              game={this.state.game}
               submitVote={this.submitVote}
             />
           ) : typeGuards.isVotingResultRound(this.state.game) ? (
             <Pages.VoteResultsPage
-              game={this.state.game as GameData<'votingResult'>}
+              game={this.state.game}
               confirmReady={this.continue}
             />
           ) : typeGuards.isMissionRound(this.state.game) ? (
             <Pages.MissionPage
-              game={this.state.game as GameData<'mission'>}
+              game={this.state.game}
               completeMission={this.submitMissionChoice}
             />
           ) : typeGuards.isMissionResultRound(this.state.game) ? (
             <Pages.MissionResultPage
-              game={this.state.game as GameData<'missionResult'>}
+              game={this.state.game}
               confirmReady={this.continue}
             />
+          ) : typeGuards.isGameOverRound(this.state.game) ? (
+            <Pages.GameOverPage
+              game={this.state.game}
+              continue={this.continue}
+            ></Pages.GameOverPage>
           ) : (
             <></>
           )}

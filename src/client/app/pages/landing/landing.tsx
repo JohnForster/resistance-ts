@@ -25,7 +25,7 @@ export class LandingPage extends PureComponent<
   };
 
   componentDidMount(): void {
-    document.getElementById('nameInput').focus();
+    document.getElementById('nameInput')?.focus();
   }
 
   handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {

@@ -8,6 +8,7 @@ import {
   LobbyRound,
   CharacterRound,
   VotingResult,
+  GameOverRound,
 } from './rounds';
 
 // export const rounds: { [r in RoundName]: RoundConstructor } = {
@@ -19,5 +20,5 @@ export const rounds: Record<RoundName, RoundConstructor> = {
   votingResult: VotingResult,
   mission: MissionRound,
   missionResult: MissionResult,
-  // gameOver: GameOverRound,
+  gameOver: GameOverRound,
 };

@@ -1,4 +1,7 @@
 import {
+  GameHistory,
+  Nomination,
+  PlayerId,
   RoundName,
   VotingRoundPublicData,
   VotingRoundSecretData,
@@ -6,7 +9,7 @@ import {
 
 import { VotingMessage } from '@shared/types/messages';
 
-import { Game, GameHistory, Nomination, Player, PlayerId } from '../game';
+import { Game, Player } from '../game';
 import { Round } from './round';
 import { getUser } from '../../../models/user';
 

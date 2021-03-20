@@ -1,15 +1,13 @@
 import { Round } from '.';
-import {
-  GameHistory,
-  Game,
-  PlayerId,
-  OngoingMission,
-  CompletedMission,
-} from '../game';
+import { Game } from '../game';
 import {
   RoundName,
   MissionRoundPublicData,
   MissionRoundSecretData,
+  CompletedMission,
+  GameHistory,
+  OngoingMission,
+  PlayerId,
 } from '@shared/types/gameData';
 import { MissionRoundMessage } from '@shared/types/messages';
 import { getUser } from '../../user';

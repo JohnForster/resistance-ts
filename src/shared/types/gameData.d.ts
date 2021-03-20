@@ -2,6 +2,7 @@
 
 import {
   CharacterMessage,
+  GameOverMessage,
   LobbyMessage,
   MissionResultMessage,
   MissionRoundMessage,
@@ -17,7 +18,33 @@ export type RoundName =
   | 'voting'
   | 'votingResult'
   | 'mission'
-  | 'missionResult';
+  | 'missionResult'
+  | 'gameOver';
+
+export type PlayerId = string;
+export interface Nomination {
+  leaderId: PlayerId;
+  nominatedPlayerIds: PlayerId[];
+  votes: Map<PlayerId, boolean>;
+  succeeded?: boolean;
+}
+
+export interface CompletedMission {
+  missionNumber: number;
+  nominations: Nomination[];
+  nominatedPlayerIds: PlayerId[];
+  votes: {
+    playerID: PlayerId;
+    succeed: boolean;
+  }[];
+  success: boolean;
+}
+
+export type GameHistory = Record<number, CompletedMission>;
+
+export type OngoingMission = Omit<CompletedMission, 'success'> & {
+  success?: boolean;
+};
 
 export type LobbyRoundPublicData = {};
 
@@ -35,7 +62,7 @@ export type VotingRoundPublicData = {
   nominatedPlayers: { id: string; name: string }[];
   unconfirmedPlayerNames: string[];
   // ? Probably need to add these?
-  // votingRoundNumber: number;
+  // votingLabel: number | string;
   // missionNumber: number;
   // nextLeader: { id: string; name: string };
   //  or
@@ -62,6 +89,14 @@ export type VotingResultPublicData = {
   votesRemaining: number;
 };
 
+export type GameOverPublicData = {
+  winners: 'resistance' | 'spies';
+  reason: 'missions' | 'nominations';
+  spies: string[];
+  fullHistory: GameHistory;
+  // characters?
+};
+
 export type PublicData =
   | LobbyRoundPublicData
   | CharacterRoundPublicData
@@ -69,13 +104,16 @@ export type PublicData =
   | VotingRoundPublicData
   | VotingResultPublicData
   | MissionRoundPublicData
-  | MissionResultPublicData;
+  | MissionResultPublicData
+  | GameOverPublicData;
 
 // ? 23/12/2020 Do the secret datas need a roundName as well?
-export type LobbyRoundSecretData = {};
+export type LobbyRoundSecretData = {
+  allegiance: null;
+};
 export type CharacterRoundSecretData = {
-  // character?: Character
   allegiance: 'resistance' | 'spies';
+  // character?: Character
   spies?: string[];
 };
 export type NominationRoundSecretData = {};
@@ -91,6 +129,9 @@ export type MissionRoundSecretData = {
 export type MissionResultSecretData = {
   hasConfirmed: boolean;
 };
+export type GameOverSecretData = {
+  allegiance: 'resistance' | 'spies';
+};
 
 export type SecretData =
   | LobbyRoundSecretData
@@ -99,7 +140,8 @@ export type SecretData =
   | VotingRoundSecretData
   | VotingResultSecretData
   | MissionRoundSecretData
-  | MissionResultSecretData;
+  | MissionResultSecretData
+  | GameOverSecretData;
 
 export type RoundData =
   | {
@@ -143,6 +185,12 @@ export type RoundData =
       public: MissionResultPublicData;
       secret: MissionResultSecretData;
       clientMessage: MissionResultMessage;
+    }
+  | {
+      roundName: 'gameOver';
+      public: GameOverPublicData;
+      secret: GameOverSecretData;
+      clientMessage: GameOverMessage;
     };
 
 export type GameData<

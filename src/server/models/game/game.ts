@@ -1,61 +1,50 @@
 import { EventByName } from '@shared/types/eventTypes';
-import { RoundName } from '@shared/types/gameData';
+import {
+  GameHistory,
+  OngoingMission,
+  PlayerId,
+  RoundName,
+} from '@shared/types/gameData';
 import { Message } from '@shared/types/messages';
 
 import generateID from '../../utils/generateID';
 import { getHsl } from '../../utils/getHsl';
 import { Rules, RULES } from '../../data/gameRules';
 
-import { getUser, send, User } from '../user';
+import { getUser, send, updateUser, User } from '../user';
 
 import { LobbyRound, Round } from './rounds';
 import { rounds } from './config';
 import chalk from 'chalk';
-import { storage } from '../../storage/storage';
 
 export interface Player {
+  inGame: boolean;
   userId: PlayerId;
   allegiance?: 'resistance' | 'spies';
   // character?: Character;
 }
 
-export interface Nomination {
-  leaderId: PlayerId;
-  nominatedPlayerIds: PlayerId[];
-  votes: Map<PlayerId, boolean>;
-  succeeded?: boolean;
-}
-
-export interface CompletedMission {
-  missionNumber: number;
-  nominations: Nomination[];
-  nominatedPlayerIds: PlayerId[];
-  votes: {
-    playerID: PlayerId;
-    succeed: boolean;
-  }[];
-  success: boolean;
-}
-
-export type OngoingMission = Omit<CompletedMission, 'success'> & {
-  success?: boolean;
-};
-
-export type GameHistory = Record<number, CompletedMission>;
-
-export type PlayerId = string;
+export type GameResult =
+  | {
+      type: 'completed';
+      winners: 'spies' | 'resistance';
+      gameOverReason: 'nominations' | 'missions';
+    }
+  | { type: 'ongoing' };
 
 export class Game {
   readonly id: string = generateID();
   readonly colouredId: string;
   public players: Player[] = [];
 
-  private currentRound: Round<RoundName>;
   public currentMission: OngoingMission;
   public votesRemaining: number;
+  // TODO Should GameHistory be an array?
   public history: GameHistory = {};
   public hostId: string;
+  public result: GameResult = { type: 'ongoing' };
 
+  private currentRound: Round<RoundName>;
   private leaderIndex = 0;
 
   public get host(): User {
@@ -91,7 +80,7 @@ export class Game {
     if (this.players.find((p) => p.userId === userId))
       return console.error('That player is already in this game.');
     this.log(`Player ${getUser(userId)?.shortId} joined`);
-    this.players.push({ userId });
+    this.players.push({ userId, inGame: true });
   };
 
   setHost = (playerID: string): void => {
@@ -107,6 +96,10 @@ export class Game {
   };
 
   sendGameUpdate = (userId: string): void => {
+    const player = this.players.find((p) => p.userId === userId);
+    if (!player.inGame) {
+      return;
+    }
     const payload = this.generatePayload(userId);
 
     const user = getUser(userId);
@@ -115,12 +108,24 @@ export class Game {
     send(userId, payload);
   };
 
-  generatePayload = (playerId: string): EventByName<'serverMessage'> => {
-    const secretData = this.currentRound.getSecretData(playerId) ?? null;
+  removePlayer = (playerId: string) => {
+    this.players = this.players.map((p) =>
+      p.userId === playerId ? { ...p, inGame: false } : p,
+    );
+    updateUser(playerId, { gameID: undefined });
+    send(playerId, { event: 'returnToMainScreen', data: undefined });
+    const activePlayers = this.players.filter((p) => p.inGame);
+    if (activePlayers.length === 0) {
+      // TODO archive game or something?
+    }
+  };
+
+  generatePayload = (playerId: string): EventByName<'gameUpdateMessage'> => {
+    const secretData = this.currentRound.getSecretData(playerId);
     const roundData = this.currentRound.getRoundData() ?? null;
 
     return {
-      event: 'serverMessage',
+      event: 'gameUpdateMessage',
       data: {
         gameID: this.id,
         missionNumber: this.currentMission.missionNumber,
@@ -171,7 +176,18 @@ export class Game {
     }
   };
 
+  sendGameOverToAllPlayers = () => {
+    this.players.forEach(({ userId }) => {
+      send(userId, { event: 'endGame', data: {} });
+    });
+  };
+
   completeCurrentRound = (): void => {
+    if (this.currentRound.roundName === 'gameOver') {
+      this.sendGameOverToAllPlayers();
+      return;
+    }
+
     this.log('Completing round', this.currentRound.roundName);
     const nextRoundName = this.currentRound.completeRound();
     this.history = this.currentRound.getUpdatedHistory();

@@ -35,3 +35,9 @@ export const isMissionResultRound = (
 ): game is GameData<'missionResult'> => {
   return game.stage === 'missionResult';
 };
+
+export const isGameOverRound = (
+  game: GameData,
+): game is GameData<'gameOver'> => {
+  return game.stage === 'gameOver';
+};

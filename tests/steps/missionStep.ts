@@ -1,9 +1,10 @@
 import { EventFns } from '../helpers/getEventFns';
 import { Instance } from '../helpers/instances';
 
-export const successfulMissionStep = ({
-  waitForAll,
-}: Partial<EventFns>) => async ({ page }: Instance) => {
+export const successfulMissionStep = (
+  { waitForAll }: Partial<EventFns>,
+  { label }: { label?: number | string } = {},
+) => async ({ page }: Instance) => {
   await page.waitForTimeout(500);
   const isOnMission = !!(await page.evaluate(
     () => document.querySelector('#missionbutton')?.textContent,
@@ -14,12 +15,13 @@ export const successfulMissionStep = ({
     await expect(page).toClick('button', { text: 'Submit' });
   }
 
-  await waitForAll('missionComplete');
+  await waitForAll(`missionComplete-${label}`);
 };
 
-export const failedMissionStep = ({ waitForAll }: Partial<EventFns>) => async ({
-  page,
-}: Instance) => {
+export const failedMissionStep = (
+  { waitForAll }: Partial<EventFns>,
+  { label }: { label?: number | string } = {},
+) => async ({ page }: Instance) => {
   await page.waitForTimeout(500);
   const isOnMission = !!(await page.evaluate(
     () => document.querySelector('#missionbutton')?.textContent,
@@ -30,5 +32,5 @@ export const failedMissionStep = ({ waitForAll }: Partial<EventFns>) => async ({
     await expect(page).toClick('button', { text: 'Submit' });
   }
 
-  await waitForAll('missionComplete');
+  await waitForAll(`missionComplete-${label}`);
 };

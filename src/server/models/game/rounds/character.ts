@@ -1,13 +1,15 @@
 import {
   CharacterRoundPublicData,
   CharacterRoundSecretData,
+  GameHistory,
   RoundName,
 } from '../../../../shared/types/gameData';
 import { CharacterMessage } from '../../../../shared/types/messages';
 import { Round } from '.';
-import { Game, GameHistory } from '../game';
+import { Game } from '../game';
 import shuffle from 'lodash/shuffle';
 import { getUser } from '../../user';
+
 export class CharacterRound implements Round<'character'> {
   public roundName = 'character' as const;
 
@@ -47,7 +49,6 @@ export class CharacterRound implements Round<'character'> {
   getSecretData = (userId: string): CharacterRoundSecretData => {
     const allegiance = this.game.players.find((p) => p.userId === userId)
       .allegiance;
-
     const spies =
       allegiance === 'spies'
         ? this.game.players
@@ -56,8 +57,8 @@ export class CharacterRound implements Round<'character'> {
         : [];
 
     return {
-      spies,
       allegiance,
+      spies,
     };
   };
 

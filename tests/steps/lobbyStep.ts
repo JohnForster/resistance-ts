@@ -1,11 +1,10 @@
 import { Instance } from '../helpers/instances';
 import { EventFns } from '../helpers/getEventFns';
 
-export const lobbyStep = ({
-  emitEvent,
-  waitForAll,
-  waitForEvent,
-}: Partial<EventFns>) => async ({ page, i, players }: Instance) => {
+export const lobbyStep = (
+  { emitEvent, waitForAll, waitForEvent }: Partial<EventFns>,
+  { label }: { label?: number | string } = {},
+) => async ({ page, i, players }: Instance) => {
   let gameId: string;
 
   if (i === 0) {
@@ -25,5 +24,5 @@ export const lobbyStep = ({
     await expect(page).toFill('input[name="gamecode"]', gameId);
     await expect(page).toClick('button', { text: 'Join Game' });
   }
-  await waitForAll('lobbyPageComplete');
+  await waitForAll(`lobbyPageComplete-${label}`);
 };

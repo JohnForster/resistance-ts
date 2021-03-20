@@ -53,3 +53,4 @@ TECH DEBT:
 🔧 Refactor react classes into functional components
 🔧 Split ids into private/public?
 🔧 Go through TODO comments
+🔧 Split events between client/server

@@ -2,10 +2,10 @@ import shuffle from 'lodash/shuffle';
 import { EventFns } from '../helpers/getEventFns';
 import { Instance } from '../helpers/instances';
 
-export const nominationStep = ({ waitForAll }: Partial<EventFns>) => async ({
-  page,
-  players,
-}: Instance) => {
+export const nominationStep = (
+  { waitForAll }: Partial<EventFns>,
+  { label }: { label?: number | string } = {},
+) => async ({ page, players }: Instance) => {
   await expect(page).toMatch(/(Waiting for \w+ to nominate|Nominate)/); // Replace this with an expect to match?
   const playerNames = await page.evaluate(() =>
     Array.from(document.querySelectorAll('#nominatename')).map(
@@ -30,5 +30,5 @@ export const nominationStep = ({ waitForAll }: Partial<EventFns>) => async ({
     );
     expect(page).toClick('button', { text: 'Submit' });
   }
-  await waitForAll('nominationComplete');
+  await waitForAll(`nominationComplete-${label}`);
 };

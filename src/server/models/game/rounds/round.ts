@@ -3,9 +3,9 @@ import {
   SecretDataByName,
   RoundName,
   MessageByName,
+  GameHistory,
 } from '@shared/types/gameData';
-import { Message } from '@shared/types/messages';
-import { Game, GameHistory } from '../game';
+import { Game } from '../game';
 
 export interface RoundConstructor<T extends RoundName = RoundName> {
   new (game: Game): Round<T>;
@@ -27,7 +27,7 @@ export interface Round<T extends RoundName> {
 
   getRoundData: () => PublicDataByName<T>;
 
-  getSecretData: (id: string) => SecretDataByName<T>;
+  getSecretData: (id: string) => Omit<SecretDataByName<T>, 'allegiance'>;
 
   isFinal: () => boolean;
 

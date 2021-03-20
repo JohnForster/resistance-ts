@@ -6,3 +6,4 @@ export * from './missionResult';
 export * from './mission';
 export * from './lobby';
 export * from './character';
+export * from './gameOver';

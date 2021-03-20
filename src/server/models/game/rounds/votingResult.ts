@@ -1,8 +1,12 @@
-import { storage } from '../../../storage/storage';
-import { RoundName } from '@shared/types/gameData';
+import {
+  GameHistory,
+  Nomination,
+  PlayerId,
+  RoundName,
+} from '@shared/types/gameData';
 import { VotingResultMessage } from '@shared/types/messages';
 import { Round } from '.';
-import { GameHistory, Game, PlayerId, Nomination } from '../game';
+import { Game } from '../game';
 import { getUser } from '../../user';
 
 export class VotingResult implements Round<'votingResult'> {
@@ -44,7 +48,15 @@ export class VotingResult implements Round<'votingResult'> {
       return 'mission';
     }
 
-    // TODO Check if this is game over? Or do this during voting round and send to a separate screen?
+    if (this.game.currentMission.nominations.length > 4) {
+      this.game.result = {
+        type: 'completed',
+        winners: 'spies',
+        gameOverReason: 'nominations',
+      };
+      return 'gameOver';
+    }
+
     return 'nomination';
   };
 
@@ -60,7 +72,6 @@ export class VotingResult implements Round<'votingResult'> {
     votesRemaining: this.game.votesRemaining,
   });
 
-  // TODO add hasConfirmed to VotingResultData
   getSecretData = (userID: string) => ({
     hasConfirmed: this.confirmedPlayers.has(userID),
   });

@@ -1,8 +1,8 @@
 import { getUser } from '../../user';
-import { RoundName } from '@shared/types/gameData';
+import { GameHistory, RoundName } from '@shared/types/gameData';
 import { LobbyMessage } from '@shared/types/messages';
 import { Round } from '.';
-import { Game, GameHistory } from '../game';
+import { Game } from '../game';
 
 export class LobbyRound implements Round<'lobby'> {
   public roundName = 'lobby' as const;
