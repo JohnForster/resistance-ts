@@ -8,3 +8,4 @@ export * from './voteResults/voteResults';
 export * from './mission/mission';
 export * from './missionResult/missionResult';
 export * from './gameOver/gameOver';
+export * from './menu/menu';

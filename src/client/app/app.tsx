@@ -9,12 +9,14 @@ import { GameData } from '@shared/types/gameData';
 import IOEventEmitter from './helpers/IOEventEmitter';
 import * as Pages from './pages';
 import * as Styled from './styles/styled';
+import { MenuButton } from './components/menuButton/MenuButton';
 
 interface AppState {
   game: GameData;
   eventEmitter?: IOEventEmitter;
   player: { name: string; playerID: string };
   screen: Screen;
+  menuIsOpen: boolean;
 }
 
 const APIAddress = window.location.host;
@@ -25,6 +27,7 @@ export default class App extends PureComponent<{}, AppState> {
     player: { playerID: null, name: null },
     screen: window.screen,
     eventEmitter: new IOEventEmitter(APIAddress),
+    menuIsOpen: false,
   };
 
   componentDidMount(): void {
@@ -135,13 +138,22 @@ export default class App extends PureComponent<{}, AppState> {
             src="assets/bg.jpg"
             alt=""
           />
+          <MenuButton
+            checked={this.state.menuIsOpen}
+            onClick={() => this.setState({ menuIsOpen: true })}
+          />
           {process.env.NODE_ENV === 'development' && (
             <p style={{ fontSize: '8px', position: 'absolute' }}>
               {this.state.player?.name}
             </p>
           )}
           {/* TODO: Add connecting indicator */}
-          {!this.state.game ? (
+          {this.state.menuIsOpen ? (
+            <Pages.Menu
+              returnToGame={() => this.setState({ menuIsOpen: false })}
+              leaveGame={() => console.log('Attempting to leave')}
+            />
+          ) : !this.state.game ? (
             <Pages.LandingPage
               hostGame={this.hostGame}
               joinGame={this.joinGame}
