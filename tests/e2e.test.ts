@@ -152,7 +152,7 @@ describe(`Let's play resistance with ${players} players!`, () => {
     await all(gameOverStep(eventFns, { label: 'game1' }));
   });
 
-  it.only('Can play two games back to back', async () => {
+  it('Can play two games back to back', async () => {
     await all(landingStep(eventFns));
 
     await all(lobbyStep(eventFns, { label: 'game1' }));
