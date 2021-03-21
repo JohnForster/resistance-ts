@@ -1,3 +1,4 @@
+import { GameData } from '@shared/types/gameData';
 import * as React from 'react';
 import styled from 'styled-components';
 import Page from '../../components/page/page';
@@ -5,6 +6,8 @@ import Page from '../../components/page/page';
 interface Props {
   cancelGame: () => void;
   returnToGame: () => void;
+  players: GameData['players'];
+  leaderID: string;
 }
 
 const CancelButton = styled.button`
@@ -34,6 +37,31 @@ export const Menu: React.FC<Props> = (props) => {
       ) : (
         <>
           <h2>Menu</h2>
+          <h3>Play Order:</h3>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'baseline',
+              paddingBottom: '1rem',
+            }}
+          >
+            {props.players.map(({ name, id }, i) => (
+              // TODO Fix this once public/private IDs are implemented, this
+              // TODO   will glitch if there are two people with the same name.
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'baseline',
+                }}
+              >
+                {name}
+                {id === props.leaderID && (
+                  <div style={{ width: 0, paddingLeft: '10px' }}>{'👑'}</div>
+                )}
+              </div>
+            ))}
+          </div>
           <CancelButton onClick={() => setCancellingGame(true)}>
             Cancel Game
           </CancelButton>

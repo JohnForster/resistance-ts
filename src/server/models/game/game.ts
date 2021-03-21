@@ -43,7 +43,6 @@ export class Game {
   public players: Player[] = [];
 
   public currentMission: OngoingMission;
-  public votesRemaining: number;
   // TODO Should GameHistory be an array?
   public history: GameHistory = {};
   public hostId: string;
@@ -69,9 +68,12 @@ export class Game {
     return this.currentRound.roundName === 'lobby';
   }
 
+  public get votesRemaining() {
+    return 5 - this.currentMission.nominations.length;
+  }
+
   constructor() {
     this.colouredId = chalk.hsl(...getHsl(this.id))(this.id);
-    this.votesRemaining = 5;
     this.currentRound = new LobbyRound(this);
     this.currentMission = {
       missionNumber: 0,
@@ -143,7 +145,7 @@ export class Game {
         playerID,
         hostName: getUser(this.hostId)?.name,
         isHost: this.hostId === playerID,
-        leaderName: this.leader?.name,
+        leaderID: this.leader.id,
         isLeader: this.leader.id === playerID,
         players: this.players
           .map(({ userID }) => getUser(userID))
@@ -212,7 +214,6 @@ export class Game {
     if (this.currentRound.roundName === 'gameOver') {
       return;
     }
-
     this.history = this.currentRound.getUpdatedHistory();
     // TODO Is there a cleaner way to work out if the current round is final?
     if (this.currentRound.isFinal()) {

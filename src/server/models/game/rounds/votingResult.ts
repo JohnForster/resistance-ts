@@ -50,7 +50,7 @@ export class VotingResult implements Round<'votingResult'> {
       return 'mission';
     }
 
-    if (this.game.currentMission.nominations.length > 4) {
+    if (this.game.votesRemaining === 0) {
       this.game.result = {
         type: 'completed',
         winners: 'spies',

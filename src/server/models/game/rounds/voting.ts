@@ -58,8 +58,6 @@ export class VotingRound implements Round<'voting'> {
       nominations: [...oldNominations, thisNomination],
     };
 
-    this.game.votesRemaining -= 1;
-
     return 'votingResult';
   };
 

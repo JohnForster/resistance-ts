@@ -63,6 +63,9 @@ export class NominationPage extends PureComponent<
   };
 
   render(): JSX.Element {
+    const leaderName = this.props.game.players.find(
+      (p) => p.id === this.props.game.leaderID,
+    )?.name;
     return (
       <Page>
         <ProgressBar
@@ -95,7 +98,7 @@ export class NominationPage extends PureComponent<
           </>
         ) : (
           <h2>
-            Waiting for {this.props.game.leaderName} to nominate for Mission{' '}
+            Waiting for {leaderName} to nominate for Mission{' '}
             {this.props.game.missionNumber}...
           </h2>
         )}

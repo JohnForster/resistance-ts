@@ -208,7 +208,7 @@ export type GameData<
   stage: R;
   hostName: string;
   isHost: boolean;
-  leaderName: string;
+  leaderID: string;
   isLeader: boolean;
   playerID: string;
   players: {

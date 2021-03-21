@@ -14,10 +14,13 @@ interface Props {
 export const VotingPage: React.FC<Props> = (props) => {
   const [playerApproves, setPlayerApproves] = useState<boolean>(null);
   const { roundData, secretData } = props.game;
+  const leaderName = props.game.players.find(
+    (p) => p.id === props.game.leaderID,
+  )?.name;
   return (
     <Page>
       <ProgressBar history={props.game.history} rounds={props.game.rounds} />
-      <h3>{props.game.leaderName} has nominated</h3>
+      <h3>{leaderName} has nominated</h3>
       <h2>{listString(roundData.nominatedPlayers.map((p) => p.name))}</h2>
       <h3>
         to undertake this mission. Do you think this mission should go ahead?

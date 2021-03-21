@@ -185,6 +185,8 @@ export default class App extends PureComponent<{}, AppState> {
             <Pages.Menu
               returnToGame={() => this.setState({ menuIsOpen: false })}
               cancelGame={this.cancelGame}
+              players={this.state.game?.players}
+              leaderID={this.state.game.leaderID}
             />
           ) : !this.state.connected ? (
             <Styled.LoadingContainer>
