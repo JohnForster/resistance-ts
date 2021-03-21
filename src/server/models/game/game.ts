@@ -81,6 +81,10 @@ export class Game {
     };
   }
 
+  advanceLeader = () => {
+    this.leaderIndex = (this.leaderIndex + 1) % this.players.length;
+  };
+
   addPlayer = (userID: string): void => {
     if (this.players.find((p) => p.userID === userID))
       return console.error('That player is already in this game.');

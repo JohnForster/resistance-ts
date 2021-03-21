@@ -39,6 +39,8 @@ export class VotingResult implements Round<'votingResult'> {
     this.confirmedPlayers.size === this.game.players.length;
 
   completeRound = (): RoundName => {
+    this.game.advanceLeader();
+
     if (this.nominationResult.succeeded) {
       this.game.currentMission = {
         ...this.game.currentMission,
