@@ -35,14 +35,15 @@ const names = shuffle([
   'Lola',
 ]);
 
-jest.setTimeout(20_000);
+jest.setTimeout(18_000 + players * 500);
 
 const options: puppeteer.PuppeteerNodeLaunchOptions = {
-  headless: false,
+  headless: showoffMode ? false : true,
   defaultViewport: {
     ...screenSize,
   },
 };
+
 describe(`Let's play resistance with ${players} players!`, () => {
   let all: ForAllFn;
   let eventFns: EventFns;
@@ -78,7 +79,7 @@ describe(`Let's play resistance with ${players} players!`, () => {
     all(async ({ page, browser, i }) => {
       await page.waitForTimeout(500);
       // ? Screenshots may be causing server to restart?
-      await page.screenshot({ path: `tests/screens/page-${i}.png` });
+      await page.screenshot({ path: `tests/screens/final-${i}.png` });
       await browser.close();
     }),
   );
@@ -151,7 +152,7 @@ describe(`Let's play resistance with ${players} players!`, () => {
     await all(gameOverStep(eventFns, { label: 'game1' }));
   });
 
-  it('Can play two games back to back', async () => {
+  it.only('Can play two games back to back', async () => {
     await all(landingStep(eventFns));
 
     await all(lobbyStep(eventFns, { label: 'game1' }));

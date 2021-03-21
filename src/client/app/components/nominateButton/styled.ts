@@ -1,14 +1,17 @@
+import responsive from '../../helpers/responsive';
 import styled from 'styled-components';
 
-export const button = styled.button`
+export const Button = styled.button`
   width: auto;
-  min-width: 45%;
+  min-width: 47%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  padding: 5px 0;
+  ${responsive`
+    margin-top: ${[5, 5, 8]}px;
+    margin-bottom: ${[5, 5, 8]}px;
+    padding: ${[1, 5, 8]}px ${[5, 5, 8]}px;
+  `}
 `;
 
 export const Side = styled.div`

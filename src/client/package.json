@@ -15,6 +15,7 @@
   "dependencies": {
     "core-js": "^3.9.1",
     "corejs": "^1.0.0",
+    "ismobilejs": "^1.1.1",
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.21",
     "react": "^17.0.1",

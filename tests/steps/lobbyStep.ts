@@ -14,12 +14,13 @@ export const lobbyStep = (
     const gameID = await page.evaluate(
       () => document.querySelector('#gameID').textContent,
     );
-    emitEvent('gameID', gameID);
-    await expect(page).toClick('button[name="begingame"]', {
-      delay: 300 + players * 100,
+    emitEvent(`gameID-${label}`, gameID);
+    await page.waitForTimeout(500 + 200 * players);
+    await expect(page).toClick('button', {
+      text: 'Begin Game',
     });
   } else {
-    [gameID] = await waitForEvent('gameID');
+    [gameID] = await waitForEvent(`gameID-${label}`);
     await expect(page).toMatchElement('input[name="gamecode"]');
     await expect(page).toFill('input[name="gamecode"]', gameID);
     await expect(page).toClick('button', { text: 'Join Game' });

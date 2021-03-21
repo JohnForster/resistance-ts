@@ -11,10 +11,10 @@ const Page = styled.div`
   width: 80%;
   animation: fade-in 0.5s;
   margin: auto;
-  padding-bottom: 2rem;
   box-sizing: border-box;
   ${responsive`
-    padding-top: ${[0, 2, 2]}rem;
+    padding-top: ${[1, 2, 2]}rem;
+    padding-bottom: ${[0, 1, 2]}rem;
   `} @media only screen and (min-width: 992px) {
     max-width: 60vh;
   }

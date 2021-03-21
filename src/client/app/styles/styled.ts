@@ -5,6 +5,11 @@ import responsive from '../helpers/responsive';
 const DARK_BLUE = '#1C2C59';
 
 export const Global = createGlobalStyle`
+  body, html, #root {
+    height: 100%;
+    width: 100%
+  }
+
   body {
     font-family: 'Turret Road';
     text-shadow: 2px 2px 8px ${DARK_BLUE};
@@ -14,21 +19,26 @@ export const Global = createGlobalStyle`
     background-color: ${DARK_BLUE}
   }
 
-  button {
+  button, input {
+    margin: 10px 0px;
+    font-family: 'Turret Road';
+    text-shadow: none;
     width: 100%;
+
+    ${responsive`
+      font-size: ${[18, 20, 22]}px;
+      max-width: ${[100, 80, 50]}%;
+    `};
+  }
+
+  button {
     border-radius: 0;
     padding: 10px;
-    margin: 10px 0px;
     border: 0px;
     background: #1C2C59;
     font-weight: bold;
     color: white;
-    font-family: 'Turret Road';
-    text-shadow: none;
 
-    ${responsive`
-      font-size: ${[18, 20, 22]}px;
-    `};
 
     :disabled {
       color: grey
@@ -36,11 +46,7 @@ export const Global = createGlobalStyle`
   }
 
   input {
-    font-size: 24px;
-    font-family: 'Turret Road';
-    width: 100%;
     padding: 10px 0px;
-    margin: 10px 0px;
     text-align: center;
     text-shadow: none;
     border: 1px solid black;
@@ -55,11 +61,11 @@ export const Global = createGlobalStyle`
 const h1Margins = [17, 21.4, 21.4];
 const h2Margins = [14, 19.9, 19.9];
 const h3Margins = [11, 18.7, 18.7];
-export const AppContainer = styled.div<{ screen: Screen }>`
+export const AppContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: ${({ screen }) => screen.height * 0.85}px;
-  width: ${({ screen }) => screen.width}px;
+  height: 85%;
+  width: 100%;
 
   ${responsive`
     h1 {
@@ -111,13 +117,21 @@ const getTransform = (screen: { width: number; height: number }) => {
   `;
 };
 
-export const BackgroundImage = styled.img<{
-  screen: { width: number; height: number };
-}>`
+type ScreenSize = { width: number; height: number };
+export const BackgroundImage = styled.img<{ screenSize: ScreenSize }>`
   position: fixed;
   overflow: hidden;
   transform-origin: top left;
-  ${({ screen }) => getTransform(screen)}
+  ${({ screenSize }) => getTransform(screenSize)}
   z-index: -1;
   filter: blur(3px) brightness(0.9);
+`;
+
+export const LoadingContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
 `;

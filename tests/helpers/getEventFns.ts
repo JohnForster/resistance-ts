@@ -1,9 +1,10 @@
-import events from 'events';
+import { EventEmitter } from 'events';
 
 export type EventFns = ReturnType<typeof getEventFns>;
 
 export const getEventFns = (players: number) => {
   const activeEvents: Record<string, number> = {};
+  const eventEmitter = new EventEmitter();
 
   const createListener = (eventName: string, n: number) => {
     let count = 0;
@@ -19,8 +20,6 @@ export const getEventFns = (players: number) => {
     });
     return count;
   };
-
-  const eventEmitter = new events.EventEmitter();
 
   const waitForEvent = (eventName: string): Promise<any[]> =>
     new Promise((resolve, reject) => {

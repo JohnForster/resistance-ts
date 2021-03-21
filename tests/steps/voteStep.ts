@@ -5,6 +5,7 @@ export const successfulVoteStep = (
   { waitForAll }: Partial<EventFns>,
   { label }: { label?: number | string } = {},
 ) => async ({ page }: Instance) => {
+  await page.waitForTimeout(250);
   await expect(page).toMatch('has nominated');
   await expect(page).toClick('button', { text: '👍' });
   await expect(page).toClick('button', { text: 'Submit' });
@@ -15,6 +16,7 @@ export const failedVoteStep = (
   { waitForAll }: Partial<EventFns>,
   { label }: { label?: number | string } = {},
 ) => async ({ page }: Instance) => {
+  await page.waitForTimeout(250);
   await expect(page).toMatch('has nominated');
   await expect(page).toClick('button', { text: '👎' });
   await expect(page).toClick('button', { text: 'Submit' });

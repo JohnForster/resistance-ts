@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import Cookies from 'js-cookie';
+import _isMobile from 'ismobilejs';
 
 import { DataByEventName } from '@shared/types/eventTypes';
 
@@ -11,23 +12,33 @@ import * as Pages from './pages';
 import * as Styled from './styles/styled';
 import { MenuButton } from './components/menuButton/MenuButton';
 
+const isMobile = _isMobile();
+
 interface AppState {
   game: GameData;
   eventEmitter?: IOEventEmitter;
   player: { name: string; playerID: string };
-  screen: Screen;
+  screenSize: { width: number; height: number };
   menuIsOpen: boolean;
+  connected: boolean;
 }
 
 const APIAddress = window.location.host;
+
+const getScreenSize = () => {
+  const height = isMobile.phone ? window.screen.height : window.innerHeight;
+  const width = isMobile.phone ? window.screen.width : window.innerWidth;
+  return { height, width };
+};
 
 export default class App extends PureComponent<{}, AppState> {
   state: AppState = {
     game: null,
     player: { playerID: null, name: null },
-    screen: window.screen,
+    screenSize: getScreenSize(),
     eventEmitter: new IOEventEmitter(APIAddress),
     menuIsOpen: false,
+    connected: true,
   };
 
   componentDidMount(): void {
@@ -36,15 +47,27 @@ export default class App extends PureComponent<{}, AppState> {
 
     this.state.eventEmitter.bind('returnToMainScreen', this.returnToMain);
 
+    this.state.eventEmitter.socket.on('disconnect', () => {
+      this.setState({ connected: false });
+    });
+
+    this.state.eventEmitter.socket.onAny(() => {
+      if (!this.state.connected) {
+        this.setState({ connected: true });
+      }
+    });
+
     // Register listeners
     this.state.eventEmitter.bind('playerData', this.onPlayerUpdate);
 
     window.addEventListener('resize', () => {
-      this.setState({ screen: window.screen });
+      console.log('resizing...');
+      window.innerHeight;
+      this.setState({
+        screenSize: getScreenSize(),
+      });
     });
   }
-
-  windowResize() {}
 
   onGameUpdate = (data: DataByEventName<'gameUpdateMessage'>): void => {
     console.log('gameUpdateReceived. data:', data);
@@ -139,9 +162,9 @@ export default class App extends PureComponent<{}, AppState> {
     return (
       <>
         <Styled.Global />
-        <Styled.AppContainer screen={this.state.screen}>
+        <Styled.AppContainer>
           <Styled.BackgroundImage
-            screen={this.state.screen}
+            screenSize={this.state.screenSize}
             src="assets/bg.jpg"
             alt=""
           />
@@ -157,11 +180,16 @@ export default class App extends PureComponent<{}, AppState> {
             </p>
           )}
           {/* TODO: Add connecting indicator */}
+
           {this.state.menuIsOpen ? (
             <Pages.Menu
               returnToGame={() => this.setState({ menuIsOpen: false })}
               cancelGame={this.cancelGame}
             />
+          ) : !this.state.connected ? (
+            <Styled.LoadingContainer>
+              <h1>Reconnecting...</h1>
+            </Styled.LoadingContainer>
           ) : !this.state.game ? (
             <Pages.LandingPage
               hostGame={this.hostGame}
