@@ -28,16 +28,18 @@ COMPLETED:
 🔧 (mostly) Replace babel with typescript ✅
 🐞 No feedback on submitting mission choice ✅
 🐞 Prevent disconnection ✅
+⭐️ Add endgame pages ✅
+
 
 ______________________________________________________________________________________
 FEATURES:
 
-⭐️ Add endgame pages
 ⭐️ Add quit game functionality in lobby/elsewhere
 ⭐️ Add loading display
-⭐️ Remove hostID
-⭐️ Character selection
+⭐️ Improve endgame pages
 ⭐️ Characters
+⭐️ Character selection
+⭐️ Remove hostID
 
 ______________________________________________________________________________________
 BUGS:
@@ -54,3 +56,4 @@ TECH DEBT:
 🔧 Split ids into private/public?
 🔧 Go through TODO comments
 🔧 Split events between client/server
+🔧 Test on real phones
