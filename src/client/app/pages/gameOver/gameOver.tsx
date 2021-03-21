@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const GameOverPage: React.FC<Props> = (props) => {
-  console.log('TODO: Fill out GameOver');
+  // TODO Make GameOver page better
   const result = props.game.roundData;
   const allegiance = props.game.secretData.allegiance;
 

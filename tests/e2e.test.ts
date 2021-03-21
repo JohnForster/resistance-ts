@@ -7,10 +7,8 @@ import { voteResultStep } from './steps/voteResultStep';
 import { landingStep } from './steps/landingStep';
 import { lobbyStep } from './steps/lobbyStep';
 import { characterStep } from './steps/characterStep';
-import { failedVoteStep, successfulVoteStep } from './steps/voteStep';
+import { failedVoteStep } from './steps/voteStep';
 import { nominationStep } from './steps/nominationStep';
-import { missionResultStep } from './steps/missionResultStep';
-import { successfulMissionStep } from './steps/missionStep';
 import { doSucessfulRound } from './helpers/successfulRound';
 import { gameOverStep } from './steps/gameOverStep';
 import { doFailedRound } from './helpers/failedRound';
@@ -40,12 +38,12 @@ const names = shuffle([
 jest.setTimeout(20_000);
 
 const options: puppeteer.PuppeteerNodeLaunchOptions = {
-  headless: true,
+  headless: false,
   defaultViewport: {
     ...screenSize,
   },
 };
-describe("Let's play resistance!", () => {
+describe(`Let's play resistance with ${players} players!`, () => {
   let all: ForAllFn;
   let eventFns: EventFns;
   let count = 0;
@@ -114,24 +112,6 @@ describe("Let's play resistance!", () => {
     await all(gameOverStep(eventFns, { label: 'game1' }));
   });
 
-  it('Can play two games', async () => {
-    await all(landingStep(eventFns));
-
-    await all(lobbyStep(eventFns, { label: 'game1' }));
-    await all(characterStep(eventFns, { label: 'game1' }));
-    await doSucessfulRound(all, eventFns, { label: 'round1' });
-    await doSucessfulRound(all, eventFns, { label: 'round2' });
-    await doSucessfulRound(all, eventFns, { label: 'round3' });
-    await all(gameOverStep(eventFns, { label: 'game1' }));
-
-    await all(lobbyStep(eventFns, { label: 'game2' }));
-    await all(characterStep(eventFns, { label: 'game2' }));
-    await doSucessfulRound(all, eventFns, { label: 'round4' });
-    await doSucessfulRound(all, eventFns, { label: 'round5' });
-    await doSucessfulRound(all, eventFns, { label: 'round6' });
-    await all(gameOverStep(eventFns, { label: 'game2' }));
-  });
-
   it('The spies can win from too many failed nominations ', async () => {
     await all(landingStep(eventFns));
     await all(lobbyStep(eventFns));
@@ -169,5 +149,23 @@ describe("Let's play resistance!", () => {
     await doFailedRound(all, eventFns, { label: 'round2' });
     await doFailedRound(all, eventFns, { label: 'round3' });
     await all(gameOverStep(eventFns, { label: 'game1' }));
+  });
+
+  it('Can play two games back to back', async () => {
+    await all(landingStep(eventFns));
+
+    await all(lobbyStep(eventFns, { label: 'game1' }));
+    await all(characterStep(eventFns, { label: 'game1' }));
+    await doSucessfulRound(all, eventFns, { label: 'round1' });
+    await doSucessfulRound(all, eventFns, { label: 'round2' });
+    await doSucessfulRound(all, eventFns, { label: 'round3' });
+    await all(gameOverStep(eventFns, { label: 'game1' }));
+
+    await all(lobbyStep(eventFns, { label: 'game2' }));
+    await all(characterStep(eventFns, { label: 'game2' }));
+    await doSucessfulRound(all, eventFns, { label: 'round4' });
+    await doSucessfulRound(all, eventFns, { label: 'round5' });
+    await doSucessfulRound(all, eventFns, { label: 'round6' });
+    await all(gameOverStep(eventFns, { label: 'game2' }));
   });
 });
