@@ -62,8 +62,6 @@ export type VotingRoundPublicData = {
   nominatedPlayers: { id: string; name: string }[];
   unconfirmedPlayerNames: string[];
   // ? Probably need to add these?
-  // votingLabel: number | string;
-  // missionNumber: number;
   // nextLeader: { id: string; name: string };
   //  or
   // playerOrder: string[]
