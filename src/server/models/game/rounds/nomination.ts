@@ -18,7 +18,7 @@ export class NominationRound implements Round<'nomination'> {
   }
 
   handleMessage = (message: NominationMessage): void => {
-    const playerIDs = this.game.players.map((p) => p.userId);
+    const playerIDs = this.game.players.map((p) => p.userID);
     if (!message.nominatedPlayerIDs.every((name) => playerIDs.includes(name)))
       return console.error(
         'Not all nominated players are part of this game.\n  nominatedPlayerIds:',
@@ -39,8 +39,8 @@ export class NominationRound implements Round<'nomination'> {
 
   completeRound = (): RoundName => {
     const nominatedPlayerIds = this.game.players
-      .filter((p) => this.nominatedPlayerIDs.includes(p.userId))
-      .map((p) => p.userId);
+      .filter((p) => this.nominatedPlayerIDs.includes(p.userID))
+      .map((p) => p.userID);
 
     if (nominatedPlayerIds.length !== this.nominatedPlayerIDs.length) {
       console.error("Couldn't find all nominated players.");

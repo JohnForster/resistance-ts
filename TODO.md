@@ -18,8 +18,8 @@
 - ⭐️ Implement MISSIONS ✅
 - 🐞 Prevent homescreen from flashing up before changing to latest screen? ✅
 - ⭐️ Show mission progress ✅
-- 🔧 Server refactor  ✅
-- 🔧 Client Refactor  ✅
+- 🔧 Server refactor ✅
+- 🔧 Client Refactor ✅
 - 🔧 Sockets.io ✅
 - 🔧 Fix prod build ✅
 - ⭐️ E2E tests ✅
@@ -29,31 +29,35 @@
 - 🐞 No feedback on submitting mission choice ✅
 - 🐞 Prevent disconnection ✅
 - ⭐️ Add endgame pages ✅
+- ⭐️ Add quit game functionality in lobby/elsewhere ✅
 
+---
 
-______________________________________________________________________________________
 #### FEATURES:
 
-- ⭐️ Add quit game functionality in lobby/elsewhere
 - ⭐️ Add loading display
 - ⭐️ Improve endgame pages
 - ⭐️ Characters
 - ⭐️ Character selection
 - ⭐️ Remove hostID
 
-______________________________________________________________________________________
+---
+
 #### BUGS:
 
 - 🐞 Small screens probably cannot handle large games. (Allow scrolling?)
 - 🐞 Small screens cannot fully show the nomination vote page with long names.
 - 🐞 Opening two tabs allows one user to have two websocket connections open? - Close one websocket on opening another.
 - 🐞 Probably need to close/clear games that haven't been used in a while.
+- 🐞 Do nominations cycle?
 
-______________________________________________________________________________________
+---
+
 #### TECH DEBT:
 
+- 🔧 Test on real phones
 - 🔧 Refactor react classes into functional components
 - 🔧 Split ids into private/public?
 - 🔧 Go through TODO comments
 - 🔧 Split events between client/server
-- 🔧 Test on real phones
+- 🔧 Rename files to their exports

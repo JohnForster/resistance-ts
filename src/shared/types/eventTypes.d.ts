@@ -12,7 +12,8 @@ export type EventType =
   | 'playerData'
   | 'gameUpdateMessage'
   | 'endGame'
-  | 'returnToMainScreen';
+  | 'returnToMainScreen'
+  | 'cancelGame';
 
 // TODO ? 23/12/10 Move createGame and joinGame into message type.
 
@@ -64,6 +65,13 @@ interface ReturnToMainScreenEvent extends EventTemplate {
   data: undefined;
 }
 
+interface CancelGameEvent extends EventTemplate {
+  event: 'cancelGame';
+  data: {
+    playerID: string;
+  };
+}
+
 export type IOEvent =
   | ErrorEvent
   | PlayerDataEvent
@@ -72,7 +80,8 @@ export type IOEvent =
   | ClientMessageEvent
   | GameUpdateMessageEvent
   | EndGameEvent
-  | ReturnToMainScreenEvent;
+  | ReturnToMainScreenEvent
+  | CancelGameEvent;
 
 export type EventByName<E extends EventType, T = IOEvent> = T extends {
   event: E;

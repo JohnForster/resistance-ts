@@ -53,8 +53,8 @@ export class MissionResult implements Round<'missionResult'> {
 
     const data = {
       unconfirmedPlayerNames: this.game.players
-        .filter(({ userId }) => this.confirmedPlayers.has(userId))
-        .map(({ userId }) => getUser(userId)?.name),
+        .filter(({ userID }) => this.confirmedPlayers.has(userID))
+        .map(({ userID }) => getUser(userID)?.name),
       missionSucceeded: this.game.currentMission.success,
       missionResults: {
         success,

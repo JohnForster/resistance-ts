@@ -12,7 +12,7 @@ export class LobbyRound implements Round<'lobby'> {
 
   // For Reorder
   // checkIDsMatch = (playerIDs: string[]): boolean => {
-  //   const gameIDs = this.game.players.map((p) => p.userId);
+  //   const gameIDs = this.game.players.map((p) => p.userID);
   //   return (
   //     !gameIDs.some((id) => !playerIDs.includes(id)) ||
   //     !playerIDs.some((id) => !gameIDs.includes(id))
@@ -53,7 +53,7 @@ export class LobbyRound implements Round<'lobby'> {
 
   getRoundData = () => ({
     hostName: this.game.host.name,
-    players: this.game.players.map(({ userId }) => getUser(userId)?.name),
+    players: this.game.players.map(({ userID }) => getUser(userID)?.name),
   });
 
   getSecretData = () => ({});

@@ -1,4 +1,4 @@
-import { EventByName } from '@shared/types/eventTypes';
+import { CancelGameEvent, EventByName } from '@shared/types/eventTypes';
 import {
   GameHistory,
   OngoingMission,
@@ -13,13 +13,14 @@ import { Rules, RULES } from '../../data/gameRules';
 
 import { getUser, send, updateUser, User } from '../user';
 
-import { LobbyRound, Round } from './rounds';
+import { GameOverRound, LobbyRound, Round } from './rounds';
 import { rounds } from './config';
 import chalk from 'chalk';
+import { storage } from '../../storage/storage';
 
 export interface Player {
   inGame: boolean;
-  userId: PlayerId;
+  userID: PlayerId;
   allegiance?: 'resistance' | 'spies';
   // character?: Character;
 }
@@ -29,6 +30,10 @@ export type GameResult =
       type: 'completed';
       winners: 'spies' | 'resistance';
       gameOverReason: 'nominations' | 'missions';
+    }
+  | {
+      type: 'cancelled';
+      cancelledBy: PlayerId;
     }
   | { type: 'ongoing' };
 
@@ -52,7 +57,7 @@ export class Game {
   }
 
   public get leader(): User {
-    const leaderId = this.players[this.leaderIndex]?.userId;
+    const leaderId = this.players[this.leaderIndex]?.userID;
     return getUser(leaderId);
   }
 
@@ -76,11 +81,11 @@ export class Game {
     };
   }
 
-  addPlayer = (userId: string): void => {
-    if (this.players.find((p) => p.userId === userId))
+  addPlayer = (userID: string): void => {
+    if (this.players.find((p) => p.userID === userID))
       return console.error('That player is already in this game.');
-    this.log(`Player ${getUser(userId)?.shortId} joined`);
-    this.players.push({ userId, inGame: true });
+    this.log(`Player ${getUser(userID)?.shortId} joined`);
+    this.players.push({ userID, inGame: true });
   };
 
   setHost = (playerID: string): void => {
@@ -89,39 +94,40 @@ export class Game {
     this.hostId = playerID;
   };
 
-  getPlayer = (id: string): Player => this.players.find((p) => p.userId === id);
+  getPlayer = (id: string): Player => this.players.find((p) => p.userID === id);
 
   sendUpdateToAllPlayers = (): void => {
-    this.players.forEach((p) => this.sendGameUpdate(p.userId));
+    this.players.forEach((p) => this.sendGameUpdate(p.userID));
   };
 
-  sendGameUpdate = (userId: string): void => {
-    const player = this.players.find((p) => p.userId === userId);
+  sendGameUpdate = (userID: string): void => {
+    const player = this.players.find((p) => p.userID === userID);
     if (!player.inGame) {
       return;
     }
-    const payload = this.generatePayload(userId);
+    const payload = this.generatePayload(userID);
 
-    const user = getUser(userId);
+    const user = getUser(userID);
     this.log(`Sending ${payload.data.stage} msg to ${user.shortId}`);
 
-    send(userId, payload);
+    send(userID, payload);
   };
 
-  removePlayer = (playerId: string) => {
+  removePlayer = (playerID: string) => {
     this.players = this.players.map((p) =>
-      p.userId === playerId ? { ...p, inGame: false } : p,
+      p.userID === playerID ? { ...p, inGame: false } : p,
     );
-    updateUser(playerId, { gameID: undefined });
-    send(playerId, { event: 'returnToMainScreen', data: undefined });
+    updateUser(playerID, { gameID: undefined });
+    send(playerID, { event: 'returnToMainScreen', data: undefined });
     const activePlayers = this.players.filter((p) => p.inGame);
     if (activePlayers.length === 0) {
+      storage.games.delete(this.id);
       // TODO archive game or something?
     }
   };
 
-  generatePayload = (playerId: string): EventByName<'gameUpdateMessage'> => {
-    const secretData = this.currentRound.getSecretData(playerId);
+  generatePayload = (playerID: string): EventByName<'gameUpdateMessage'> => {
+    const secretData = this.currentRound.getSecretData(playerID);
     const roundData = this.currentRound.getRoundData() ?? null;
 
     return {
@@ -130,13 +136,13 @@ export class Game {
         gameID: this.id,
         missionNumber: this.currentMission.missionNumber,
         stage: this.currentRound.roundName,
-        playerID: playerId,
+        playerID,
         hostName: getUser(this.hostId)?.name,
-        isHost: this.hostId === playerId,
+        isHost: this.hostId === playerID,
         leaderName: this.leader?.name,
-        isLeader: this.leader.id === playerId,
+        isLeader: this.leader.id === playerID,
         players: this.players
-          .map(({ userId }) => getUser(userId))
+          .map(({ userID }) => getUser(userID))
           .map(({ name, id }) => ({ name, id })),
         roundData,
         secretData,
@@ -177,19 +183,32 @@ export class Game {
   };
 
   sendGameOverToAllPlayers = () => {
-    this.players.forEach(({ userId }) => {
-      send(userId, { event: 'endGame', data: {} });
+    this.players.forEach(({ userID }) => {
+      send(userID, { event: 'endGame', data: {} });
     });
   };
 
+  cancelGame = ({ playerID }: { playerID: string }) => {
+    if (this.result.type === 'cancelled') {
+      const user = getUser(this.result.cancelledBy);
+      this.log(`Game already cancelled by ${user.shortId}`);
+      return this.sendUpdateToAllPlayers();
+    }
+    const user = getUser(playerID);
+    this.log(`Game cancelled by ${user.shortId}`);
+    this.result = { type: 'cancelled', cancelledBy: playerID };
+    this.currentRound = new GameOverRound(this);
+    this.sendUpdateToAllPlayers();
+  };
+
   completeCurrentRound = (): void => {
+    this.log('Completing round', this.currentRound.roundName);
+    const nextRoundName = this.currentRound.completeRound();
+
     if (this.currentRound.roundName === 'gameOver') {
-      this.sendGameOverToAllPlayers();
       return;
     }
 
-    this.log('Completing round', this.currentRound.roundName);
-    const nextRoundName = this.currentRound.completeRound();
     this.history = this.currentRound.getUpdatedHistory();
     // TODO Is there a cleaner way to work out if the current round is final?
     if (this.currentRound.isFinal()) {

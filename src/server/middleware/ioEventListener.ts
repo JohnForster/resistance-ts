@@ -20,22 +20,22 @@ import chalk from 'chalk';
 export const ioConnectionListener = (socket: Socket): void => {
   const cookies = cookie.parse(socket.request.headers.cookie ?? '');
 
-  const userId = cookies.playerID ?? '';
-  const existingUser = getUser(userId);
+  const userID = cookies.playerID ?? '';
+  const existingUser = getUser(userID);
 
   // If we have a user, but this is a new connection
   if (existingUser) {
     replaceUserSocket(existingUser, socket);
-    sendPlayerData(userId);
-    const gameId = getUser(userId).gameID;
-    const game = storage.games.get(gameId);
-    game?.sendGameUpdate(userId);
+    sendPlayerData(userID);
+    const gameID = getUser(userID).gameID;
+    const game = storage.games.get(gameID);
+    game?.sendGameUpdate(userID);
   } else {
     console.log(
       chalk.blue(new Date().toLocaleTimeString()) +
         ' Received a new connection from ' +
         socket.handshake.address,
-      userId ? `with existing userId:${userId}` : 'with no existing userId.',
+      userID ? `with existing userID:${userID}` : 'with no existing userID.',
     );
 
     const user = createUser(socket);
@@ -84,21 +84,36 @@ const clientMessageValidator = (x: any): x is Message => {
   return isClientMessage;
 };
 
-const attachEventListeners = (socket: Socket, userId: string) => {
+const cancelGameValidator = (x: any): x is EventByName<'cancelGame'>['data'] =>
+  !!x.playerID;
+
+const attachEventListeners = (socket: Socket, userID: string) => {
   socket.on('createGame', () => {
-    createGame(userId);
+    createGame(userID);
   });
 
   socket.on('joinGame', (data: unknown) => {
-    joinValidator(data) && joinGame(userId, data);
+    joinValidator(data) && joinGame(userID, data);
   });
 
   socket.on('playerData', (data: unknown) => {
-    playerDataValidator(data) && updatePlayerData(userId, data);
+    playerDataValidator(data) && updatePlayerData(userID, data);
+  });
+
+  socket.on('cancelGame', (data: unknown) => {
+    if (!cancelGameValidator(data)) return;
+    const user = getUser(userID);
+    const game = storage.games.get(user?.gameID);
+    if (!game) {
+      return console.error(
+        `No game found for user: ${userID}. Cannot cancel game.`,
+      );
+    }
+    game.cancelGame(data);
   });
 
   socket.on('clientMessage', (message: unknown) => {
-    const user = getUser(userId);
+    const user = getUser(userID);
     if (!clientMessageValidator(message)) return;
     const game = storage.games.get(message.gameID);
 
@@ -117,18 +132,18 @@ const attachEventListeners = (socket: Socket, userId: string) => {
   });
 };
 
-const createGame = (userId: string): Game | void => {
+const createGame = (userID: string): Game | void => {
   const game = new Game();
   storage.games.set(game.id, game);
-  updateUser(userId, { gameID: game.id });
-  game.addPlayer(userId);
-  game.setHost(userId);
+  updateUser(userID, { gameID: game.id });
+  game.addPlayer(userID);
+  game.setHost(userID);
   game.sendUpdateToAllPlayers();
   return game;
 };
 
 const joinGame = (
-  userId: string,
+  userID: string,
   data: EventByName<'joinGame'>['data'],
 ): void => {
   const game = storage.games.get(data.gameID);
@@ -136,25 +151,25 @@ const joinGame = (
   if (!game) {
     console.error(`No game found with ID '${data.gameID}'`);
     console.error('Current games:', ...storage.games.keys());
-    return sendError(userId, `Game with id ${data.gameID} not found.`);
+    return sendError(userID, `Game with id ${data.gameID} not found.`);
   }
 
   if (!game.isOpen) {
     console.error(
       `Error joining game, game with id ${data.gameID} has already begun`,
     );
-    return sendError(userId, `Game with id ${data.gameID} has already begun`);
+    return sendError(userID, `Game with id ${data.gameID} has already begun`);
   }
 
-  game.addPlayer(userId);
-  updateUser(userId, { gameID: data.gameID });
+  game.addPlayer(userID);
+  updateUser(userID, { gameID: data.gameID });
   game.sendUpdateToAllPlayers();
 };
 
-const updatePlayerData = (userId: string, data: PlayerData): void => {
-  if (data.playerID && userId !== data.playerID)
+const updatePlayerData = (userID: string, data: PlayerData): void => {
+  if (data.playerID && userID !== data.playerID)
     return console.error(
-      `ID mismatch: '${userId}' stored, '${data.playerID}' received`,
+      `ID mismatch: '${userID}' stored, '${data.playerID}' received`,
     );
-  updateUser(userId, { name: data.name });
+  updateUser(userID, { name: data.name });
 };

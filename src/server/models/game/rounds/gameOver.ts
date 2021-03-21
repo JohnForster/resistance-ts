@@ -14,7 +14,7 @@ export class GameOverRound implements Round<'gameOver'> {
   private unconfirmedPlayerIds: string[];
 
   constructor(private readonly game: Game) {
-    this.unconfirmedPlayerIds = [...this.game.players.map((p) => p.userId)];
+    this.unconfirmedPlayerIds = [...this.game.players.map((p) => p.userID)];
   }
 
   handleMessage = (message: GameOverMessage): void => {
@@ -30,7 +30,7 @@ export class GameOverRound implements Round<'gameOver'> {
   };
 
   completeRound = (): RoundName => {
-    // TODO store completed games somewhere?
+    this.game.sendGameOverToAllPlayers();
     return 'lobby';
   };
 
@@ -39,9 +39,18 @@ export class GameOverRound implements Round<'gameOver'> {
     if (gameResult.type === 'ongoing') {
       throw new Error('Game result is set to ongoing during gameOver round');
     }
+
+    if (gameResult.type === 'cancelled') {
+      const cancelledBy = getUser(gameResult.cancelledBy).name;
+      return {
+        reason: 'cancelled',
+        cancelledBy,
+      };
+    }
+
     const spyIds = this.game.players
       .filter((p) => p.allegiance === 'spies')
-      .map((p) => p.userId);
+      .map((p) => p.userID);
 
     return {
       winners: gameResult.winners,
@@ -51,8 +60,8 @@ export class GameOverRound implements Round<'gameOver'> {
     };
   };
 
-  getSecretData = (playerId: string): GameOverSecretData => ({
-    allegiance: this.game.players.find((p) => p.userId === playerId).allegiance,
+  getSecretData = (playerID: string): GameOverSecretData => ({
+    allegiance: this.game.players.find((p) => p.userID === playerID).allegiance,
   });
 
   isFinal = (): boolean => {

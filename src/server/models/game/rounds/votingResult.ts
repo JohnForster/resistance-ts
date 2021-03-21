@@ -17,8 +17,8 @@ export class VotingResult implements Round<'votingResult'> {
 
   get unconfirmedPlayerNames(): string[] {
     return this.game.players
-      .filter(({ userId }) => !this.confirmedPlayers.has(userId))
-      .map(({ userId }) => getUser(userId).name);
+      .filter(({ userID }) => !this.confirmedPlayers.has(userID))
+      .map(({ userID }) => getUser(userID).name);
   }
 
   get nominationResult(): Nomination {

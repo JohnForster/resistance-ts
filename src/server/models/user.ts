@@ -29,39 +29,39 @@ export const createUser = (socket: Socket): User => {
   return user;
 };
 
-export const getUser = (userId: string) => {
-  return storage.users.get(userId);
+export const getUser = (userID: string) => {
+  return storage.users.get(userID);
 };
 
-export const updateUser = (userId: string, update: Partial<User>) => {
-  const oldUser = getUser(userId);
+export const updateUser = (userID: string, update: Partial<User>) => {
+  const oldUser = getUser(userID);
   if (!oldUser) {
-    throw new Error(`No user found with id ${userId}`);
+    throw new Error(`No user found with id ${userID}`);
   }
   const newUser = { ...oldUser, ...update };
   storage.users.set(oldUser.id, newUser);
   return newUser;
 };
 
-export const sendPlayerData = (userId: string) => {
-  const user = getUser(userId);
-  send(userId, {
+export const sendPlayerData = (userID: string) => {
+  const user = getUser(userID);
+  send(userID, {
     event: 'playerData',
     data: {
-      playerID: userId,
+      playerID: userID,
       name: user.name,
     },
   });
 };
 
-export const sendError = (userId: string, errorMessage: string) =>
-  send(userId, {
+export const sendError = (userID: string, errorMessage: string) =>
+  send(userID, {
     event: 'error',
     data: errorMessage,
   });
 
-export const send = (userId: string, { event, data }: IOEvent) => {
+export const send = (userID: string, { event, data }: IOEvent) => {
   // ? Error handling?
-  const user = getUser(userId);
+  const user = getUser(userID);
   user.socket.emit(event, data);
 };

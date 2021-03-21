@@ -15,7 +15,7 @@ export const LobbyPage: React.FC<LobbyPageProps> = (props) => (
   <Page>
     <h1>Lobby</h1>
     <p>Game ID: </p>
-    <Styled.GameID id="gameId">{props.game.gameID}</Styled.GameID>
+    <Styled.GameID id="gameID">{props.game.gameID}</Styled.GameID>
     <h3>Players</h3>
     <Styled.PlayerContainer>
       {props.game.players.map((p, i) => (

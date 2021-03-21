@@ -87,13 +87,20 @@ export type VotingResultPublicData = {
   votesRemaining: number;
 };
 
-export type GameOverPublicData = {
+type SuccessfulGame = {
   winners: 'resistance' | 'spies';
   reason: 'missions' | 'nominations';
   spies: string[];
   fullHistory: GameHistory;
   // characters?
 };
+
+type CancelledGame = {
+  reason: 'cancelled';
+  cancelledBy: string;
+};
+
+export type GameOverPublicData = SuccessfulGame | CancelledGame;
 
 export type PublicData =
   | LobbyRoundPublicData

@@ -128,6 +128,13 @@ export default class App extends PureComponent<{}, AppState> {
     });
   };
 
+  cancelGame = () => {
+    this.state.eventEmitter.send('cancelGame', {
+      playerID: this.state.player.playerID,
+    });
+    this.setState({ menuIsOpen: false });
+  };
+
   render(): JSX.Element {
     return (
       <>
@@ -138,10 +145,12 @@ export default class App extends PureComponent<{}, AppState> {
             src="assets/bg.jpg"
             alt=""
           />
-          <MenuButton
-            checked={this.state.menuIsOpen}
-            onClick={() => this.setState({ menuIsOpen: true })}
-          />
+          {!!this.state.game && (
+            <MenuButton
+              checked={this.state.menuIsOpen}
+              onClick={() => this.setState({ menuIsOpen: true })}
+            />
+          )}
           {process.env.NODE_ENV === 'development' && (
             <p style={{ fontSize: '8px', position: 'absolute' }}>
               {this.state.player?.name}
@@ -151,7 +160,7 @@ export default class App extends PureComponent<{}, AppState> {
           {this.state.menuIsOpen ? (
             <Pages.Menu
               returnToGame={() => this.setState({ menuIsOpen: false })}
-              leaveGame={() => console.log('Attempting to leave')}
+              cancelGame={this.cancelGame}
             />
           ) : !this.state.game ? (
             <Pages.LandingPage

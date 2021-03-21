@@ -17,11 +17,11 @@ export class VotingRound implements Round<'voting'> {
   public roundName = 'voting' as const;
 
   public get unconfirmedPlayers(): Player[] {
-    return this.game.players.filter((p) => !this.votes.has(p.userId));
+    return this.game.players.filter((p) => !this.votes.has(p.userID));
   }
 
   private readonly nominatedPlayers: PlayerId[];
-  private votes: Map<Player['userId'], boolean> = new Map();
+  private votes: Map<Player['userID'], boolean> = new Map();
 
   constructor(private readonly game: Game) {
     const nominations = this.game.currentMission.nominations;
@@ -66,7 +66,7 @@ export class VotingRound implements Round<'voting'> {
   getRoundData = (): VotingRoundPublicData => ({
     // TODO player order - who is nominating next
     unconfirmedPlayerNames: this.unconfirmedPlayers.map(
-      ({ userId }) => getUser(userId)?.name,
+      ({ userID }) => getUser(userID)?.name,
     ),
     nominatedPlayers: this.nominatedPlayers
       .map((id) => getUser(id))
