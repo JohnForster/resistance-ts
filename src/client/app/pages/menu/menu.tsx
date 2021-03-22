@@ -15,20 +15,20 @@ const CancelButton = styled.button`
 `;
 
 const OrderContainer = styled.div`
-  display: 'flex';
-  flex-direction: 'column';
-  align-items: 'baseline';
-  padding-bottom: '1rem';
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  padding-bottom: 1rem;
 `;
 
 const Name = styled.div`
-  display: 'flex';
-  align-items: 'baseline';
+  display: flex;
+  align-items: baseline;
 `;
 
 const Crown = styled.div`
   width: 0;
-  padding-left: '10px';
+  padding-left: 10px;
 `;
 
 // TODO - Add more options. E.g. Name change (when out of game), about etc.
