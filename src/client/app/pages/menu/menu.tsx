@@ -13,6 +13,24 @@ interface Props {
 const CancelButton = styled.button`
   color: red;
 `;
+
+const OrderContainer = styled.div`
+  display: 'flex';
+  flex-direction: 'column';
+  align-items: 'baseline';
+  padding-bottom: '1rem';
+`;
+
+const Name = styled.div`
+  display: 'flex';
+  align-items: 'baseline';
+`;
+
+const Crown = styled.div`
+  width: 0;
+  padding-left: '10px';
+`;
+
 // TODO - Add more options. E.g. Name change (when out of game), about etc.
 export const Menu: React.FC<Props> = (props) => {
   const [cancellingGame, setCancellingGame] = React.useState(false);
@@ -38,30 +56,14 @@ export const Menu: React.FC<Props> = (props) => {
         <>
           <h2>Menu</h2>
           <h3>Play Order:</h3>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'baseline',
-              paddingBottom: '1rem',
-            }}
-          >
+          <OrderContainer>
             {props.players.map(({ name, id }, i) => (
-              // TODO Fix this once public/private IDs are implemented, this
-              // TODO   will glitch if there are two people with the same name.
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'baseline',
-                }}
-              >
+              <Name key={`playerOrder-${id.slice(0, 6)}`}>
                 {name}
-                {id === props.leaderID && (
-                  <div style={{ width: 0, paddingLeft: '10px' }}>{'👑'}</div>
-                )}
-              </div>
+                {id === props.leaderID && <Crown>{'👑'}</Crown>}
+              </Name>
             ))}
-          </div>
+          </OrderContainer>
           <CancelButton onClick={() => setCancellingGame(true)}>
             Cancel Game
           </CancelButton>
