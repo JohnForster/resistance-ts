@@ -169,6 +169,10 @@ export class Game {
     );
   };
 
+  randomiseLeader = () => {
+    this.leaderIndex = Math.floor(Math.random() * this.players.length);
+  };
+
   handleMessage = (message: Message): void => {
     const isValid = this.currentRound.validateMessage(message);
     if (!isValid) {

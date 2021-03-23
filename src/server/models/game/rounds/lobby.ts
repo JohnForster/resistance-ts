@@ -48,6 +48,7 @@ export class LobbyRound implements Round<'lobby'> {
   isReadyToComplete = (): boolean => this.gameReadyToBegin;
 
   completeRound = (): RoundName => {
+    this.game.randomiseLeader();
     return 'character';
   };
 
