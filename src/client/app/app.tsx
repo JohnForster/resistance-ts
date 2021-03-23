@@ -171,7 +171,9 @@ export default class App extends PureComponent<{}, AppState> {
           {!!this.state.game && (
             <MenuButton
               checked={this.state.menuIsOpen}
-              onClick={() => this.setState({ menuIsOpen: true })}
+              onClick={() =>
+                this.setState({ menuIsOpen: !this.state.menuIsOpen })
+              }
             />
           )}
           {process.env.NODE_ENV === 'development' && (
