@@ -3,9 +3,9 @@ import React, { PureComponent } from 'react';
 import { GameData, NominationRoundPublicData } from '@shared/types/gameData';
 import Page from '../../components/page/page';
 import ProgressBar from '../../components/progressBar/progressBar';
-import { PlayerContainer } from '../lobby/styled';
 import NominateButton from '../../components/nominateButton/nominatebutton';
 import styled from 'styled-components';
+import { ContinueButton } from '../../components/continueButton/continueButton';
 
 export interface NominationPageProps {
   game: GameData<'nomination'>;
@@ -89,12 +89,13 @@ export class NominationPage extends PureComponent<
                 />
               ))}
             </Container>
-            <button
+            <ContinueButton
+              text="Submit"
               onClick={this.submit}
               disabled={!this.isCorrectNumberOfNominations}
             >
               Submit
-            </button>
+            </ContinueButton>
           </>
         ) : (
           <h2>

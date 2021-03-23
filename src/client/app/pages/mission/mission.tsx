@@ -1,22 +1,17 @@
 import React, { PureComponent } from 'react';
+import styled from 'styled-components';
 
 import {
   GameData,
   MissionRoundPublicData,
   MissionRoundSecretData,
 } from '@shared/types/gameData';
-import Page from '../../components/page/page';
 
 import listString from '../../helpers/listString';
 import { MissionButton } from '../../components/missionButton/missionButton';
 import ProgressBar from '../../components/progressBar/progressBar';
-import styled from 'styled-components';
-
-const MissionButtonsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-`;
+import Page from '../../components/page/page';
+import { ContinueButton } from '../../components/continueButton/continueButton';
 
 export interface MissionPageProps {
   game: GameData<'mission'>;
@@ -64,34 +59,33 @@ export class MissionPage extends PureComponent<
         <ProgressBar {...this.props.game} />
         {this.playerIsOnMission ? (
           <>
-            <MissionButtonsContainer>
-              <MissionButton
-                icon={'✊'}
-                text={'Success'}
-                isSelected={this.state.voteToSucceed === true}
-                onClick={(): void => this.makeDecision(true)}
-              />
-              <MissionButton
-                icon={'💀'}
-                text={'Fail'}
-                isSelected={this.state.voteToSucceed === false}
-                onClick={(): void => this.makeDecision(false)}
-              />
-            </MissionButtonsContainer>
-            <button
+            <MissionButton
+              icon={'✊'}
+              text={'Success'}
+              isSelected={this.state.voteToSucceed === true}
+              onClick={(): void => this.makeDecision(true)}
+            />
+            <MissionButton
+              icon={'💀'}
+              text={'Fail'}
+              isSelected={this.state.voteToSucceed === false}
+              onClick={(): void => this.makeDecision(false)}
+            />
+            <ContinueButton
               onClick={this.submit}
               disabled={
                 this.state.voteToSucceed === null ||
                 (hasVoted &&
                   this.secretData.votedToSucceed === this.state.voteToSucceed)
               }
-            >
-              {!hasVoted
-                ? 'Submit'
-                : this.secretData.votedToSucceed === this.state.voteToSucceed
-                ? 'Submitted'
-                : 'Resubmit'}
-            </button>
+              text={
+                !hasVoted
+                  ? 'Submit'
+                  : this.secretData.votedToSucceed === this.state.voteToSucceed
+                  ? 'Submitted'
+                  : 'Resubmit'
+              }
+            />
           </>
         ) : (
           <>

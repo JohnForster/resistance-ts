@@ -4,6 +4,7 @@ import { GameData } from '@shared/types/gameData';
 import { PlayerData } from '@shared/types/playerData';
 import * as Styled from './styled';
 import Page from '../../components/page/page';
+import { ContinueButton } from '../../components/continueButton/continueButton';
 
 export interface LobbyPageProps {
   game: GameData<'lobby'>;
@@ -22,18 +23,14 @@ export const LobbyPage: React.FC<LobbyPageProps> = (props) => (
         <p key={`player-${i}`}>{p.name}</p>
       ))}
     </Styled.PlayerContainer>
-    {props.game.isHost ? (
-      <button
-        name="begingame"
-        onClick={props.beginGame}
-        disabled={props.game.players.length < 2}
-      >
-        Begin Game
-      </button>
-    ) : (
-      <p>
-        Waiting for <span>{props.game.hostName}</span> to start the game.
-      </p>
-    )}
+    <ContinueButton
+      hidden={!props.game.isHost}
+      name="begingame"
+      onClick={props.beginGame}
+      disabled={props.game.players.length < 2}
+      text="Begin Game"
+      subtext={`Waiting for ${props.game.hostName} to start the game.`}
+      hideSubtext={props.game.isHost}
+    />
   </Page>
 );

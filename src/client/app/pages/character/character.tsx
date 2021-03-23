@@ -7,6 +7,7 @@ import {
 } from '@shared/types/gameData';
 import Page from '../../components/page/page';
 import listString from '../../helpers/listString';
+import { ContinueButton } from '../../components/continueButton/continueButton';
 
 export interface CharacterPageProps {
   confirmCharacter: () => void;
@@ -65,20 +66,16 @@ export class CharacterPage extends PureComponent<
             ))}
           </>
         )}
-        <button
+        <ContinueButton
           disabled={this.state.hasConfirmed}
           onClick={this.confirmCharacter}
           name="confirmcharacter"
-        >
-          OK
-        </button>
-        {playerIsWaiting && (
-          <p>
-            Waiting for{' '}
-            {listString(this.roundData.unconfirmedPlayerNames, 'and')} to
-            confirm...
-          </p>
-        )}
+          subtext={`Waiting for ${listString(
+            this.roundData.unconfirmedPlayerNames,
+            'and',
+          )} to confirm...`}
+          hideSubtext={!playerIsWaiting}
+        />
       </Page>
     );
   }

@@ -6,7 +6,7 @@ export const voteResultStep = (
   { label }: { label?: number | string } = {},
 ) => async ({ page }: Instance) => {
   await expect(page).toMatch('Vote Results');
-  await expect(page).toMatch('Ready');
-  await expect(page).toClick('button', { text: 'Ready' });
+  await expect(page).toMatch('Continue');
+  await expect(page).toClick('button', { text: 'Continue' });
   await waitForAll(`voteResultComplete-${label}`);
 };

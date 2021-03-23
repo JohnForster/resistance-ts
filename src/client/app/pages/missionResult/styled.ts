@@ -51,8 +51,6 @@ export const Result = styled.div`
   ${slamAnimation}
 `;
 
-// eslint-disable-next-line
-// @ts-ignore
 export const OverallResult = styled.h1`
   pointer-events: none;
   // TODO add media query here

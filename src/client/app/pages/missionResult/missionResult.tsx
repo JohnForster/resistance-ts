@@ -5,6 +5,7 @@ import { GameData } from '@shared/types/gameData';
 
 import * as Styled from './styled';
 import listString from '../../helpers/listString';
+import { ContinueButton } from '../../components/continueButton/continueButton';
 
 export interface MissionResultProps {
   game: GameData<'missionResult'>;
@@ -45,15 +46,17 @@ export const MissionResultPage: React.FC<MissionResultProps> = (
       <Styled.OverallResult numOfVotes={resultArray.length}>
         {roundData.missionSucceeded ? 'MISSION ACCOMPLISHED' : 'MISSION FAILED'}
       </Styled.OverallResult>
-      <button disabled={playerWantsToContinue} onClick={confirm}>
-        Continue
-      </button>
-      {!!(playerWantsToContinue && roundData.unconfirmedPlayerNames) && (
-        <p>
-          Waiting for {listString(roundData.unconfirmedPlayerNames, 'and')} to
-          confirm...
-        </p>
-      )}
+      <ContinueButton
+        disabled={playerWantsToContinue}
+        onClick={confirm}
+        subtext={`Waiting for ${listString(
+          roundData.unconfirmedPlayerNames,
+          'and',
+        )} to confirm...`}
+        hideSubtext={
+          !playerWantsToContinue || !roundData.unconfirmedPlayerNames
+        }
+      />
     </Page>
   );
 };

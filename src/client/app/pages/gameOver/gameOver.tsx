@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { GameData } from '@shared/types/gameData';
 import Page from '../../components/page/page';
+import { ContinueButton } from '../../components/continueButton/continueButton';
 
 interface Props {
   game: GameData<'gameOver'>;
@@ -28,9 +29,11 @@ export const GameOverPage: React.FC<Props> = (props) => {
           ))}
         </>
       )}
-      <button onClick={props.continue} name="returnToMainScreen">
-        Return to main screen
-      </button>
+      <ContinueButton
+        text="Return to main screen"
+        onClick={props.continue}
+        name="returnToMainScreen"
+      ></ContinueButton>
     </Page>
   );
 };

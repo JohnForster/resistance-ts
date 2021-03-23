@@ -4,6 +4,7 @@ import { GameData } from '@shared/types/gameData';
 import Page from '../../components/page/page';
 import listString from '../../helpers/listString';
 import ProgressBar from '../../components/progressBar/progressBar';
+import { ContinueButton } from '../../components/continueButton/continueButton';
 
 import * as Styled from './styled';
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
   submitVote: (playerApproves: boolean) => void;
 }
 
+// TODO Refactor this page to allow changing vote after submit?
 export const VotingPage: React.FC<Props> = (props) => {
   const [playerApproves, setPlayerApproves] = useState<boolean>(null);
   const { roundData, secretData } = props.game;
@@ -49,13 +51,11 @@ export const VotingPage: React.FC<Props> = (props) => {
               👎
             </Styled.VoteButton>
           </Styled.ButtonContainer>
-          <button
-            // TODO Allow changing votes by ungreying if they choose something else?
+          <ContinueButton
+            text="Submit"
             disabled={playerApproves === null}
             onClick={() => props.submitVote(playerApproves)}
-          >
-            Submit
-          </button>
+          />
         </>
       )}
     </Page>
