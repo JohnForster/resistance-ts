@@ -10,6 +10,13 @@ import Page from '../../components/page/page';
 import listString from '../../helpers/listString';
 import { MissionButton } from '../../components/missionButton/missionButton';
 import ProgressBar from '../../components/progressBar/progressBar';
+import styled from 'styled-components';
+
+const MissionButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+`;
 
 export interface MissionPageProps {
   game: GameData<'mission'>;
@@ -57,18 +64,20 @@ export class MissionPage extends PureComponent<
         <ProgressBar {...this.props.game} />
         {this.playerIsOnMission ? (
           <>
-            <MissionButton
-              icon={'✊'}
-              text={'Success'}
-              isSelected={this.state.voteToSucceed === true}
-              onClick={(): void => this.makeDecision(true)}
-            />
-            <MissionButton
-              icon={'💀'}
-              text={'Fail'}
-              isSelected={this.state.voteToSucceed === false}
-              onClick={(): void => this.makeDecision(false)}
-            />
+            <MissionButtonsContainer>
+              <MissionButton
+                icon={'✊'}
+                text={'Success'}
+                isSelected={this.state.voteToSucceed === true}
+                onClick={(): void => this.makeDecision(true)}
+              />
+              <MissionButton
+                icon={'💀'}
+                text={'Fail'}
+                isSelected={this.state.voteToSucceed === false}
+                onClick={(): void => this.makeDecision(false)}
+              />
+            </MissionButtonsContainer>
             <button
               onClick={this.submit}
               disabled={
