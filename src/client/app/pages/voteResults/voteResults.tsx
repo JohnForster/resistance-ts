@@ -1,8 +1,8 @@
 import React from 'react';
-import { GameData } from '@shared/types/gameData';
-import Page from '../../components/page/page';
-import listString from '../../helpers/listString';
 import styled from 'styled-components';
+import { GameData } from '@shared/types/gameData';
+import listString from '../../helpers/listString';
+import Page from '../../components/page/page';
 import { ContinueButton } from '../../components/continueButton/continueButton';
 
 interface VoteResultsProps {
@@ -18,6 +18,19 @@ export const MainContent = styled.div`
   flex-grow: 1;
 `;
 
+const PlayerResult = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 50%;
+`;
+
+const SubTitle = styled.span`
+  align-self: baseline;
+  text-decoration: underline;
+  padding-top: 0.6rem;
+`;
+
 export const VoteResultsPage: React.FC<VoteResultsProps> = (props) => {
   const [isReady, setIsReady] = React.useState(false);
 
@@ -29,17 +42,30 @@ export const VoteResultsPage: React.FC<VoteResultsProps> = (props) => {
     props.confirmReady();
   };
 
+  const forVotes = props.game.roundData.votes.filter((v) => v.playerApproves);
+  const againstVotes = props.game.roundData.votes.filter(
+    (v) => !v.playerApproves,
+  );
+
   const voteSucceeded = props.game.roundData.voteSucceeded;
-  // TODO make this less ugly
   return (
     <Page>
-      <h2>Vote Results</h2>
+      <h2>{voteSucceeded ? 'Nomination Succeeded' : 'Nomination Failed'}</h2>
       <MainContent>
-        <h3>{voteSucceeded ? 'Nomination Succeeded' : 'Nomination Failed'}</h3>
-        {props.game.roundData.votes.map((vote, i) => (
-          <p key={`vote-${i}`}>
-            {vote.name}: {vote.playerApproves ? '👍' : '👎'}
-          </p>
+        <SubTitle>Votes For:</SubTitle>
+        {forVotes.length === 0 && <span>none</span>}
+        {forVotes.map((vote) => (
+          <PlayerResult key={`vote-${vote.id}`}>
+            <span>{vote.name}:</span>
+            <span>👍</span>
+          </PlayerResult>
+        ))}
+        <SubTitle>Votes Against:</SubTitle>
+        {againstVotes.map((vote) => (
+          <PlayerResult key={`vote-${vote.id}`}>
+            <span>{vote.name}:</span>
+            <span>👎</span>
+          </PlayerResult>
         ))}
         {!voteSucceeded && (
           <h3>{props.game.roundData.votesRemaining} nominations remain...</h3>

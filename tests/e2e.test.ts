@@ -1,6 +1,5 @@
-import 'expect-puppeteer';
+import { setDefaultOptions as setExpectPuppeteerOptions } from 'expect-puppeteer';
 import puppeteer from 'puppeteer';
-import shuffle from 'lodash/shuffle';
 import { ForAllFn, getForAll } from './helpers/instances';
 import { EventFns, getEventFns } from './helpers/getEventFns';
 import { voteResultStep } from './steps/voteResultStep';
@@ -22,7 +21,7 @@ const screenSize = {
   width: 500,
 };
 
-const names = shuffle([
+const names = [
   'John',
   'Alice',
   'Jamie',
@@ -33,9 +32,12 @@ const names = shuffle([
   'Amanda',
   'Ben',
   'Lola',
-]);
+];
 
-jest.setTimeout(18_000 + players * 500);
+const devices = ['iPhone SE'];
+
+jest.setTimeout(15_000 + players * 1500);
+setExpectPuppeteerOptions({ timeout: 500 + players * 100 });
 
 const options: puppeteer.PuppeteerNodeLaunchOptions = {
   headless: showoffMode ? false : true,
@@ -59,10 +61,10 @@ describe(`Let's play resistance with ${players} players!`, () => {
     );
 
   beforeAll(async () => {
-    all = await getForAll(players, names, options);
+    all = await getForAll(players, names, devices, options);
 
-    await all(async ({ page }) => {
-      await page.emulate(puppeteer.devices['iPhone SE']);
+    await all(async ({ page, device }) => {
+      await page.emulate(puppeteer.devices[device]);
     });
   });
 

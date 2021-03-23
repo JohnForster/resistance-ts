@@ -5,8 +5,8 @@ import { Instance } from '../helpers/instances';
 export const nominationStep = (
   { waitForAll }: Partial<EventFns>,
   { label }: { label?: number | string } = {},
-) => async ({ page, players }: Instance) => {
-  await expect(page).toMatch(/(Waiting for \w+ to nominate|Nominate)/); // Replace this with an expect to match?
+) => async ({ page, players, device }: Instance) => {
+  await expect(page).toMatch(/(Waiting for \w+ to nominate|Nominate)/);
   const playerNames = await page.evaluate(() =>
     Array.from(document.querySelectorAll('#nominatename')).map(
       (el) => el.textContent,
@@ -16,6 +16,7 @@ export const nominationStep = (
   const isNominating = !!playerNames.length;
   if (isNominating) {
     expect(playerNames.length).toEqual(players);
+
     // Minging hack to get number of people to nominate
     const count = parseInt(
       await page.evaluate(
@@ -28,6 +29,9 @@ export const nominationStep = (
     await Promise.all(
       nominations.map((name) => expect(page).toClick('button', { text: name })),
     );
+    await page.screenshot({
+      path: `tests/screens/nomination-${device.replace(' ', '')}.png`,
+    });
     expect(page).toClick('button', { text: 'Submit' });
   }
   await waitForAll(`nominationComplete-${label}`);

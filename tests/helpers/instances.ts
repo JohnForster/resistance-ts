@@ -6,6 +6,7 @@ export type Instance = {
   browser: puppeteer.Browser;
   players: number;
   page: puppeteer.Page;
+  device: string;
 };
 
 export type ForAllFn = <A = any>(fn: (i: Instance) => A) => Promise<A[]>;
@@ -13,11 +14,18 @@ export type ForAllFn = <A = any>(fn: (i: Instance) => A) => Promise<A[]>;
 export const getForAll = async (
   players: number,
   names: string[],
+  devices: string[],
   options: PuppeteerNodeLaunchOptions,
 ) => {
   let instances = await Promise.all(
     [...Array(players).keys()].map((i) =>
-      createNewInstance(i, names[i], players, options),
+      createNewInstance(
+        i,
+        names[i],
+        devices[i % devices.length],
+        players,
+        options,
+      ),
     ),
   );
 
@@ -30,13 +38,16 @@ export const getForAll = async (
 const createNewInstance = async (
   i: number,
   name: string,
+  device: string,
   players: number,
   options: PuppeteerNodeLaunchOptions,
 ) => {
-  const args: string[] = [
-    `--window-size=${options.defaultViewport.width},${options.defaultViewport.height}`,
-    `--window-position=${500 * (i % 4)},${Math.floor(i / 4) * 500}`,
-  ];
+  const args: string[] = options.headless
+    ? []
+    : [
+        `--window-size=${options.defaultViewport.width},${options.defaultViewport.height}`,
+        `--window-position=${500 * (i % 4)},${Math.floor(i / 4) * 500}`,
+      ];
 
   const browser = await puppeteer.launch({ ...options, args });
   const pages = await browser.pages();
@@ -46,6 +57,7 @@ const createNewInstance = async (
     i,
     name,
     browser,
+    device,
     page,
     players,
   };
