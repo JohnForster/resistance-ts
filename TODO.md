@@ -29,35 +29,44 @@
 - 🐞 No feedback on submitting mission choice ✅
 - 🐞 Prevent disconnection ✅
 - ⭐️ Add endgame pages ✅
+- 🐞 Fix nominations not cycling ✅
+- 🐞 Fix nomination count not resetting ✅
 - ⭐️ Add quit game functionality in lobby/elsewhere ✅
+- 🐞 Small screens probably cannot handle large games. (Allow scrolling?) ✅
+- 🐞 Small screens cannot fully show the nomination vote page with long names. ✅
+- ⭐️ Add reconnecting display ✅
+- ⭐️ Improve endgame pages ✅
+- ⭐️ Randomise starting leader ✅
+- 🐞 Menu toggle not working ✅
+- 🔧 Test on real phones ✅
 
 ---
 
 #### FEATURES:
 
-- ⭐️ Add loading display
-- ⭐️ Improve endgame pages
 - ⭐️ Characters
 - ⭐️ Character selection
+- ⭐️ Allow reordering players
+- ⭐️ Lady of the Lake
+- ⭐️ Allow name change
+- ⭐️ Avalon Theme
 - ⭐️ Remove hostID
 
 ---
 
 #### BUGS:
 
-- 🐞 Small screens probably cannot handle large games. (Allow scrolling?)
-- 🐞 Small screens cannot fully show the nomination vote page with long names.
+- 🐞 Probably will fuck up if you enter a long name.
 - 🐞 Opening two tabs allows one user to have two websocket connections open? - Close one websocket on opening another.
 - 🐞 Probably need to close/clear games that haven't been used in a while.
-- 🐞 Do nominations cycle?
 
 ---
 
 #### TECH DEBT:
 
-- 🔧 Test on real phones
 - 🔧 Refactor react classes into functional components
 - 🔧 Split ids into private/public?
 - 🔧 Go through TODO comments
 - 🔧 Split events between client/server
 - 🔧 Rename files to their exports
+- 🔧 Rework testing steps to facilitate taking screenshots.
