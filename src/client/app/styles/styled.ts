@@ -1,9 +1,7 @@
 import clamp from 'lodash/clamp';
-import styled, { createGlobalStyle, css } from 'styled-components';
+import styled, { createGlobalStyle, css } from './themed-styled-components';
 import responsive from '../helpers/responsive';
-
-const DARK_BLUE = '#1C2C59';
-
+import { Background } from '../themes';
 export const Global = createGlobalStyle`
   body, html, #root {
     height: 100%;
@@ -11,17 +9,17 @@ export const Global = createGlobalStyle`
   }
 
   body {
-    font-family: 'Turret Road';
-    text-shadow: 2px 2px 8px ${DARK_BLUE};
+    font-family: '${({ theme }) => theme.fontFamily}';
+    text-shadow: 2px 2px 4px ${({ theme }) => theme.colours.shadow};
     margin: 0;
-    align-self:center;
-    color:white;
-    background-color: ${DARK_BLUE}
+    align-self: center;
+    color: white;
+    background-color: ${({ theme }) => theme.colours.button};
   }
 
   button, input {
     margin: 10px 0px;
-    font-family: 'Turret Road';
+    font-family: '${({ theme }) => theme.fontFamily}';
     text-shadow: none;
     width: 100%;
 
@@ -35,7 +33,7 @@ export const Global = createGlobalStyle`
     border-radius: 0;
     padding: 10px;
     border: 0px;
-    background: #1C2C59;
+    background: ${({ theme }) => theme.colours.button};
     font-weight: bold;
     color: white;
 
@@ -50,7 +48,7 @@ export const Global = createGlobalStyle`
     text-align: center;
     text-shadow: none;
     border: 1px solid black;
-    color: ${DARK_BLUE};
+    color: ${({ theme }) => theme.colours.button};
   }
 
   p {
@@ -83,48 +81,62 @@ export const AppContainer = styled.div`
   `};
 `;
 
-const BG_RESOLUTION = { x: 1920, y: 1080 };
-const ACTUAL_DUDE_POSITION = { left: 690, top: 720 };
-const IDEAL_POSITION = { left: 0.2, top: 0.8 };
+const getTransform = (
+  screen: { width: number; height: number },
+  image: Background,
+) => {
+  const scaleX = screen.width / image.resolution.x;
+  const scaleY = screen.height / image.resolution.y;
+  const scale = Math.max(scaleX, scaleY);
 
-const getTransform = (screen: { width: number; height: number }) => {
+  const imageSize = {
+    x: scale * image.resolution.x,
+    y: scale * image.resolution.y,
+  };
+
+  const scaledPositionOfInterest = {
+    left: scale * image.pointOfInterest.x,
+    top: scale * image.pointOfInterest.y,
+  };
+
   const idealPositionOnScreen = {
-    left: screen.width * IDEAL_POSITION.left,
-    top: screen.height * IDEAL_POSITION.top,
+    left: screen.width * image.idealPointLocation.left,
+    top: screen.height * image.idealPointLocation.top,
   };
 
-  const adjustment = {
-    top: idealPositionOnScreen.top - ACTUAL_DUDE_POSITION.top,
-    left: idealPositionOnScreen.left - ACTUAL_DUDE_POSITION.left,
+  const exactAdjustment = {
+    left: idealPositionOnScreen.left - scaledPositionOfInterest.left,
+    top: idealPositionOnScreen.top - scaledPositionOfInterest.top,
   };
 
-  const maximums = {
-    top: Math.max(0, BG_RESOLUTION.y - screen.height),
-    left: Math.max(0, BG_RESOLUTION.x - screen.width),
+  // How far the image can be moved in each direction while still
+  // being on screen.
+  const adjustmentLimits = {
+    left: screen.width - imageSize.x,
+    top: screen.height - imageSize.y,
   };
 
-  const scaleX = screen.width / BG_RESOLUTION.x;
-  const scaleY = screen.height / BG_RESOLUTION.y;
-
-  const scale = Math.max(1, scaleX, scaleY);
-
-  const translateX = clamp(adjustment.left, -maximums.left, 0);
-  const translateY = clamp(adjustment.top, -maximums.top, 0);
+  const translate = {
+    x: clamp(exactAdjustment.left, adjustmentLimits.left, 0),
+    y: clamp(exactAdjustment.top, adjustmentLimits.top, 0),
+  };
 
   return css`
     transform: scale(${scale})
-      translate(${translateX * scale}px, ${translateY * scale}px);
+      translate(${translate.x / scale}px, ${translate.y / scale}px);
   `;
 };
 
 type ScreenSize = { width: number; height: number };
-export const BackgroundImage = styled.img<{ screenSize: ScreenSize }>`
+export const BackgroundImage = styled.img<{
+  screenSize: ScreenSize;
+}>`
   position: fixed;
   overflow: hidden;
   transform-origin: top left;
-  ${({ screenSize }) => getTransform(screenSize)}
+  ${({ screenSize, theme }) => getTransform(screenSize, theme.background)}
   z-index: -1;
-  filter: blur(3px) brightness(0.9);
+  filter: blur(3px) brightness(${({ theme }) => theme.brightness});
 `;
 
 export const LoadingContainer = styled.div`

@@ -11,6 +11,8 @@ import IOEventEmitter from './helpers/IOEventEmitter';
 import * as Pages from './pages';
 import * as Styled from './styles/styled';
 import { MenuButton } from './components/menuButton/MenuButton';
+import { themes } from './themes';
+import { ThemeProvider } from './styles/themed-styled-components';
 
 const isMobile = _isMobile();
 
@@ -21,6 +23,7 @@ interface AppState {
   screenSize: { width: number; height: number };
   menuIsOpen: boolean;
   connected: boolean;
+  theme: 'avalon' | 'resistance';
 }
 
 const APIAddress = window.location.host;
@@ -39,6 +42,7 @@ export default class App extends PureComponent<{}, AppState> {
     eventEmitter: new IOEventEmitter(APIAddress),
     menuIsOpen: false,
     connected: true,
+    theme: 'avalon',
   };
 
   componentDidMount(): void {
@@ -158,14 +162,18 @@ export default class App extends PureComponent<{}, AppState> {
     this.setState({ menuIsOpen: false });
   };
 
+  get theme() {
+    return themes[this.state.theme];
+  }
+
   render(): JSX.Element {
     return (
-      <>
+      <ThemeProvider theme={this.theme}>
         <Styled.Global />
         <Styled.AppContainer>
           <Styled.BackgroundImage
             screenSize={this.state.screenSize}
-            src="assets/bg.jpg"
+            src={this.theme.background.path}
             alt=""
           />
           {!!this.state.game && (
@@ -177,9 +185,22 @@ export default class App extends PureComponent<{}, AppState> {
             />
           )}
           {process.env.NODE_ENV === 'development' && (
-            <p style={{ fontSize: '8px', position: 'absolute' }}>
-              {this.state.player?.name}
-            </p>
+            <>
+              <button
+                style={{ width: '15px', height: '15px', position: 'absolute' }}
+                onClick={() =>
+                  this.setState({
+                    theme:
+                      this.state.theme === 'avalon' ? 'resistance' : 'avalon',
+                  })
+                }
+              >
+                -
+              </button>
+              <p style={{ fontSize: '8px', position: 'absolute' }}>
+                {this.state.player?.name}
+              </p>
+            </>
           )}
           {/* TODO: Add connecting indicator */}
 
@@ -246,7 +267,7 @@ export default class App extends PureComponent<{}, AppState> {
             <></>
           )}
         </Styled.AppContainer>
-      </>
+      </ThemeProvider>
     );
   }
 }
