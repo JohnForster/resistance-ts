@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import { PlayerData } from '@shared/types/playerData';
+import { PlayerData } from 'shared';
 import Page from '../../components/page/page';
 
 export interface LandingPageProps {

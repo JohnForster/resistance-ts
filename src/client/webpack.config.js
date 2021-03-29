@@ -76,9 +76,6 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
-    alias: {
-      '@shared': path.resolve(__dirname, '../shared'),
-    },
   },
   plugins: [...prodPlugins, ...(isDev ? devPlugins : [])],
   watchOptions: {

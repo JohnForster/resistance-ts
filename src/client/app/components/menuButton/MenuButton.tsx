@@ -1,5 +1,6 @@
 import * as React from 'react';
-import styled from 'styled-components';
+
+import styled from '../../styles/themed-styled-components';
 
 const Hamburger = styled.div<{ checked: boolean }>`
   position: relative;
@@ -7,8 +8,8 @@ const Hamburger = styled.div<{ checked: boolean }>`
   width: 1.25em;
   height: 0.8em;
   margin-right: 0.3em;
-  border-top: 0.2em solid #fff;
-  border-bottom: 0.2em solid #fff;
+  border-top: 0.2em solid ${({ theme }) => theme.colours.menu};
+  border-bottom: 0.2em solid ${({ theme }) => theme.colours.menu};
 
   :before {
     content: '';
@@ -16,7 +17,7 @@ const Hamburger = styled.div<{ checked: boolean }>`
     top: 0.3em;
     left: 0px;
     width: 100%;
-    border-top: 0.2em solid #fff;
+    border-top: 0.2em solid ${({ theme }) => theme.colours.menu};
   }
 
   margin: 1rem;

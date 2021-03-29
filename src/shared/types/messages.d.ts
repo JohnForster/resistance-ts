@@ -1,7 +1,7 @@
 // TODO add discriminants to all messages
 // TODO PlayerData event?
 
-import { GameOverSecretData } from './gameData';
+import { Character, GameOverSecretData } from './gameData';
 
 type BaseMessage = {
   playerID: string;
@@ -17,6 +17,7 @@ export type LobbyMessage = BaseMessage &
     | {
         type: 'startGame';
         playerID: string;
+        characters: { [key in Exclude<Character, 'Assassin'>]: boolean };
       }
     // | {
     //     type: 'reorder';

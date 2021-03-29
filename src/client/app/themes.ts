@@ -2,11 +2,13 @@ export interface Theme {
   name: string;
   background: Background;
   colours: {
+    menu: string;
     button: string;
     shadow: string;
   };
   fontFamily: string;
   brightness: string;
+  fontSizeAdjust: number;
 }
 
 export type Background = {
@@ -45,28 +47,33 @@ const colours = {
   darkBlue: '#1C2C59',
   darkGreen: '#283224',
   lightBlue: '#6F99B4',
+  white: '#FFF',
 };
 
 const avalon: Theme = {
   name: 'avalon',
   colours: {
-    button: colours.lightBlue,
+    menu: colours.darkGreen,
+    button: colours.darkGreen,
     shadow: colours.darkGreen,
   },
   background: CASTLE,
   fontFamily: 'Fondamento',
   brightness: '1',
+  fontSizeAdjust: 0.9,
 };
 
 const resistance: Theme = {
   name: 'resistance',
   colours: {
+    menu: colours.white,
     button: colours.darkBlue,
     shadow: colours.darkBlue,
   },
   background: SKYLINE,
   fontFamily: 'Turret Road',
   brightness: '0.9',
+  fontSizeAdjust: 0,
 };
 
 export const themes: Record<ThemeName, Theme> = {

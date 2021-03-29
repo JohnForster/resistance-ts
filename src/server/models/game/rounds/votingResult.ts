@@ -1,10 +1,5 @@
-import {
-  GameHistory,
-  Nomination,
-  PlayerId,
-  RoundName,
-} from '@shared/types/gameData';
-import { VotingResultMessage } from '@shared/types/messages';
+import { GameHistory, Nomination, PlayerId, RoundName } from 'shared';
+import { VotingResultMessage } from 'shared';
 import { Round } from '.';
 import { Game } from '../game';
 import { getUser } from '../../user';

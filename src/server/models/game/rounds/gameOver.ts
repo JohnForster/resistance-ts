@@ -1,9 +1,5 @@
-import {
-  GameOverPublicData,
-  GameOverSecretData,
-  RoundName,
-} from '@shared/types/gameData';
-import { GameOverMessage } from '@shared/types/messages';
+import { GameOverPublicData, GameOverSecretData, RoundName } from 'shared';
+import { GameOverMessage } from 'shared';
 import { getUser } from '../../user';
 
 import { Game } from '../game';

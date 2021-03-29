@@ -4,7 +4,7 @@ import {
   GameData,
   CharacterRoundSecretData,
   CharacterRoundPublicData,
-} from '@shared/types/gameData';
+} from 'shared';
 import Page from '../../components/page/page';
 import listString from '../../helpers/listString';
 import { ContinueButton } from '../../components/continueButton/continueButton';

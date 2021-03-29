@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 interface Props {
   text?: string;
-  subtext?: string;
+  subtext?: React.ReactElement | string;
   onClick: React.ReactEventHandler<HTMLButtonElement>;
   hidden?: boolean;
   disabled?: boolean;

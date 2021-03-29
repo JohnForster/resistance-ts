@@ -1,4 +1,4 @@
-import { GameData } from '@shared/types/gameData';
+import { GameData } from 'shared';
 
 export const isLobbyRound = (game: GameData): game is GameData<'lobby'> => {
   return game.missionNumber === 0 && game.stage === 'lobby';

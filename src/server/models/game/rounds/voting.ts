@@ -5,9 +5,9 @@ import {
   RoundName,
   VotingRoundPublicData,
   VotingRoundSecretData,
-} from '@shared/types/gameData';
+} from 'shared';
 
-import { VotingMessage } from '@shared/types/messages';
+import { VotingMessage } from 'shared';
 
 import { Game, Player } from '../game';
 import { Round } from './round';

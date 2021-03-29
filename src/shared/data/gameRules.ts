@@ -1,4 +1,4 @@
-export interface Rules {
+export type Rules = {
   numberOfSpies: number;
   numberOfResistance: number;
   missions: {
@@ -7,7 +7,7 @@ export interface Rules {
       failsRequired: number;
     };
   };
-}
+};
 
 const devRules: { [playres: number]: Rules } = {
   2: {

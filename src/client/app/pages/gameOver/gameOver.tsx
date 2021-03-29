@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameData } from '@shared/types/gameData';
+import { GameData } from 'shared';
 import Page from '../../components/page/page';
 import { ContinueButton } from '../../components/continueButton/continueButton';
 

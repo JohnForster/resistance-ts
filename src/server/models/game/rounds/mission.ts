@@ -8,8 +8,8 @@ import {
   GameHistory,
   OngoingMission,
   PlayerId,
-} from '@shared/types/gameData';
-import { MissionRoundMessage } from '@shared/types/messages';
+} from 'shared';
+import { MissionRoundMessage } from 'shared';
 import { getUser } from '../../user';
 export class MissionRound implements Round<'mission'> {
   public roundName = 'mission' as const;

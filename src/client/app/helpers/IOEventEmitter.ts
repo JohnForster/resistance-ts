@@ -1,4 +1,4 @@
-import { Message } from '@shared/types/messages';
+import { Message } from 'shared';
 import { io, Socket } from 'socket.io-client';
 import {
   Callback,

@@ -70,3 +70,4 @@
 - 🔧 Split events between client/server
 - 🔧 Rename files to their exports
 - 🔧 Rework testing steps to facilitate taking screenshots.
+- 🔧 Split puppeteer commands/assertions

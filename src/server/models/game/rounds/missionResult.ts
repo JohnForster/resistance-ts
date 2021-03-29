@@ -6,8 +6,8 @@ import {
   MissionResultSecretData,
   PlayerId,
   RoundName,
-} from '@shared/types/gameData';
-import { MissionResultMessage } from '@shared/types/messages';
+} from 'shared';
+import { MissionResultMessage } from 'shared';
 import { getUser } from '../../user';
 
 export class MissionResult implements Round<'missionResult'> {

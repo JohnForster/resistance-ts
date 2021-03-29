@@ -7,10 +7,6 @@
     "target": "ES6",
     "module": "commonjs",
     "types": ["node"],
-    "baseUrl": ".",
-    "paths": {
-      "@shared/*": ["../shared/*"]
-    }
-  },
-  "files": ["server.ts"]
+    "baseUrl": "."
+  }
 }

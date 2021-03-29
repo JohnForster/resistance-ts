@@ -29,8 +29,14 @@ export const createUser = (socket: Socket): User => {
   return user;
 };
 
-export const getUser = (userID: string) => {
-  return storage.users.get(userID);
+export const getUser = (userID: string): User => {
+  const user = storage.users.get(userID);
+  if (!user) throw new Error(`No user found with id: ${userID}`);
+  return user;
+};
+
+export const isUser = (userID: string) => {
+  return storage.users.has(userID);
 };
 
 export const updateUser = (userID: string, update: Partial<User>) => {

@@ -17,7 +17,7 @@ export const Global = createGlobalStyle`
     background-color: ${({ theme }) => theme.colours.button};
   }
 
-  button, input {
+  button, input[type="text"] {
     margin: 10px 0px;
     font-family: '${({ theme }) => theme.fontFamily}';
     text-shadow: none;
@@ -43,7 +43,7 @@ export const Global = createGlobalStyle`
     }
   }
 
-  input {
+  input[type="text"] {
     padding: 10px 0px;
     text-align: center;
     text-shadow: none;

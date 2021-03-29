@@ -1,4 +1,4 @@
-import { RoundName } from '@shared/types/gameData';
+import { RoundName } from 'shared';
 import {
   MissionRound,
   NominationRound,
@@ -11,8 +11,7 @@ import {
   GameOverRound,
 } from './rounds';
 
-// export const rounds: { [r in RoundName]: RoundConstructor } = {
-export const rounds: Record<RoundName, RoundConstructor> = {
+export const rounds: { [r in RoundName]: RoundConstructor } = {
   lobby: LobbyRound,
   character: CharacterRound,
   nomination: NominationRound,

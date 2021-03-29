@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GameData } from '@shared/types/gameData';
+import { GameData } from 'shared';
 
 import Page from '../../components/page/page';
 import listString from '../../helpers/listString';

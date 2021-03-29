@@ -1,4 +1,4 @@
-import { GameData } from '@shared/types/gameData';
+import { GameData } from 'shared';
 import * as React from 'react';
 import styled from 'styled-components';
 import Page from '../../components/page/page';

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import { GameData, NominationRoundPublicData } from '@shared/types/gameData';
+import { GameData, NominationRoundPublicData } from 'shared';
 import Page from '../../components/page/page';
 import ProgressBar from '../../components/progressBar/progressBar';
 import NominateButton from '../../components/nominateButton/nominatebutton';

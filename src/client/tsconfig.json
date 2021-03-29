@@ -5,13 +5,7 @@
     "esModuleInterop": true,
     "module": "commonjs",
     "target": "ES2017",
-    "jsx": "react",
-    "baseUrl": ".",
-    "paths": {
-      "@shared/*": ["../shared/*"],
-      "@client/*": ["./*"]
-    }
+    "jsx": "react"
   },
-  "files": ["index.tsx"],
   "skipLibCheck": true
 }

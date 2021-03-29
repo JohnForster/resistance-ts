@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { GameData } from '@shared/types/gameData';
+import { GameData } from 'shared';
 import listString from '../../helpers/listString';
 import Page from '../../components/page/page';
 import { ContinueButton } from '../../components/continueButton/continueButton';

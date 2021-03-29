@@ -2,10 +2,10 @@ import React, { PureComponent } from 'react';
 import Cookies from 'js-cookie';
 import _isMobile from 'ismobilejs';
 
-import { DataByEventName } from '@shared/types/eventTypes';
+import { DataByEventName } from 'shared';
 
 import * as typeGuards from '../types/typeGuards';
-import { GameData } from '@shared/types/gameData';
+import { Character, GameData } from 'shared';
 
 import IOEventEmitter from './helpers/IOEventEmitter';
 import * as Pages from './pages';
@@ -24,7 +24,16 @@ interface AppState {
   menuIsOpen: boolean;
   connected: boolean;
   theme: 'avalon' | 'resistance';
+  characters: { [key in Exclude<Character, 'Assassin'>]?: boolean };
 }
+
+const defaultCharacters: { [key in Exclude<Character, 'Assassin'>]: false } = {
+  Merlin: false,
+  Percival: false,
+  Morgana: false,
+  Mordred: false,
+  Oberon: false,
+};
 
 const APIAddress = window.location.host;
 
@@ -43,6 +52,7 @@ export default class App extends PureComponent<{}, AppState> {
     menuIsOpen: false,
     connected: true,
     theme: 'avalon',
+    characters: {},
   };
 
   componentDidMount(): void {
@@ -106,11 +116,18 @@ export default class App extends PureComponent<{}, AppState> {
     this.setState({ player });
   };
 
-  beginGame = (): void => {
+  beginGame = (
+    characters: Record<Exclude<Character, 'Assassin'>, boolean>,
+  ): void => {
     const { gameID, playerID } = this.state.game;
+
     this.state.eventEmitter.sendMessage({
       gameID,
       playerID,
+      characters: {
+        ...defaultCharacters,
+        ...characters,
+      },
       type: 'startGame',
     });
   };
@@ -225,7 +242,6 @@ export default class App extends PureComponent<{}, AppState> {
           ) : typeGuards.isLobbyRound(this.state.game) ? (
             <Pages.LobbyPage
               game={this.state.game}
-              player={this.state.player}
               beginGame={this.beginGame}
             />
           ) : typeGuards.isCharacterRound(this.state.game) ? (

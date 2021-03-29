@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import Page from '../../components/page/page';
-import { GameData } from '@shared/types/gameData';
+import { GameData } from 'shared';
 
 import * as Styled from './styled';
 import listString from '../../helpers/listString';

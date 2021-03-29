@@ -1,15 +1,16 @@
-import { CancelGameEvent, EventByName } from '@shared/types/eventTypes';
+import { EventByName } from 'shared';
 import {
+  Character,
   GameHistory,
   OngoingMission,
   PlayerId,
   RoundName,
-} from '@shared/types/gameData';
-import { Message } from '@shared/types/messages';
+} from 'shared';
+import { Message } from 'shared';
 
 import generateID from '../../utils/generateID';
 import { getHsl } from '../../utils/getHsl';
-import { Rules, RULES } from '../../data/gameRules';
+import { Rules, RULES } from 'shared/data/gameRules';
 
 import { getUser, send, updateUser, User } from '../user';
 
@@ -22,7 +23,7 @@ export interface Player {
   inGame: boolean;
   userID: PlayerId;
   allegiance?: 'resistance' | 'spies';
-  // character?: Character;
+  character?: Character;
 }
 
 export type GameResult =
@@ -43,10 +44,17 @@ export class Game {
   public players: Player[] = [];
 
   public currentMission: OngoingMission;
-  // TODO Should GameHistory be an array?
   public history: GameHistory = {};
   public hostId: string;
   public result: GameResult = { type: 'ongoing' };
+  public characters: { [key in Character]: boolean } = {
+    Merlin: false,
+    Assassin: false,
+    Percival: false,
+    Morgana: false,
+    Mordred: false,
+    Oberon: false,
+  };
 
   private currentRound: Round<RoundName>;
   private leaderIndex = 0;
@@ -161,7 +169,7 @@ export class Game {
     };
   };
 
-  log = (...messages: string[]) => {
+  log = (...messages: any[]) => {
     console.log(
       chalk.blue(new Date().toLocaleTimeString()),
       this.colouredId,

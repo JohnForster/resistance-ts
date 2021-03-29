@@ -1,5 +1,6 @@
 // TODO 23/12/2020 split this file up
 
+import { Rules } from '../data/gameRules';
 import {
   CharacterMessage,
   GameOverMessage,
@@ -20,6 +21,14 @@ export type RoundName =
   | 'mission'
   | 'missionResult'
   | 'gameOver';
+
+export type Character =
+  | 'Merlin'
+  | 'Percival'
+  | 'Morgana'
+  | 'Oberon'
+  | 'Mordred'
+  | 'Assassin';
 
 export type PlayerId = string;
 export interface Nomination {
@@ -116,11 +125,15 @@ export type PublicData =
 export type LobbyRoundSecretData = {
   allegiance: null;
 };
+
+export type Spy = { type: 'known'; name: string } | { type: 'unknown' };
 export type CharacterRoundSecretData = {
   allegiance: 'resistance' | 'spies';
-  // character?: Character
-  spies?: string[];
+  character?: Character;
+  spies: Spy[];
+  merlin: string[];
 };
+
 export type NominationRoundSecretData = {};
 export type VotingRoundSecretData = {
   playerApproves: boolean;

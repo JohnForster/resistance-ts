@@ -1,6 +1,6 @@
 import { getUser } from '../../user';
-import { GameHistory, RoundName } from '@shared/types/gameData';
-import { LobbyMessage } from '@shared/types/messages';
+import { Character, GameHistory, RoundName } from 'shared';
+import { LobbyMessage } from 'shared';
 import { Round } from '.';
 import { Game } from '../game';
 
@@ -21,7 +21,21 @@ export class LobbyRound implements Round<'lobby'> {
 
   handleMessage = (message: LobbyMessage): void => {
     if (message.type === 'startGame' && message.playerID === this.game.hostId) {
+      console.log('message:', message);
       this.gameReadyToBegin = true;
+      if (!this.validateCharacters(message.characters)) {
+        return console.error(
+          `Invalid characters sent: ${Object.entries(message.characters)
+            .map(([char, bool]) => (bool ? char : undefined))
+            .filter(Boolean)
+            .join(', ')}`,
+        );
+      }
+
+      this.game.characters = {
+        ...message.characters,
+        Assassin: message.characters.Merlin,
+      };
       return;
     }
 
@@ -36,6 +50,22 @@ export class LobbyRound implements Round<'lobby'> {
     // }
 
     // Leave game option?
+  };
+
+  validateCharacters = (
+    characters: { [key in Exclude<Character, 'Assassin'>]: boolean },
+  ) => {
+    if (characters.Mordred && !characters.Merlin) return false;
+    if (characters.Percival && !characters.Merlin) return false;
+    if (characters.Morgana && !characters.Percival) return false;
+
+    const evilCharNames = ['Morgana', 'Mordred', 'Oberon'] as const;
+    const numEvilChars = evilCharNames.filter((n) => characters[n]).length;
+
+    // +1 to allow for the Assassin character
+    if (numEvilChars + 1 > this.game.rules.numberOfSpies) return false;
+
+    return true;
   };
 
   validateMessage = (message: LobbyMessage): boolean => {

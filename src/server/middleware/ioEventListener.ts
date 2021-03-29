@@ -1,9 +1,9 @@
 import { Socket } from 'socket.io';
 import cookie from 'cookie';
 
-import { EventByName, EventType } from '@shared/types/eventTypes';
-import { Message } from '@shared/types/messages';
-import { PlayerData } from '@shared/types/playerData';
+import { EventByName, EventType } from 'shared';
+import { Message } from 'shared';
+import { PlayerData } from 'shared';
 
 import { Game } from '../models/game/game';
 import {
@@ -12,6 +12,7 @@ import {
   sendError,
   updateUser,
   User,
+  isUser,
   getUser,
 } from '../models/user';
 import { storage } from '../storage/storage';
@@ -21,11 +22,10 @@ export const ioConnectionListener = (socket: Socket): void => {
   const cookies = cookie.parse(socket.request.headers.cookie ?? '');
 
   const userID = cookies.playerID ?? '';
-  const existingUser = getUser(userID);
 
   // If we have a user, but this is a new connection
-  if (existingUser) {
-    replaceUserSocket(existingUser, socket);
+  if (isUser(userID)) {
+    replaceUserSocket(userID, socket);
     sendPlayerData(userID);
     const gameID = getUser(userID).gameID;
     const game = storage.games.get(gameID);
@@ -45,13 +45,14 @@ export const ioConnectionListener = (socket: Socket): void => {
   }
 };
 
-const replaceUserSocket = (user: User, socket: Socket) => {
-  attachEventListeners(socket, user.id);
-  logSocketChange(user, socket);
-  updateUser(user.id, { socket });
+const replaceUserSocket = (userID: string, socket: Socket) => {
+  attachEventListeners(socket, userID);
+  logSocketChange(userID, socket);
+  updateUser(userID, { socket });
 };
 
-const logSocketChange = (user: User, socket: Socket) => {
+const logSocketChange = (userID: string, socket: Socket) => {
+  const user = getUser(userID);
   const oldSocket = user.socket.id.slice(0, 5);
   const newSocket = socket.id.slice(0, 5);
   console.log(

@@ -5,7 +5,7 @@ import {
   GameData,
   MissionRoundPublicData,
   MissionRoundSecretData,
-} from '@shared/types/gameData';
+} from 'shared';
 
 import listString from '../../helpers/listString';
 import { MissionButton } from '../../components/missionButton/missionButton';
