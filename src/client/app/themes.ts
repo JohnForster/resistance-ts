@@ -8,6 +8,7 @@ export interface Theme {
   };
   fontFamily: string;
   brightness: string;
+  saturation: number;
   fontSizeAdjust: number;
 }
 
@@ -45,6 +46,7 @@ const SKYLINE: Background = {
 
 const colours = {
   darkBlue: '#1C2C59',
+  midGreen: '#414a20',
   darkGreen: '#283224',
   lightBlue: '#6F99B4',
   white: '#FFF',
@@ -54,12 +56,13 @@ const avalon: Theme = {
   name: 'avalon',
   colours: {
     menu: colours.darkGreen,
-    button: colours.darkGreen,
+    button: colours.midGreen,
     shadow: colours.darkGreen,
   },
   background: CASTLE,
   fontFamily: 'Fondamento',
   brightness: '1',
+  saturation: 1.2,
   fontSizeAdjust: 0.9,
 };
 
@@ -73,6 +76,7 @@ const resistance: Theme = {
   background: SKYLINE,
   fontFamily: 'Turret Road',
   brightness: '0.9',
+  saturation: 1,
   fontSizeAdjust: 0,
 };
 

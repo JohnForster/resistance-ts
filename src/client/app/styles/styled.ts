@@ -3,14 +3,19 @@ import styled, { createGlobalStyle, css } from './themed-styled-components';
 import responsive from '../helpers/responsive';
 import { Background } from '../themes';
 export const Global = createGlobalStyle`
+
+
   body, html, #root {
     height: 100%;
-    width: 100%
+    width: 100%;
+    transition-timing-function: linear;
   }
 
   body {
     font-family: '${({ theme }) => theme.fontFamily}';
-    text-shadow: 2px 2px 4px ${({ theme }) => theme.colours.shadow};
+    text-shadow:
+      2px 2px 4px ${({ theme }) => theme.colours.shadow},
+      0px 0px 2px ${({ theme }) => theme.colours.shadow};
     margin: 0;
     align-self: center;
     color: white;
@@ -47,7 +52,7 @@ export const Global = createGlobalStyle`
     padding: 10px 0px;
     text-align: center;
     text-shadow: none;
-    border: 1px solid black;
+    border: 1px solid ${({ theme }) => theme.colours.button};
     color: ${({ theme }) => theme.colours.button};
   }
 
@@ -136,7 +141,8 @@ export const BackgroundImage = styled.img<{
   transform-origin: top left;
   ${({ screenSize, theme }) => getTransform(screenSize, theme.background)}
   z-index: -1;
-  filter: blur(3px) brightness(${({ theme }) => theme.brightness});
+  filter: blur(3px) brightness(${({ theme }) => theme.brightness})
+    saturate(${({ theme }) => theme.saturation});
 `;
 
 export const LoadingContainer = styled.div`

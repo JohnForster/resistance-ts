@@ -78,7 +78,7 @@ export const LobbyPage: React.FC<LobbyPageProps> = ({ game, beginGame }) => {
               disabled={game.players.length < 2 || !!charactersError}
               text="Begin Game"
               subtext={<RedSpan>{charactersError}</RedSpan>}
-              hideSubtext={!charactersError}
+              hideSubtext={game.players.length < 2 || !charactersError}
             />
           </>
           <CharactersPanel
