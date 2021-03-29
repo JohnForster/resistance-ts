@@ -23,13 +23,13 @@ export const Global = createGlobalStyle`
   }
 
   button, input[type="text"] {
-    margin: 10px 0px;
+    margin: ${responsive`${[5, 10, 10]}px 0px`};
     font-family: '${({ theme }) => theme.fontFamily}';
     text-shadow: none;
     width: 100%;
 
     ${responsive`
-      font-size: ${[18, 20, 22]}px;
+      font-size: ${[16, 20, 22]}px;
       max-width: ${[100, 80, 50]}%;
     `};
   }
@@ -61,9 +61,9 @@ export const Global = createGlobalStyle`
   }
 `;
 
-const h1Margins = [17, 21.4, 21.4];
-const h2Margins = [14, 19.9, 19.9];
-const h3Margins = [11, 18.7, 18.7];
+const h1Margins = [14, 21.4, 21.4];
+const h2Margins = [12, 19.9, 19.9];
+const h3Margins = [9, 18.7, 18.7];
 export const AppContainer = styled.div`
   display: flex;
   flex-direction: column;

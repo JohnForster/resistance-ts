@@ -4,14 +4,13 @@ import {
   CharacterRoundSecretData,
   GameHistory,
   RoundName,
-  Spy,
 } from '../../../../shared/types/gameData';
 import { CharacterMessage } from '../../../../shared/types/messages';
 import { Round } from '.';
-import { Game, Player } from '../game';
+import { Game } from '../game';
 import shuffle from 'lodash/shuffle';
 import { getUser } from '../../user';
-import { spy } from '../../../utils/spy';
+import { getCharacterInfo } from '../../../utils/getCharacterInfo';
 
 type CharacterCard = ['spies' | 'resistance', Character | null];
 
@@ -54,12 +53,6 @@ export class CharacterRound implements Round<'character'> {
       ...genericEvilCards,
     ]);
 
-    game.log(
-      'pack.length, players.length:',
-      pack.length,
-      this.game.players.length,
-    );
-
     this.game.players = this.game.players.map((player, i) => ({
       ...player,
       allegiance: pack[i][0],
@@ -86,56 +79,13 @@ export class CharacterRound implements Round<'character'> {
       .map((p) => getUser(p.userID)?.name),
   });
 
-  getVisibleSpies = (player: Player, spies: Player[]): string[] => {
-    // Merlin sees all evil characters except Mordred
-    if (player.character === 'Merlin') {
-      return spies.map((p) =>
-        p.character === 'Mordred' ? null : getUser(p.userID).name,
-      );
-    }
-
-    // Oberon only sees himself
-    if (player.character === 'Oberon') {
-      return spies.map((p) =>
-        p.userID === player.userID ? getUser(p.userID).name : null,
-      );
-    }
-
-    // The spies see all other spies except Oberon
-    if (player.allegiance === 'spies') {
-      return spies.map((p) =>
-        p.character === 'Oberon' ? null : getUser(p.userID).name,
-      );
-    }
-
-    return spies.map((_) => null);
-  };
-
   getSecretData = (userID: string): CharacterRoundSecretData => {
-    const player = this.game.players.find((p) => p.userID === userID);
-    const { allegiance, character } = player;
-
-    const spies = this.game.players.filter((p) => p.allegiance === 'spies');
-
-    const visibleSpies = this.getVisibleSpies(player, spies).map((name) =>
-      spy(name),
-    );
-
-    const merlin =
-      player.character === 'Percival'
-        ? this.game.players
-            .filter(
-              (p) => p.character === 'Merlin' || p.character === 'Morgana',
-            )
-            .map((p) => getUser(p.userID).name)
-        : [];
-
-    return {
-      allegiance,
-      character,
-      spies: visibleSpies,
-      merlin,
-    };
+    const characterInfo = getCharacterInfo(this.game.players, userID);
+    if (!characterInfo)
+      throw new Error(
+        `No character information found for user with ID ${userID}`,
+      );
+    return characterInfo;
   };
 
   isFinal = (): boolean => true;

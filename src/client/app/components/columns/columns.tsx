@@ -4,32 +4,51 @@ import styled from 'styled-components';
 interface Props<T> {
   items: T[];
   mapFn: (n: T, i?: number, ary?: T[]) => React.ReactNode;
+  forceSingle?: boolean;
 }
 
 const Column = styled.div`
-  width: 100%;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex-grow: 1;
+  flex-basis: 0px;
+
+  &:first-child {
+    padding-right: 5px;
+  }
+  &:last-child {
+    padding-left: 5px;
+  }
 `;
 
 const TwoColumnsContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
 `;
 
-export const Columns = <T extends any>({ items, mapFn }: Props<T>) => {
+const SingleColumnContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+`;
+
+export const Columns = <T extends any>({
+  items,
+  mapFn,
+  forceSingle,
+}: Props<T>) => {
   console.log('TODO: Fill out Columns');
   const midwayIndex = Math.ceil(items.length / 2);
 
   const firstColumn =
-    items.length > 5 ? items.slice(0, midwayIndex) : [...items];
+    items.length < 5 || forceSingle ? [...items] : items.slice(0, midwayIndex);
   const secondColumn =
-    items.length > 5 ? items.slice(midwayIndex, items.length) : [];
-
-  console.log('midwayIndex, items.length:', midwayIndex, items.length);
-  console.log('firstColumn, secondColumn:', firstColumn, secondColumn);
+    items.length < 5 || forceSingle
+      ? []
+      : items.slice(midwayIndex, items.length);
 
   return secondColumn.length ? (
     <TwoColumnsContainer>
@@ -39,6 +58,8 @@ export const Columns = <T extends any>({ items, mapFn }: Props<T>) => {
       </Column>
     </TwoColumnsContainer>
   ) : (
-    <Column>{firstColumn.map(mapFn)}</Column>
+    <SingleColumnContainer>
+      <Column>{firstColumn.map((n, i) => mapFn(n, i, items))}</Column>
+    </SingleColumnContainer>
   );
 };

@@ -70,10 +70,6 @@ export type NominationRoundPublicData = {
 export type VotingRoundPublicData = {
   nominatedPlayers: { id: string; name: string }[];
   unconfirmedPlayerNames: string[];
-  // ? Probably need to add these?
-  // nextLeader: { id: string; name: string };
-  //  or
-  // playerOrder: string[]
 };
 
 export type MissionRoundPublicData = {
@@ -127,7 +123,9 @@ export type LobbyRoundSecretData = {
 };
 
 export type Spy = { type: 'known'; name: string } | { type: 'unknown' };
-export type CharacterRoundSecretData = {
+export type CharacterRoundSecretData = CharacterInformation;
+
+export type CharacterInformation = {
   allegiance: 'resistance' | 'spies';
   character?: Character;
   spies: Spy[];
@@ -224,6 +222,8 @@ export type GameData<
   leaderID: string;
   isLeader: boolean;
   playerID: string;
+  characterInfo: CharacterInformation | undefined;
+  characters: Character[];
   players: {
     name: string;
     id: string;

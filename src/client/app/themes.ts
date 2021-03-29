@@ -5,6 +5,7 @@ export interface Theme {
     menu: string;
     button: string;
     shadow: string;
+    progressBar: string;
   };
   fontFamily: string;
   brightness: string;
@@ -49,6 +50,7 @@ const colours = {
   midGreen: '#414a20',
   darkGreen: '#283224',
   lightBlue: '#6F99B4',
+  lighterBlue: '#a6d6f4',
   white: '#FFF',
 };
 
@@ -58,10 +60,11 @@ const avalon: Theme = {
     menu: colours.darkGreen,
     button: colours.midGreen,
     shadow: colours.darkGreen,
+    progressBar: colours.lighterBlue,
   },
   background: CASTLE,
   fontFamily: 'Fondamento',
-  brightness: '1',
+  brightness: '0.9',
   saturation: 1.2,
   fontSizeAdjust: 0.9,
 };
@@ -72,6 +75,7 @@ const resistance: Theme = {
     menu: colours.white,
     button: colours.darkBlue,
     shadow: colours.darkBlue,
+    progressBar: colours.white,
   },
   background: SKYLINE,
   fontFamily: 'Turret Road',

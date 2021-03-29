@@ -15,7 +15,7 @@ import { doFailedRound } from './helpers/failedRound';
 const url = 'http://192.168.1.154:8080/';
 
 const showoffMode = false;
-const players = showoffMode ? 10 : 5;
+const players = showoffMode ? 10 : 10;
 const screenSize = {
   height: 667,
   width: 500,
@@ -40,7 +40,7 @@ jest.setTimeout(15_000 + players * 1500);
 setExpectPuppeteerOptions({ timeout: 500 + players * 100 });
 
 const options: puppeteer.PuppeteerNodeLaunchOptions = {
-  headless: showoffMode ? false : true,
+  headless: showoffMode ? false : false,
   defaultViewport: {
     ...screenSize,
   },
@@ -85,6 +85,12 @@ describe(`Let's play resistance with ${players} players!`, () => {
       await browser.close();
     }),
   );
+
+  it.only('Test', async () => {
+    await all(landingStep(eventFns));
+
+    await all(lobbyStep(eventFns, { label: 'game1' }));
+  });
 
   // it('should take screenshots', async () => {
   //   await all(landingStep(eventFns));

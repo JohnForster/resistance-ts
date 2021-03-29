@@ -6,6 +6,7 @@ import ProgressBar from '../../components/progressBar/progressBar';
 import NominateButton from '../../components/nominateButton/nominatebutton';
 import styled from 'styled-components';
 import { ContinueButton } from '../../components/continueButton/continueButton';
+import { Columns } from '../../components/columns/columns';
 
 export interface NominationPageProps {
   game: GameData<'nomination'>;
@@ -15,13 +16,6 @@ export interface NominationPageProps {
 interface NominationPageState {
   selectedPlayers: Set<string>;
 }
-const rounds: [number, number][] = [
-  [3, 1],
-  [4, 1],
-  [4, 1],
-  [5, 2],
-  [5, 1],
-];
 
 const Container = styled.div`
   width: 100%;
@@ -80,14 +74,17 @@ export class NominationPage extends PureComponent<
               this mission.
             </h3>
             <Container>
-              {this.props.game.players.map((player, i) => (
-                <NominateButton
-                  key={`nominateButton-${i}`}
-                  name={player.name}
-                  select={this.onSelect(player.id)}
-                  isSelected={this.state.selectedPlayers.has(player.id)}
-                />
-              ))}
+              <Columns
+                items={this.props.game.players}
+                mapFn={(player, i) => (
+                  <NominateButton
+                    key={`nominateButton-${i}`}
+                    name={player.name}
+                    select={this.onSelect(player.id)}
+                    isSelected={this.state.selectedPlayers.has(player.id)}
+                  />
+                )}
+              />
             </Container>
             <ContinueButton
               text="Submit"

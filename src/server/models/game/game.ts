@@ -18,6 +18,7 @@ import { GameOverRound, LobbyRound, Round } from './rounds';
 import { rounds } from './config';
 import chalk from 'chalk';
 import { storage } from '../../storage/storage';
+import { getCharacterInfo } from '../../utils/getCharacterInfo';
 
 export interface Player {
   inGame: boolean;
@@ -158,6 +159,10 @@ export class Game {
         players: this.players
           .map(({ userID }) => getUser(userID))
           .map(({ name, id }) => ({ name, id })),
+        characterInfo: getCharacterInfo(this.players, playerID),
+        characters: (Object.keys(this.characters) as Character[]).filter(
+          (name) => this.characters[name],
+        ),
         roundData,
         secretData,
         history: Object.values(this.history).map((m) => m.success),

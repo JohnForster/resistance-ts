@@ -1,73 +1,91 @@
-import { GameData } from 'shared';
+import { CharacterInformation, GameData, RoundName } from 'shared';
 import * as React from 'react';
 import styled from 'styled-components';
 import Page from '../../components/page/page';
+import { PlayOrder } from './components/playOrder';
+import { CharacterInfo } from '../../components/characterInfo/characterInfo';
 
 interface Props {
   cancelGame: () => void;
   returnToGame: () => void;
-  players: GameData['players'];
-  leaderID: string;
+  game: GameData;
+  // characterInfo: CharacterInformation;
+  // missionNumber: number;
+  // players: GameData['players'];
+  // leaderID: string;
 }
 
 const CancelButton = styled.button`
   color: red;
 `;
 
-const OrderContainer = styled.div`
+const BottomButtonsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: baseline;
-  padding-bottom: 1rem;
+  width: 100%;
+  justify-content: flex-end;
+  flex-grow: 1;
 `;
 
-const Name = styled.div`
-  display: flex;
-  align-items: baseline;
-`;
-
-const Crown = styled.div`
-  width: 0;
-  padding-left: 10px;
-`;
+type MenuScreen = 'menu' | 'playOrder' | 'rules' | 'character' | 'cancelling';
 
 // TODO - Add more options. E.g. Name change (when out of game), about etc.
-export const Menu: React.FC<Props> = (props) => {
-  const [cancellingGame, setCancellingGame] = React.useState(false);
+export const Menu: React.FC<Props> = ({ cancelGame, returnToGame, game }) => {
+  const [menuScreen, setMenuScreen] = React.useState<MenuScreen>('menu');
 
   const handleReturn = () => {
-    setCancellingGame(false);
-    props.returnToGame();
+    returnToGame();
   };
+
+  const handleMenuChange = (screen: MenuScreen) => () => setMenuScreen(screen);
+
+  const backToMenu = () => setMenuScreen('menu');
 
   return (
     <Page>
-      {cancellingGame ? (
+      {menuScreen === 'cancelling' ? (
         <>
           <h2>Are you sure you want to cancel the game?</h2>
           <h3>
             This will cancel the game for{' '}
             <span style={{ textDecoration: 'underline' }}>all players</span>{' '}
           </h3>
-          <CancelButton onClick={props.cancelGame}>Confirm Cancel</CancelButton>
+          <CancelButton onClick={cancelGame}>Confirm Cancel</CancelButton>
           <button onClick={handleReturn}>Return</button>
         </>
+      ) : menuScreen === 'character' ? (
+        game.characterInfo && (
+          <CharacterInfo
+            info={game.characterInfo}
+            characters={game.characters}
+          />
+        )
+      ) : menuScreen === 'playOrder' ? (
+        <PlayOrder
+          players={game.players}
+          leaderID={game.leaderID}
+          backToMenu={backToMenu}
+        />
+      ) : menuScreen === 'rules' ? (
+        <></>
       ) : (
         <>
           <h2>Menu</h2>
-          <h3>Play Order:</h3>
-          <OrderContainer>
-            {props.players.map(({ name, id }, i) => (
-              <Name key={`playerOrder-${id.slice(0, 6)}`}>
-                {name}
-                {id === props.leaderID && <Crown>{'👑'}</Crown>}
-              </Name>
-            ))}
-          </OrderContainer>
-          <CancelButton onClick={() => setCancellingGame(true)}>
-            Cancel Game
-          </CancelButton>
-          <button onClick={handleReturn}>Return</button>
+          <button onClick={handleMenuChange('rules')}>Rules</button>
+          {game.characterInfo && game.missionNumber > 0 && (
+            <>
+              <button onClick={handleMenuChange('playOrder')}>
+                Play Order
+              </button>
+              <button onClick={handleMenuChange('character')}>Character</button>
+            </>
+          )}
+          <BottomButtonsContainer>
+            <CancelButton onClick={handleMenuChange('cancelling')}>
+              Cancel Game
+            </CancelButton>
+            <button onClick={handleReturn}>Return</button>
+          </BottomButtonsContainer>
         </>
       )}
     </Page>

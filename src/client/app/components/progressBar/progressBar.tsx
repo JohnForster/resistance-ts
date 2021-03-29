@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
-import styled from 'styled-components';
 
 import responsive from '../../helpers/responsive';
+import styled from '../../styles/themed-styled-components';
 
 const scale = (f: number) => (x: number): number => x * f;
 const BOX_SIZE_PX = [24, 30, 56];
@@ -10,14 +10,17 @@ const FONT_SIZES = BOX_SIZE_PX.map(scale(0.8));
 const BORDER_WEIGHT = [2, 2, 4];
 
 const Line = styled.div<{ half?: boolean }>`
+  --progress-bar: ${({ theme }) => theme.colours.progressBar};
   ${({ half }): string => responsive`
     width: ${half ? HALF_SIZE : BOX_SIZE_PX}px;
     height: ${HALF_SIZE}px;
-    border-bottom: ${BORDER_WEIGHT}px white solid;
+    border-bottom: ${BORDER_WEIGHT}px var(--progress-bar) solid;
   `}
 `;
 
 const Nominations = styled.div<{ selected: boolean }>`
+  --progress-bar: ${({ theme }) => theme.colours.progressBar};
+
   ${responsive`
     height: ${BOX_SIZE_PX}px;
     width: ${BOX_SIZE_PX}px;
@@ -32,12 +35,12 @@ const Nominations = styled.div<{ selected: boolean }>`
 
   @keyframes glow {
     from {
-      border-color: white;
-      box-shadow: 0 0 20px white;
+      border-color: var(--progress-bar);
+      box-shadow: 0 0 20px var(--progress-bar);
     }
     to {
-      border-color: white;
-      box-shadow: 0 0 0px white;
+      border-color: var(--progress-bar);
+      box-shadow: 0 0 0px var(--progress-bar);
     }
   }
   ${({ selected }): string =>

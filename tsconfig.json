@@ -5,8 +5,7 @@
     "esModuleInterop": true,
     "module": "commonjs",
     "target": "ES2017",
-    "jsx": "react",
-    "baseUrl": "."
+    "jsx": "react"
   },
   "skipLibCheck": true
 }

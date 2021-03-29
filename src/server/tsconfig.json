@@ -6,7 +6,6 @@
     "esModuleInterop": true,
     "target": "ES6",
     "module": "commonjs",
-    "types": ["node"],
-    "baseUrl": "."
+    "types": ["node"]
   }
 }
