@@ -2,7 +2,7 @@ import { Player } from '../models/game/game';
 import { getUser } from '../models/user';
 import { CharacterInformation } from 'shared';
 import { spy } from './spy';
-import { shuffle } from 'lodash';
+import { sortBy } from 'lodash';
 
 const getVisibleSpies = (
   player: Player,
@@ -35,9 +35,10 @@ export const getCharacterInfo = (
   if (!allegiance) return;
 
   const spies = players.filter((p) => p.allegiance === 'spies');
-  spies.sort((a, b) => (a.userID > b.userID ? 1 : -1));
+  // Deterministic but essentially random sort order.
+  const sortedSpies = sortBy(spies, (player) => player.userID[2]);
 
-  const visibleSpies = getVisibleSpies(player, spies).map((id) =>
+  const visibleSpies = getVisibleSpies(player, sortedSpies).map((id) =>
     spy(id && getUser(id)?.name),
   );
 
@@ -51,7 +52,7 @@ export const getCharacterInfo = (
   return {
     allegiance,
     character,
-    spies: shuffle(visibleSpies),
+    spies: visibleSpies,
     merlin,
   };
 };

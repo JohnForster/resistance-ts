@@ -51,6 +51,27 @@ export interface CompletedMission {
 
 export type GameHistory = Record<number, CompletedMission>;
 
+export type ClientNomination = {
+  leaderName: string;
+  nominatedPlayers: string[];
+  votes: { playerName: string; approved: boolean }[];
+  success: boolean;
+};
+
+export type ClientMissionHistory = {
+  missionNumber: number;
+  team: string[];
+  leader: string;
+  succeedFail: [number, number];
+  succeeded: boolean;
+  nominations: ClientNomination[];
+};
+
+export type ClientGameHistory = {
+  pastMissions: ClientMissionHistory[];
+  currentMission: { nominations: ClientNomination[] };
+};
+
 export type OngoingMission = Omit<CompletedMission, 'success'> & {
   success?: boolean;
 };
@@ -151,7 +172,7 @@ export type GameOverSecretData = {
 
 export type SecretData =
   | LobbyRoundSecretData
-  | CharacterRoundPublicData
+  | CharacterRoundSecretData
   | NominationRoundSecretData
   | VotingRoundSecretData
   | VotingResultSecretData
@@ -228,10 +249,10 @@ export type GameData<
     name: string;
     id: string;
   }[];
-  history: boolean[];
+  history: ClientGameHistory;
+  rounds: [number, number][];
   roundData: P;
   secretData?: S;
-  rounds: [number, number][];
 };
 
 export type RoundDataByName<R extends RoundName, T = RoundData> = T extends {

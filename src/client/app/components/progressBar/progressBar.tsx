@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { ClientGameHistory } from 'shared';
 
 import responsive from '../../helpers/responsive';
 import styled from '../../styles/themed-styled-components';
@@ -74,11 +75,12 @@ const RoundNumber = styled.div`
 `;
 
 interface Props {
-  history: boolean[];
+  history: ClientGameHistory;
   rounds: [number, number][];
 }
 
 const ProgressBar: React.FC<Props> = (props) => {
+  const resultArray = props.history.pastMissions.map((m) => m.succeeded);
   return (
     <Container>
       <h3>Mission Progress</h3>
@@ -86,12 +88,12 @@ const ProgressBar: React.FC<Props> = (props) => {
         <Line half />
         {props.rounds.map(([peopleOnMission, failsRequired], i) => {
           const result =
-            props.history[i] === true
+            resultArray[i] === true
               ? ' ✊'
-              : props.history[i] === false
+              : resultArray[i] === false
               ? ' 💀'
               : undefined;
-          const currentRoundIndex = props.history.length;
+          const currentRoundIndex = resultArray.length;
           const showFailsRequired = !result && failsRequired > 1;
           return (
             <Fragment key={`line-${i}`}>

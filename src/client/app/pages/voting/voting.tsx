@@ -19,6 +19,7 @@ export const VotingPage: React.FC<Props> = (props) => {
   const leaderName = props.game.players.find(
     (p) => p.id === props.game.leaderID,
   )?.name;
+
   return (
     <Page>
       <ProgressBar history={props.game.history} rounds={props.game.rounds} />

@@ -16,8 +16,11 @@
     "start:dev:server": "yarn workspace resistance-ts-server run start",
     "start:dev:client": "yarn workspace resistance-ts-client run start",
     "test": "jest tests/e2e.test.ts --unhandled-rejections=strict",
+    "closechromium": "pkill -o chromium",
     "build": "rm -rf src/server/build && yarn workspaces run build",
-    "typecheck": "yarn workspaces run typecheck"
+    "typecheck": "yarn workspaces run typecheck",
+    "typecheck:server": "yarn workspace resistance-ts-server run typecheck --watch",
+    "typecheck:client": "yarn workspace resistance-ts-client run typecheck --watch"
   },
   "devDependencies": {
     "@types/expect-puppeteer": "^4.4.5",

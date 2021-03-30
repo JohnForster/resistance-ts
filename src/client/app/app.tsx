@@ -11,7 +11,7 @@ import IOEventEmitter from './helpers/IOEventEmitter';
 import * as Pages from './pages';
 import * as Styled from './styles/styled';
 import { MenuButton } from './components/menuButton/MenuButton';
-import { themes } from './themes';
+import { Theme, ThemeName, themes } from './themes';
 import { ThemeProvider } from './styles/themed-styled-components';
 
 const isMobile = _isMobile();
@@ -23,7 +23,7 @@ interface AppState {
   screenSize: { width: number; height: number };
   menuIsOpen: boolean;
   connected: boolean;
-  theme: 'avalon' | 'resistance';
+  theme: ThemeName;
   characters: { [key in Exclude<Character, 'Assassin'>]?: boolean };
 }
 
@@ -202,30 +202,16 @@ export default class App extends PureComponent<{}, AppState> {
             />
           )}
           {process.env.NODE_ENV === 'development' && (
-            <>
-              <button
-                style={{ width: '15px', height: '15px', position: 'absolute' }}
-                onClick={() =>
-                  this.setState({
-                    theme:
-                      this.state.theme === 'avalon' ? 'resistance' : 'avalon',
-                  })
-                }
-              >
-                -
-              </button>
-              <p style={{ fontSize: '8px', position: 'absolute' }}>
-                {this.state.player?.name}
-              </p>
-            </>
+            <p style={{ fontSize: '8px', position: 'absolute' }}>
+              {this.state.player?.name}
+            </p>
           )}
-          {/* TODO: Add connecting indicator */}
-
           {this.state.menuIsOpen ? (
             <Pages.Menu
               returnToGame={() => this.setState({ menuIsOpen: false })}
               cancelGame={this.cancelGame}
               game={this.state.game}
+              setTheme={(themeName) => this.setState({ theme: themeName })}
             />
           ) : !this.state.connected ? (
             <Styled.LoadingContainer>

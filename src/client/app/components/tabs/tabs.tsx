@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
+import responsive from '../../helpers/responsive';
 
 const TabTitlesContainer = styled.div`
   display: flex;
@@ -8,10 +9,11 @@ const TabTitlesContainer = styled.div`
   height: 50px;
   align-items: baseline;
   justify-content: center;
+  white-space: nowrap;
 `;
 
 const TabTitle = styled.h3<{ isActive: boolean; width: number }>`
-  ${({ isActive }) => !isActive && 'font-size: 15px;'}
+  ${({ isActive }) => !isActive && responsive`font-size: ${[11, 15, 20]}px;`}
   ${({ isActive }) => !isActive && 'text-decoration: underline;'}
   width: ${({ width }) => width}%;
 

@@ -1,24 +1,26 @@
-import { EventByName } from 'shared';
+import chalk from 'chalk';
+
 import {
+  EventByName,
   Character,
   GameHistory,
   OngoingMission,
   PlayerId,
   RoundName,
+  Message,
 } from 'shared';
-import { Message } from 'shared';
+import { Rules, RULES } from 'shared/data/gameRules';
 
 import generateID from '../../utils/generateID';
 import { getHsl } from '../../utils/getHsl';
-import { Rules, RULES } from 'shared/data/gameRules';
+import { getClientHistory } from '../../utils/getClientHistory';
+import { getCharacterInfo } from '../../utils/getCharacterInfo';
+import { storage } from '../../storage/storage';
 
 import { getUser, send, updateUser, User } from '../user';
 
 import { GameOverRound, LobbyRound, Round } from './rounds';
 import { rounds } from './config';
-import chalk from 'chalk';
-import { storage } from '../../storage/storage';
-import { getCharacterInfo } from '../../utils/getCharacterInfo';
 
 export interface Player {
   inGame: boolean;
@@ -165,7 +167,10 @@ export class Game {
         ),
         roundData,
         secretData,
-        history: Object.values(this.history).map((m) => m.success),
+        history: getClientHistory(
+          this.history,
+          this.currentMission.nominations,
+        ),
         rounds: Object.entries(this.rules?.missions ?? {}).map(([, o]) => [
           o.players,
           o.failsRequired,

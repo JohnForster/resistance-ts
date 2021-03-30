@@ -7,13 +7,11 @@ import { ContinueButton } from '../../../components/continueButton/continueButto
 interface Props {
   players: GameData['players'];
   leaderID: string;
-  backToMenu: () => void;
 }
 
 const OrderContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
   align-items: baseline;
   padding: 1rem 0;
 `;
@@ -29,10 +27,9 @@ const Crown = styled.div`
 `;
 
 export const PlayOrder: React.FC<Props> = (props) => {
-  console.log('TODO: Fill out PlayOrder');
   return (
     <>
-      <h3>Play Order:</h3>
+      <h2>Play Order:</h2>
       <OrderContainer>
         <Columns
           items={props.players}
@@ -45,7 +42,6 @@ export const PlayOrder: React.FC<Props> = (props) => {
           forceSingle
         />
       </OrderContainer>
-      <ContinueButton text={'Return to menu'} onClick={props.backToMenu} />
     </>
   );
 };

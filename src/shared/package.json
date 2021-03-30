@@ -4,5 +4,11 @@
   "description": "",
   "main": "index.d.ts",
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^4.2.3"
+  }
 }
