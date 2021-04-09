@@ -23,7 +23,7 @@ export const Global = createGlobalStyle`
   }
 
   button, input[type="text"] {
-    margin: ${responsive`${[5, 10, 10]}px 0px`};
+  ${responsive`margin: ${[5, 10, 10]}px 0px;`}
     font-family: '${({ theme }) => theme.fontFamily}';
     text-shadow: none;
     width: 100%;
@@ -41,6 +41,7 @@ export const Global = createGlobalStyle`
     background: ${({ theme }) => theme.colours.button};
     font-weight: bold;
     color: white;
+    line-height: 18px;
 
 
     :disabled {
@@ -72,14 +73,18 @@ export const AppContainer = styled.div`
 
   ${responsive`
     h1 {
+      line-height: 32px;
+
       margin-top: ${h1Margins}px;
       margin-bottom: ${h1Margins}px;
     }
     h2 {
+      line-height: 32px;
       margin-top: ${h2Margins}px;
       margin-bottom: ${h2Margins}px;
     }
     h3 {
+      line-height: 32px;
       margin-top: ${h3Margins}px;
       margin-bottom: ${h3Margins}px;
     }

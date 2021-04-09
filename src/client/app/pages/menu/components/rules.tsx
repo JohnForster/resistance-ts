@@ -3,15 +3,6 @@ import styled from 'styled-components';
 import { Tabs } from '../../../components/tabs/tabs';
 import responsive from '../../../helpers/responsive';
 
-interface Props {}
-
-type Page = 'basicRules' | 'characters' | null;
-
-const Section = styled.div<{ open: boolean }>`
-  ${({ open }) => (open ? '' : 'height: 0px;')}
-  overflow: hidden;
-`;
-
 const Text = styled.p`
   ${responsive`
     font-size: ${[11, 15, 20]}px;
@@ -28,7 +19,7 @@ const Container = styled.div`
   width: 100%;
 `;
 
-export const RulesScreen: React.FC<Props> = (props) => {
+export const RulesScreen: React.FC = () => {
   return (
     <Container>
       <Tabs titles={['Basic Rules', 'Characters']}>
@@ -81,20 +72,11 @@ export const RulesScreen: React.FC<Props> = (props) => {
             harder for the Spies to win.
           </Text>
           <Text>
-            <strong>The Assassin</strong> has the final say on who the team
+            <strong>The Assassin</strong> has the final say on who the spies
             think is Merlin
           </Text>
         </>
       </Tabs>
-      {/* <Section open={currentPage === 'basicRules'}>
-        <h3>Basic Rules</h3>
-
-      </Section>
-      <button onClick={togglePage('characters')}>Characters</button>
-      <Section open={currentPage === 'characters'}>
-        <h3>Characters</h3>
-
-      </Section> */}
     </Container>
   );
 };
