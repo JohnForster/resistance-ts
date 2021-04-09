@@ -8,6 +8,7 @@ export const MissionButtonContainer = styled.div`
 export const MissionButton = styled.button`
   width: 150px;
   background-color: Transparent;
+  line-height: inherit;
   :focus {
     outline: none;
     box-shadow: none;
