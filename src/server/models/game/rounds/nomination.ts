@@ -1,7 +1,7 @@
 import { NominationRoundPublicData, RoundName } from 'shared';
 import { NominationMessage } from 'shared';
 
-import { Rules } from '../../../../shared/data/gameRules';
+import { Rules } from '../../../data/gameRules';
 import { Game } from '../game';
 import { Round } from './round';
 

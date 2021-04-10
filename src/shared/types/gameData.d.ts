@@ -1,6 +1,4 @@
 // TODO 23/12/2020 split this file up
-
-import { Rules } from '../data/gameRules';
 import {
   AssassinationMessage,
   CharacterMessage,

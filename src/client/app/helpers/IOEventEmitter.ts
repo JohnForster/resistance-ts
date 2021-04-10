@@ -7,7 +7,7 @@ import {
   EventByName,
   EventType,
   IOEvent,
-} from '../../../shared/types/eventTypes';
+} from 'shared/types/eventTypes';
 
 export default class IOEventEmitter {
   public socket: Socket;

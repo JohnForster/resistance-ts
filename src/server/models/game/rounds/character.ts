@@ -4,8 +4,8 @@ import {
   CharacterRoundSecretData,
   GameHistory,
   RoundName,
-} from '../../../../shared/types/gameData';
-import { CharacterMessage } from '../../../../shared/types/messages';
+} from 'shared/types/gameData';
+import { CharacterMessage } from 'shared/types/messages';
 import { Round } from '.';
 import { Game } from '../game';
 import shuffle from 'lodash/shuffle';

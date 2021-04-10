@@ -6,7 +6,8 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build": "echo 'Nothing to build for shared folder'"
   },
   "devDependencies": {
     "typescript": "^4.2.3"

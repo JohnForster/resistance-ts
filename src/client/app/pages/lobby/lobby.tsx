@@ -8,7 +8,7 @@ import { Tabs } from '../../components/tabs/tabs';
 
 import { PlayerList } from './components/playerList';
 import { CharactersPanel } from './components/charactersPanel';
-import { RULES } from 'shared/data/gameRules';
+import { RULES } from '../../../data/gameRules';
 
 export const GameID = styled.p`
   font-family: 'Sans Serif';

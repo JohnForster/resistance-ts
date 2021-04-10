@@ -9,7 +9,7 @@ import {
   RoundName,
   Message,
 } from 'shared';
-import { Rules, RULES } from 'shared/data/gameRules';
+import { Rules, RULES } from '../../data/gameRules';
 
 import generateID from '../../utils/generateID';
 import { getHsl } from '../../utils/getHsl';
