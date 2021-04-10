@@ -10,6 +10,7 @@ import {
   VotingResult,
   GameOverRound,
 } from './rounds';
+import { AssassinationRound } from './rounds/assassination';
 
 export const rounds: { [r in RoundName]: RoundConstructor } = {
   lobby: LobbyRound,
@@ -19,5 +20,6 @@ export const rounds: { [r in RoundName]: RoundConstructor } = {
   votingResult: VotingResult,
   mission: MissionRound,
   missionResult: MissionResult,
+  assassination: AssassinationRound,
   gameOver: GameOverRound,
 };

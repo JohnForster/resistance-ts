@@ -33,7 +33,7 @@ export type GameResult =
   | {
       type: 'completed';
       winners: 'spies' | 'resistance';
-      gameOverReason: 'nominations' | 'missions';
+      gameOverReason: 'nominations' | 'missions' | 'assassination';
     }
   | {
       type: 'cancelled';
@@ -58,6 +58,7 @@ export class Game {
     Mordred: false,
     Oberon: false,
   };
+  public assassinatedPlayerID: string;
 
   private currentRound: Round<RoundName>;
   private leaderIndex = 0;

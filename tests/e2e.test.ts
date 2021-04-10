@@ -86,12 +86,6 @@ describe(`Let's play resistance with ${players} players!`, () => {
     }),
   );
 
-  it.only('Test', async () => {
-    await all(landingStep(eventFns));
-
-    await all(lobbyStep(eventFns, { label: 'game1' }));
-  });
-
   // it('should take screenshots', async () => {
   //   await all(landingStep(eventFns));
   //   await takeSingleScreenshot();

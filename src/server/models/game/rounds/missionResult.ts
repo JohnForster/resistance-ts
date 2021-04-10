@@ -34,6 +34,10 @@ export class MissionResult implements Round<'missionResult'> {
       (this.game.currentMission.success ? 1 : 0);
     const spyWins = this.game.currentMission.missionNumber - resistanceWins;
 
+    if (resistanceWins > 2 && this.game.characters.Assassin) {
+      return 'assassination';
+    }
+
     if (resistanceWins > 2 || spyWins > 2) {
       this.game.result = {
         type: 'completed',

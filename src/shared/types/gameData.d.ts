@@ -2,6 +2,7 @@
 
 import { Rules } from '../data/gameRules';
 import {
+  AssassinationMessage,
   CharacterMessage,
   GameOverMessage,
   LobbyMessage,
@@ -20,6 +21,7 @@ export type RoundName =
   | 'votingResult'
   | 'mission'
   | 'missionResult'
+  | 'assassination'
   | 'gameOver';
 
 export type Character =
@@ -106,6 +108,12 @@ export type MissionResultPublicData = {
   };
 };
 
+export type AssassinationRoundPublicData = {
+  spies: { id: string; name: string }[];
+  resistance: { id: string; name: string }[];
+  assassin: string;
+};
+
 export type VotingResultPublicData = {
   unconfirmedPlayerNames: string[];
   votes: { id: string; name: string; playerApproves: boolean }[]; // ? Do we need to send other player ids... ever?
@@ -115,9 +123,10 @@ export type VotingResultPublicData = {
 
 type SuccessfulGame = {
   winners: 'resistance' | 'spies';
-  reason: 'missions' | 'nominations';
+  reason: 'missions' | 'nominations' | 'assassination';
   spies: string[];
   fullHistory: GameHistory;
+  assassinated: string;
   // characters?
 };
 
@@ -128,30 +137,20 @@ type CancelledGame = {
 
 export type GameOverPublicData = SuccessfulGame | CancelledGame;
 
-export type PublicData =
-  | LobbyRoundPublicData
-  | CharacterRoundPublicData
-  | NominationRoundPublicData
-  | VotingRoundPublicData
-  | VotingResultPublicData
-  | MissionRoundPublicData
-  | MissionResultPublicData
-  | GameOverPublicData;
-
 // ? 23/12/2020 Do the secret datas need a roundName as well?
 export type LobbyRoundSecretData = {
   allegiance: null;
 };
 
 export type Spy = { type: 'known'; name: string } | { type: 'unknown' };
-export type CharacterRoundSecretData = CharacterInformation;
-
 export type CharacterInformation = {
   allegiance: 'resistance' | 'spies';
   character?: Character;
   spies: Spy[];
   merlin: string[];
 };
+
+export type CharacterRoundSecretData = CharacterInformation;
 
 export type NominationRoundSecretData = {};
 export type VotingRoundSecretData = {
@@ -169,16 +168,9 @@ export type MissionResultSecretData = {
 export type GameOverSecretData = {
   allegiance: 'resistance' | 'spies';
 };
-
-export type SecretData =
-  | LobbyRoundSecretData
-  | CharacterRoundSecretData
-  | NominationRoundSecretData
-  | VotingRoundSecretData
-  | VotingResultSecretData
-  | MissionRoundSecretData
-  | MissionResultSecretData
-  | GameOverSecretData;
+export type AssassinationRoundSecretData = {
+  isAssassin: boolean;
+};
 
 export type RoundData =
   | {
@@ -224,11 +216,20 @@ export type RoundData =
       clientMessage: MissionResultMessage;
     }
   | {
+      roundName: 'assassination';
+      public: AssassinationRoundPublicData;
+      secret: AssassinationRoundSecretData;
+      clientMessage: AssassinationMessage;
+    }
+  | {
       roundName: 'gameOver';
       public: GameOverPublicData;
       secret: GameOverSecretData;
       clientMessage: GameOverMessage;
     };
+
+export type PublicData = RoundData['public'];
+export type SecretData = RoundData['secret'];
 
 export type GameData<
   R extends RoundName = RoundName,

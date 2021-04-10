@@ -152,6 +152,16 @@ export default class App extends PureComponent<{}, AppState> {
     });
   };
 
+  submitAssassinationTarget = (targetID: string) => {
+    const { gameID, playerID } = this.state.game;
+    this.state.eventEmitter.sendMessage({
+      type: 'assassination',
+      gameID,
+      playerID,
+      targetID,
+    });
+  };
+
   submitMissionChoice = (succeedMission: boolean): void => {
     const { gameID, playerID } = this.state.game;
     this.state.eventEmitter.sendMessage({
@@ -259,6 +269,11 @@ export default class App extends PureComponent<{}, AppState> {
               game={this.state.game}
               confirmReady={this.continue}
             />
+          ) : typeGuards.isAssassinationRound(this.state.game) ? (
+            <Pages.AssassinationPage
+              game={this.state.game}
+              chooseTarget={this.submitAssassinationTarget}
+            ></Pages.AssassinationPage>
           ) : typeGuards.isGameOverRound(this.state.game) ? (
             <Pages.GameOverPage
               game={this.state.game}

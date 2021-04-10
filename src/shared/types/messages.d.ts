@@ -52,6 +52,11 @@ export type MissionRoundMessage = BaseMessage & {
 
 export type MissionResultMessage = ContinueMessage;
 
+export type AssassinationMessage = BaseMessage & {
+  type: 'assassination';
+  targetID: string;
+};
+
 export type GameOverMessage = ContinueMessage;
 
 // TODO Rename message?
@@ -63,4 +68,5 @@ export type Message =
   | VotingResultMessage
   | MissionRoundMessage
   | MissionResultMessage
+  | AssassinationMessage
   | GameOverMessage;

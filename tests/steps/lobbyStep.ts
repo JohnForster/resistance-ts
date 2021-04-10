@@ -17,9 +17,9 @@ export const lobbyStep = (
     emitEvent(`gameID-${label}`, gameID);
     await waitForAll(`gameIDRecieved-${label}`);
     await page.waitForTimeout(500);
-    // await expect(page).toClick('button', {
-    //   text: 'Begin Game',
-    // });
+    await expect(page).toClick('button', {
+      text: 'Begin Game',
+    });
   } else {
     [gameID] = await waitForEvent(`gameID-${label}`);
     await expect(page).toMatchElement('input[name="gamecode"]');

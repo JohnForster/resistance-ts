@@ -48,11 +48,15 @@ export class GameOverRound implements Round<'gameOver'> {
       .filter((p) => p.allegiance === 'spies')
       .map((p) => p.userID);
 
+    const assassinated =
+      this.game.assassinatedPlayerID &&
+      getUser(this.game.assassinatedPlayerID)?.name;
     return {
       winners: gameResult.winners,
       spies: spyIds.map((id) => getUser(id).name),
       reason: gameResult.gameOverReason,
       fullHistory: this.game.history,
+      assassinated,
     };
   };
 

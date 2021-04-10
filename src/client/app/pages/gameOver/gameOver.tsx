@@ -23,6 +23,9 @@ export const GameOverPage: React.FC<Props> = (props) => {
       ) : (
         <>
           <h1>{allegiance === result.winners ? 'Victory' : 'Defeat'}</h1>
+          {!!result.assassinated && (
+            <h3>{result.assassinated} was assassinated.</h3>
+          )}
           <h2>The spies in this game were...</h2>
           {result.spies.map((name, i) => (
             <h3 key={`${name}-${i}`}>{name}</h3>
@@ -33,7 +36,7 @@ export const GameOverPage: React.FC<Props> = (props) => {
         text="Return to main screen"
         onClick={props.continue}
         name="returnToMainScreen"
-      ></ContinueButton>
+      />
     </Page>
   );
 };
