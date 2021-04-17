@@ -172,10 +172,9 @@ export class Game {
           this.history,
           this.currentMission.nominations,
         ),
-        rounds: Object.entries(this.rules?.missions ?? {}).map(([, o]) => [
-          o.players,
-          o.failsRequired,
-        ]),
+        rounds: Object.entries(this.rules?.missions ?? {})
+          .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+          .map(([, o]) => [o.players, o.failsRequired]),
       },
     };
   };
