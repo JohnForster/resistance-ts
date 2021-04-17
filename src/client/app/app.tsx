@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import Cookies from 'js-cookie';
 import _isMobile from 'ismobilejs';
 
 import { DataByEventName } from 'shared';
@@ -7,6 +6,7 @@ import { DataByEventName } from 'shared';
 import * as typeGuards from '../types/typeGuards';
 import { Character, GameData } from 'shared';
 
+import * as Cookies from './helpers/Cookies';
 import IOEventEmitter from './helpers/IOEventEmitter';
 import * as Pages from './pages';
 import * as Styled from './styles/styled';
@@ -51,7 +51,7 @@ export default class App extends PureComponent<{}, AppState> {
     eventEmitter: new IOEventEmitter(APIAddress),
     menuIsOpen: false,
     connected: true,
-    theme: 'avalon',
+    theme: (Cookies.get('themeName') as ThemeName) ?? 'avalon',
     characters: {},
   };
 
@@ -193,6 +193,11 @@ export default class App extends PureComponent<{}, AppState> {
     return themes[this.state.theme];
   }
 
+  setTheme = (themeName: ThemeName) => {
+    Cookies.set('themeName', themeName);
+    this.setState({ theme: themeName });
+  };
+
   render(): JSX.Element {
     return (
       <ThemeProvider theme={this.theme}>
@@ -221,7 +226,7 @@ export default class App extends PureComponent<{}, AppState> {
               returnToGame={() => this.setState({ menuIsOpen: false })}
               cancelGame={this.cancelGame}
               game={this.state.game}
-              setTheme={(themeName) => this.setState({ theme: themeName })}
+              setTheme={this.setTheme}
             />
           ) : !this.state.connected ? (
             <Styled.LoadingContainer>

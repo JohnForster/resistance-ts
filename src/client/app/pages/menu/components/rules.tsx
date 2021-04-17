@@ -32,13 +32,13 @@ export const RulesScreen: React.FC = () => {
           </Text>
           <Text>
             Before each mission, one player is the "leader" and nominates people
-            to go on the mission. The whole group votes on whether or not they
-            think this mission should go ahead with the proposed team.
+            to go on the mission. The whole group votes on whether they think
+            the mission should go ahead with the proposed team.
           </Text>
           <Text>
-            The number of people on each mission is dependent on how many
-            players there are, and how missions have already been completed. It
-            (almost always) only takes one spy to sabotage a mission.
+            The number of people on each mission depends on how many players
+            there are, and how missions have already been completed. It (almost
+            always) only takes one spy to sabotage a mission.
           </Text>
           <Text>
             If a nomination is voted down, the next player is the "leader", and
