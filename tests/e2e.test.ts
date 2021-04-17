@@ -11,6 +11,7 @@ import { nominationStep } from './steps/nominationStep';
 import { doSucessfulRound } from './helpers/successfulRound';
 import { gameOverStep } from './steps/gameOverStep';
 import { doFailedRound } from './helpers/failedRound';
+import { successfulAssassinStep } from './steps/assassinStep';
 
 const url = 'http://192.168.1.154:8080/';
 
@@ -40,7 +41,7 @@ jest.setTimeout(15_000 + players * 1500);
 setExpectPuppeteerOptions({ timeout: 500 + players * 100 });
 
 const options: puppeteer.PuppeteerNodeLaunchOptions = {
-  headless: showoffMode ? false : false,
+  headless: showoffMode ? false : true,
   defaultViewport: {
     ...screenSize,
   },
@@ -170,5 +171,34 @@ describe(`Let's play resistance with ${players} players!`, () => {
     await doSucessfulRound(all, eventFns, { label: 'round5' });
     await doSucessfulRound(all, eventFns, { label: 'round6' });
     await all(gameOverStep(eventFns, { label: 'game2' }));
+  });
+
+  it('Can play a full game with an assassination step', async () => {
+    await all(landingStep(eventFns));
+
+    await all(lobbyStep(eventFns, { label: 'game1', characters: ['Merlin'] }));
+    await all(characterStep(eventFns, { label: 'game1' }));
+    await doSucessfulRound(all, eventFns, { label: 'round1' });
+    await doSucessfulRound(all, eventFns, { label: 'round2' });
+    await doSucessfulRound(all, eventFns, { label: 'round3' });
+    await all(successfulAssassinStep(eventFns));
+    await all(gameOverStep(eventFns, { label: 'game1' }));
+  });
+
+  it('Can play a full game with all characters present', async () => {
+    if (players < 10) {
+      console.error("Can't run this test with fewer than 10 players");
+      return;
+    }
+    await all(landingStep(eventFns));
+
+    const characters = ['Merlin', 'Percival', 'Oberon', 'Morgana', 'Mordred'];
+    await all(lobbyStep(eventFns, { label: 'game1', characters }));
+    await all(characterStep(eventFns, { label: 'game1' }));
+    await doSucessfulRound(all, eventFns, { label: 'round1' });
+    await doSucessfulRound(all, eventFns, { label: 'round2' });
+    await doSucessfulRound(all, eventFns, { label: 'round3' });
+    await all(successfulAssassinStep(eventFns));
+    await all(gameOverStep(eventFns, { label: 'game1' }));
   });
 });

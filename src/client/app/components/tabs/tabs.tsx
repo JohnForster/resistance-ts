@@ -74,6 +74,7 @@ export const Tabs: React.FC<Props> = (props) => {
         {props.titles.map((title, i) => (
           <TabTitle
             key={title}
+            id={`${title}Tab`}
             onClick={() => setCurrentTabIndex(i)}
             isActive={i === currentTabIndex}
             width={width}

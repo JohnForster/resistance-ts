@@ -34,7 +34,7 @@ export const AssassinateButton: React.FC<AssassinateButtonProps> = (props) => {
     <Button onClick={props.select} name="selectTarget">
       <Side></Side>
       <Center>
-        <span id="targetName">{`${props.name} `}</span>
+        <span id="targetname">{`${props.name} `}</span>
       </Center>
       <Side>{props.isSelected ? ' 🔪 ' : '   '}</Side>
     </Button>
