@@ -29,9 +29,6 @@ export const nominationStep = (
     await Promise.all(
       nominations.map((name) => expect(page).toClick('button', { text: name })),
     );
-    await page.screenshot({
-      path: `tests/screens/nomination-${device.replace(' ', '')}.png`,
-    });
     expect(page).toClick('button', { text: 'Submit' });
   }
   await waitForAll(`nominationComplete-${label}`);

@@ -21,7 +21,6 @@ export class LobbyRound implements Round<'lobby'> {
 
   handleMessage = (message: LobbyMessage): void => {
     if (message.type === 'startGame' && message.playerID === this.game.hostId) {
-      console.log('message:', message);
       this.gameReadyToBegin = true;
       if (!this.validateCharacters(message.characters)) {
         return console.error(

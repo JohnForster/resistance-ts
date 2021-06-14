@@ -13,10 +13,10 @@ import { gameOverStep } from './steps/gameOverStep';
 import { doFailedRound } from './helpers/failedRound';
 import { successfulAssassinStep } from './steps/assassinStep';
 
-const url = 'http://192.168.1.154:8080/';
+const url = 'http://192.168.1.100:8080/';
 
 const showoffMode = false;
-const players = showoffMode ? 10 : 10;
+const players = showoffMode ? 10 : 5;
 const screenSize = {
   height: 667,
   width: 500,
@@ -37,8 +37,8 @@ const names = [
 
 const devices = ['iPhone SE'];
 
-jest.setTimeout(15_000 + players * 1500);
-setExpectPuppeteerOptions({ timeout: 500 + players * 100 });
+jest.setTimeout(90_000);
+setExpectPuppeteerOptions({ timeout: 500 + players * 200 });
 
 const options: puppeteer.PuppeteerNodeLaunchOptions = {
   headless: showoffMode ? false : true,
@@ -80,9 +80,6 @@ describe(`Let's play resistance with ${players} players!`, () => {
 
   afterAll(() =>
     all(async ({ page, browser, i }) => {
-      await page.waitForTimeout(500);
-      // ? Screenshots may be causing server to restart?
-      await page.screenshot({ path: `tests/screens/final-${i}.png` });
       await browser.close();
     }),
   );
@@ -188,6 +185,7 @@ describe(`Let's play resistance with ${players} players!`, () => {
   it('Can play a full game with all characters present', async () => {
     if (players < 10) {
       console.error("Can't run this test with fewer than 10 players");
+      pending()
       return;
     }
     await all(landingStep(eventFns));
