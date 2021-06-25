@@ -22,6 +22,9 @@ export class MissionResult implements Round<'missionResult'> {
 
   handleMessage = (message: MissionResultMessage): void => {
     this.confirmedPlayers.add(message.playerID);
+    if (!this.game.timer.hasStarted && this.confirmedPlayers.size >= this.game.players.length * 2/3) {
+      this.game.startTimer(this.roundName)
+    }
   };
 
   isReadyToComplete = (): boolean =>

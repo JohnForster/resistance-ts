@@ -14,6 +14,8 @@ import { getCharacterInfo } from '../../../utils/getCharacterInfo';
 
 type CharacterCard = ['spies' | 'resistance', Character | null];
 
+const TIMER_LENGTH = 15_000
+
 export class CharacterRound implements Round<'character'> {
   public roundName = 'character' as const;
 
@@ -62,6 +64,9 @@ export class CharacterRound implements Round<'character'> {
 
   handleMessage = (message: CharacterMessage): void => {
     this.confirmedPlayerIDs.add(message.playerID);
+    if (!this.game.timer.hasStarted && this.confirmedPlayerIDs.size >= this.game.players.length * 2/3) {
+      this.game.startTimer(this.roundName, TIMER_LENGTH)
+    }
   };
 
   validateMessage = (message: CharacterMessage): boolean => !!message.playerID;
