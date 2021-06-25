@@ -14,7 +14,7 @@ export const getClientHistory = (
   currentMissionNominations: Nomination[],
 ): ClientGameHistory => {
   const pastMissions = Object.entries(history)
-    .sort((a, b) => b[0].localeCompare(a[0]))
+    .sort((a, b) => a[0].localeCompare(b[0]))
     .map(([, mission]) => getMissionHistory(mission));
 
   const currentMission = {

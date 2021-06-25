@@ -80,7 +80,7 @@ interface Props {
 }
 
 const ProgressBar: React.FC<Props> = (props) => {
-  const resultArray = props.history.pastMissions.map((m) => m.succeeded);
+  const resultArray = props.history.pastMissions.sort((a, b) => a.missionNumber - b.missionNumber).map((m) => m.succeeded);
   return (
     <Container>
       <h3>Mission Progress</h3>

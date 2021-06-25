@@ -40,7 +40,6 @@ export const Columns = <T extends any>({
   mapFn,
   forceSingle,
 }: Props<T>) => {
-  console.log('TODO: Fill out Columns');
   const midwayIndex = Math.ceil(items.length / 2);
 
   const firstColumn =
