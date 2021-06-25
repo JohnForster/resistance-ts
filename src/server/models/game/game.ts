@@ -29,6 +29,8 @@ export interface Player {
   character?: Character;
 }
 
+const TIMER_LENGTH = 5_000
+
 export type GameResult =
   | {
       type: 'completed';
@@ -40,6 +42,13 @@ export type GameResult =
       cancelledBy: PlayerId;
     }
   | { type: 'ongoing' };
+
+  type Timer = {
+    roundName: RoundName | null,
+    hasStarted: boolean,
+    hasRunOut: boolean,
+    timeout: NodeJS.Timeout | null
+  }
 
 export class Game {
   readonly id: string = generateID();
@@ -59,6 +68,12 @@ export class Game {
     Oberon: false,
   };
   public assassinatedPlayerID: string;
+  public timer: Timer = {
+    roundName: null,
+    hasStarted: false,
+    hasRunOut: false,
+    timeout: null
+  }
 
   private currentRound: Round<RoundName>;
   private leaderIndex = 0;
@@ -93,6 +108,35 @@ export class Game {
       nominatedPlayerIds: [],
       votes: [],
     };
+  }
+
+  startTimer = (roundName: RoundName, timeInMs = TIMER_LENGTH) => {
+    this.log('Starting timer for round', roundName)
+    if (this.timer.hasStarted) {
+      return console.error('Trying to start a timer twice', this.timer)
+    }
+    this.timer.roundName = roundName
+    this.timer.hasStarted = true
+    this.timer.timeout = setTimeout(() => {
+      if (this.currentRound.roundName !== roundName) {
+        console.error("Tried to timeout round after already complete. This shouldn't happen!")
+        return
+      }
+      this.completeCurrentRound()
+    }, timeInMs)
+  }
+
+  resetTimer = () => {
+    this.log('Resetting Timer')
+    if (this.timer.timeout) {
+      clearTimeout(this.timer.timeout)
+    }
+    this.timer = {
+      roundName: null,
+      hasStarted : false,
+      hasRunOut : false,
+      timeout : null,
+    }
   }
 
   advanceLeader = () => {
@@ -231,6 +275,7 @@ export class Game {
 
   completeCurrentRound = (): void => {
     this.log('Completing round', this.currentRound.roundName);
+    this.resetTimer()
     const nextRoundName = this.currentRound.completeRound();
 
     if (this.currentRound.roundName === 'gameOver') {
