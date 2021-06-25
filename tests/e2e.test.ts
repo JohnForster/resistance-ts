@@ -13,7 +13,7 @@ import { gameOverStep } from './steps/gameOverStep';
 import { doFailedRound } from './helpers/failedRound';
 import { successfulAssassinStep } from './steps/assassinStep';
 
-const url = 'http://192.168.1.100:8080/';
+const url = 'http://192.168.1.127:8080/';
 
 const showoffMode = false;
 const players = showoffMode ? 10 : 5;
@@ -41,7 +41,7 @@ jest.setTimeout(90_000);
 setExpectPuppeteerOptions({ timeout: 500 + players * 200 });
 
 const options: puppeteer.PuppeteerNodeLaunchOptions = {
-  headless: showoffMode ? false : true,
+  headless: showoffMode ? false : false,
   defaultViewport: {
     ...screenSize,
   },

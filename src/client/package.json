@@ -7,14 +7,15 @@
   "description": "Mobile app for playing \"The Resistance\" board game",
   "repository": "github.com/johnforster/resistance",
   "scripts": {
-    "start": "PORT=9001 webpack serve",
-    "build": "NODE_ENV=production webpack",
+    "start": "cross-env PORT=9001 webpack serve",
+    "build": "cross-env NODE_ENV=production webpack",
     "test": "jest tests/e2e.test.ts --unhandled-rejections=strict",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "core-js": "^3.9.1",
     "corejs": "^1.0.0",
+    "cross-env": "^7.0.3",
     "ismobilejs": "^1.1.1",
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.21",

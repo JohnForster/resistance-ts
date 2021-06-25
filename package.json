@@ -12,7 +12,7 @@
   "private": true,
   "scripts": {
     "start": "node src/server/build/server.js",
-    "start:dev": "PORT=9001 NODE_ENV=development concurrently \"yarn workspace resistance-ts-client run start\" \"yarn workspace resistance-ts-server run start\"",
+    "start:dev": "cross-env PORT=9001 NODE_ENV=development concurrently \"yarn workspace resistance-ts-client run start\" \"yarn workspace resistance-ts-server run start\"",
     "start:dev:server": "yarn workspace resistance-ts-server run start",
     "start:dev:client": "yarn workspace resistance-ts-client run start",
     "test": "jest tests/e2e.test.ts --unhandled-rejections=strict",
@@ -35,5 +35,8 @@
     "ts-jest": "^26.5.4",
     "type-fest": "^0.21.3",
     "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3"
   }
 }
