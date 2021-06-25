@@ -4,6 +4,7 @@ import { ThemeName } from '../themes';
 type CookieDictionary = {
   themeName: ThemeName;
   playerID: string;
+  playerName: string;
 };
 
 export const get = <T extends keyof CookieDictionary>(
