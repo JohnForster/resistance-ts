@@ -71,3 +71,4 @@
 - 🔧 Rename files to their exports
 - 🔧 Rework testing steps to facilitate taking screenshots.
 - 🔧 Split puppeteer commands/assertions
+- 🔧 Move client/server/shared out of src folder, and add src folders to each workspace.

@@ -89,10 +89,15 @@ export default class App extends PureComponent<{}, AppState> {
   };
 
   onPlayerUpdate = (data: DataByEventName<'playerData'>): void => {
-    // Use a library for dealing with cookies?
     console.log(`Setting player cookie: ${data.playerID.slice(0, 6)}...`);
     Cookies.set('playerID', data.playerID);
-    this.setState({ player: data });
+    const cookiesName = Cookies.get('playerName')
+    this.setState({ player: data }, () => {
+      if (!data.name && cookiesName) {
+        console.log('Submitting name')
+        this.submitName(cookiesName)
+      }
+    });
   };
 
   hostGame = (): void => {
@@ -109,10 +114,10 @@ export default class App extends PureComponent<{}, AppState> {
     this.setState({ game: null });
   };
 
-  // ! Currently using same type for incoming and outgoing playerData
   submitName = (name: string): void => {
     const player = { ...this.state.player, name };
     this.state.eventEmitter.send('playerData', player);
+    Cookies.set('playerName', name)
     this.setState({ player });
   };
 

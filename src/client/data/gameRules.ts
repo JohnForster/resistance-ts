@@ -1,3 +1,5 @@
+// TODO MOVE TO SHARED. IS THIS EVEN STILL IN USE?
+
 export type Rules = {
   numberOfSpies: number;
   numberOfResistance: number;

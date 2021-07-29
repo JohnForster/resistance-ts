@@ -213,7 +213,7 @@ const prodRules: { [players: number]: Rules } = {
       },
       4: {
         players: 5,
-        failsRequired: 1,
+        failsRequired: 2,
       },
       5: {
         players: 5,

@@ -11,8 +11,9 @@ export interface LandingPageProps {
 }
 
 interface LandingPageState {
-  formValue: string;
-  nameValue: string;
+  gameCode: string;
+  playerName: string;
+  changingName: boolean;
 }
 
 export class LandingPage extends PureComponent<
@@ -20,51 +21,50 @@ export class LandingPage extends PureComponent<
   LandingPageState
 > {
   state: LandingPageState = {
-    formValue: '',
-    nameValue: '',
+    gameCode: '',
+    playerName: '',
+    changingName: false,
   };
 
   componentDidMount(): void {
     document.getElementById('nameInput')?.focus();
   }
 
-  handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+  handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    if (this.state.formValue.length !== 5) return;
-    this.props.joinGame(this.state.formValue.toUpperCase());
-  };
+    this.setState({playerName: event.target.value});
+  }
 
-  handleChange = (fieldName: 'formValue' | 'nameValue') => (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
+  handleGameCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    const newValue =
-      fieldName === 'formValue'
-        ? event.target.value.toUpperCase()
-        : event.target.value;
-    const newState = { [fieldName]: newValue } as Pick<
-      LandingPageState,
-      typeof fieldName
-    >;
-    this.setState(newState);
-  };
+    const code = event.target.value.trim().toUpperCase()
+    if (code.length > 3) {
+      return
+    }
+    this.setState({gameCode: event.target.value.toUpperCase()});
+  }
+
+  submitName = () => {
+    this.props.submitName(this.state.playerName)
+    this.setState({changingName: false})
+  }
 
   render(): JSX.Element {
     return (
       <Page>
         <h1>The Resistance</h1>
-        {!this.props.player.name ? (
+        {this.state.changingName || !this.props.player.name ? (
           <>
             <p>Enter your name!</p>
             <input
               id="nameInput"
               type="text"
-              value={this.state.nameValue}
-              onChange={this.handleChange('nameValue')}
+              value={this.state.playerName}
+              onChange={this.handleNameChange}
             />
             <br />
             <button
-              onClick={(): void => this.props.submitName(this.state.nameValue)}
+              onClick={this.submitName}
             >
               Enter Name
             </button>
@@ -80,14 +80,15 @@ export class LandingPage extends PureComponent<
             <input
               type="text"
               name="gamecode"
-              value={this.state.formValue}
-              onChange={this.handleChange('formValue')}
+              value={this.state.gameCode}
+              onChange={this.handleGameCodeChange}
             />
             <button
-              onClick={(): void => this.props.joinGame(this.state.formValue)}
+              onClick={(): void => this.props.joinGame(this.state.gameCode)}
             >
               Join Game
             </button>
+            <p role="button" style={{textDecoration: 'underline'}} onClick={() => this.setState({changingName: true})}>Edit name</p>
           </>
         )}
       </Page>
