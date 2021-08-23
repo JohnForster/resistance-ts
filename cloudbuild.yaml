@@ -1,0 +1,5 @@
+steps:
+- name: 'yarn'
+  args: ['install']
+- name: 'yarn'
+  args: ['build']
