@@ -1,5 +1,7 @@
 steps:
-- name: 'yarn'
+- name: 'node'
+  entrypoint: 'yarn'
   args: ['install']
-- name: 'yarn'
+- name: 'node'
+  entrypoint: 'yarn'
   args: ['build']
