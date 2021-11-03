@@ -51,7 +51,7 @@ export default class App extends PureComponent<{}, AppState> {
     eventEmitter: new IOEventEmitter(APIAddress),
     menuIsOpen: false,
     connected: true,
-    theme: (Cookies.get('themeName') as ThemeName) ?? 'avalon',
+    theme: (Cookies.get('themeName') as ThemeName) ?? 'resistance',
     characters: {},
   };
 
