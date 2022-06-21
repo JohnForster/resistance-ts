@@ -4,4 +4,4 @@ A web application to assist playing The Resistance board game (AKA Avalon), writ
 
 The application is a Progressive Web App, meaning that it can be installed on devices without the use of an app store.
 
-Play it at http://resistance.johnforster.dev
+Play it at https://resistance.johnforster.dev or https://avalon.johnforster.dev
