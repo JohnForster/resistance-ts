@@ -18,5 +18,5 @@ export const set = <T extends keyof CookieDictionary>(
   key: T,
   value: CookieDictionary[T],
 ) => {
-  return Cookies.set(key, value);
+  return Cookies.set(key, value, { expires: 365 });
 };
