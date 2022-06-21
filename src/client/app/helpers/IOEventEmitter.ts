@@ -45,7 +45,7 @@ export default class IOEventEmitter {
     cb: Callback<EventByName<T>>,
   ): void => {
     if (!this.callbacks[eventType]) this.callbacks[eventType] = [];
-    this.callbacks[eventType].push(cb);
+    this.callbacks[eventType].push(cb as any);
   };
 
   private execute = <T extends EventType, W extends IOEvent = EventByName<T>>(

@@ -5,6 +5,7 @@ export interface AssassinateButtonProps {
   name: string;
   isSelected: boolean;
   select: () => void;
+  children: React.ReactNode;
 }
 
 export const Button = styled.button`

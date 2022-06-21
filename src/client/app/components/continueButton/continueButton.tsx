@@ -9,6 +9,7 @@ interface Props {
   disabled?: boolean;
   hideSubtext?: boolean;
   name?: string;
+  children?: React.ReactNode;
 }
 
 const SubText = styled.p<{ hideSubtext: boolean }>`

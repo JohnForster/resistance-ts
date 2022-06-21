@@ -53,7 +53,9 @@ const Spacing = styled.div<{ width: number }>`
 
 interface Props {
   titles: string[];
+  children: React.ReactNode;
 }
+
 export const Tabs: React.FC<Props> = (props) => {
   const tabs = React.Children.toArray(props.children);
   const [currentTabIndex, setCurrentTabIndex] = React.useState(0);
