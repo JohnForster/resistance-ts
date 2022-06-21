@@ -43,6 +43,14 @@ const getScreenSize = () => {
   return { height, width };
 };
 
+const getInitialTheme = (): ThemeName => {
+  const cookiesTheme = Cookies.get('themeName');
+  if (cookiesTheme) return cookiesTheme;
+  const isAvalon = !!window.location.href.match(/avalon/);
+  if (isAvalon) return 'avalon';
+  return 'resistance';
+};
+
 export default class App extends PureComponent<{}, AppState> {
   state: AppState = {
     game: null,
@@ -51,7 +59,7 @@ export default class App extends PureComponent<{}, AppState> {
     eventEmitter: new IOEventEmitter(APIAddress),
     menuIsOpen: false,
     connected: true,
-    theme: (Cookies.get('themeName') as ThemeName) ?? 'resistance',
+    theme: getInitialTheme(),
     characters: {},
   };
 
@@ -91,11 +99,11 @@ export default class App extends PureComponent<{}, AppState> {
   onPlayerUpdate = (data: DataByEventName<'playerData'>): void => {
     console.log(`Setting player cookie: ${data.playerID.slice(0, 6)}...`);
     Cookies.set('playerID', data.playerID);
-    const cookiesName = Cookies.get('playerName')
+    const cookiesName = Cookies.get('playerName');
     this.setState({ player: data }, () => {
       if (!data.name && cookiesName) {
-        console.log('Submitting name')
-        this.submitName(cookiesName)
+        console.log('Submitting name');
+        this.submitName(cookiesName);
       }
     });
   };
@@ -117,7 +125,7 @@ export default class App extends PureComponent<{}, AppState> {
   submitName = (name: string): void => {
     const player = { ...this.state.player, name };
     this.state.eventEmitter.send('playerData', player);
-    Cookies.set('playerName', name)
+    Cookies.set('playerName', name);
     this.setState({ player });
   };
 
